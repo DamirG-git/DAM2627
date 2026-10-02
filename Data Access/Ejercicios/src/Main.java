@@ -2,6 +2,7 @@ import dg2627activities.U1.EJ2.U1Ex2;
 import dg2627activities.U2.EJ1.U2Ex1;
 import dg2627activities.U2.EJ2.U2Ex2;
 import dg2627activities.U2.EJ3.U2Ex3;
+import dg2627activities.U2.EJ4.U2Ex4;
 
 import java.util.Scanner;
 
@@ -11,7 +12,7 @@ public class Main {
 
 
     final static int UNIT_COUNT = 2;
-    final static int EXERCISE_LIMIT_UNIT2 = 3;
+    final static int EXERCISE_LIMIT_UNIT2 = 4;
 
     public static void main(String[] args) {
 
@@ -33,19 +34,27 @@ public class Main {
                 case 2:
                     System.out.println("Select runnable exercises in unit 2: " + EXERCISE_LIMIT_UNIT2);
                     var u2 = InputValidation(scan, EXERCISE_LIMIT_UNIT2);
-                    if (u2 == 1) {
-                        new U2Ex1(scan);
-                        exit = true;
-                    }
-                    if (u2 == 2) {
-                        new U2Ex2(scan);
-                        exit = true;
-                    }
-                    if(u2 == 3) {
-                        new U2Ex3(scan);
-                        exit = true;
-                    }
+                    exit = switch (u2) {
+                        case 1 -> {
+                            new U2Ex1(scan);
+                            yield true;
+                        }
+                        case 2 -> {
+                            new U2Ex2(scan);
+                            yield true;
+                        }
+                        case 3 -> {
+                            new U2Ex3(scan);
+                            yield true;
+                        }
+                        case 4 -> {
+                            new U2Ex4(scan);
+                            yield true;
+                        }
+                        default -> false;
+                    };
                     break;
+
                 default:
                     System.out.println("Invalid input!");
                     break;

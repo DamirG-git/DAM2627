@@ -21,10 +21,10 @@ public class U2Ex3 {
         }
     }
 
-    private final int[] daysInAMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    private final String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    protected final int[] daysInAMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    protected final String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
-    static class MyDateTime {
+    public static class MyDateTime {
         private int day;
         private int month;
         private int year;
@@ -108,7 +108,9 @@ public class U2Ex3 {
 
     }
 
-    String DateLogic(String dayRaw, String monthRaw, String yearRaw) {
+    protected boolean isLeapYear = false;
+
+    protected String DateLogic(String dayRaw, String monthRaw, String yearRaw) {
         var error = "";
         var myDate = new MyDateTime();
         myDate.setDay(dayRaw);
@@ -121,10 +123,12 @@ public class U2Ex3 {
 
 
         var arrayMonth = myDate.getMonth() - 1;
+        isLeapYear = (myDate.getYear() % 400 == 0) || (myDate.getYear() % 4 == 0 && myDate.getYear() % 100 != 0);
         if (daysInAMonth[arrayMonth] < myDate.getDay()) {
-            boolean isLeapYear = (myDate.getYear() % 400 == 0) || (myDate.getYear() % 4 == 0 && myDate.getYear() % 100 != 0);
-            if (myDate.getMonth() != 2 || !isLeapYear || myDate.getDay() != 29)
-                error += "Invalid date, in " + monthNames[arrayMonth] + " only has " + daysInAMonth[arrayMonth] + "days.\n";
+            if (myDate.getMonth() != 2 || !isLeapYear || myDate.getDay() != 29) {
+                var daysMessageEdge = isLeapYear && myDate.getMonth() == 2 ? 29 : daysInAMonth[arrayMonth];
+                error += "Invalid date, in " + monthNames[arrayMonth] + " there are only " + daysMessageEdge + " days.\n";
+            }
         }
         if (error.isBlank()) {
             System.out.println("Day:" + myDate.getDay() + " Month:" + monthNames[myDate.getMonth() - 1] + " Year:" + myDate.getYear());
