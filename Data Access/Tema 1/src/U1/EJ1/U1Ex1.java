@@ -1,11 +1,17 @@
 package U1.EJ1;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class U1Ex1 {
     static class Student {
         private String name;
+
+        public Student(String name, int mark) {
+            this.name = name;
+            this.mark = mark;
+        }
 
         public String getName() {
             return name;
@@ -34,7 +40,11 @@ public class U1Ex1 {
     }
 
     static class Students {
-        private final List<Student> studentList = new ArrayList<>();
+        private final List<Student> studentList;
+
+        public Students() {
+            studentList = new ArrayList<>();
+        }
 
         // Agrega un nuevo alumno a la lista
         //
@@ -63,6 +73,34 @@ public class U1Ex1 {
             }
             return average / studentList.size();
 
+        }
+    }
+
+    static class StudentFTC extends Student {
+        String company;
+        String tutor;
+        String instructor;
+
+        public StudentFTC(String name, int mark, String company, String tutor, String instructor) {
+            super(name, mark);
+            this.company = company;
+            this.tutor = tutor;
+            this.instructor = instructor;
+
+        }
+    }
+
+    static class StudentErasmus extends Student {
+
+        LocalDate startDate;
+        LocalDate endDate;
+        String originCountry;
+
+        public StudentErasmus(String name, int mark,  LocalDate startDate, LocalDate endDate, String originCountry) {
+            super(name, mark);
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.originCountry = originCountry;
         }
     }
 }
