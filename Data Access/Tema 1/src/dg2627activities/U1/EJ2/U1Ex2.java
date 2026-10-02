@@ -1,4 +1,4 @@
-package U1.EJ2;
+package dg2627activities.U1.EJ2;
 
 import java.time.LocalDate;
 import java.time.Period;

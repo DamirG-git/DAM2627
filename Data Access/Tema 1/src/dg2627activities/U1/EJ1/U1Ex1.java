@@ -1,4 +1,4 @@
-package U1.EJ1;
+package dg2627activities.U1.EJ1;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
