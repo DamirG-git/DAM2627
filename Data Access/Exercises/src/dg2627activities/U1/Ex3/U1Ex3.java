@@ -1,4 +1,4 @@
-package dg2627activities.U1.Ej3;
+package dg2627activities.U1.Ex3;
 
 import java.util.List;
 import java.util.Optional;

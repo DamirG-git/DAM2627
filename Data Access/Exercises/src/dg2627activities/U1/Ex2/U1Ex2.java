@@ -1,4 +1,4 @@
-package dg2627activities.U1.EJ2;
+package dg2627activities.U1.Ex2;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -62,6 +62,22 @@ public class U1Ex2 {
                 throw new IllegalArgumentException(INVALID_PHONE);
 
             }
+        }
+
+        public List<Company> getClientOf() {
+            return clientOf;
+        }
+
+        public void setClientOf(List<Company> clientOf) {
+            this.clientOf = clientOf;
+        }
+
+        public void addClient(Company client) {
+            clientOf.add(client);
+        }
+
+        public void removeClient(Company client) {
+            clientOf.remove(client);
         }
     }
 

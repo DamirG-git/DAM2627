@@ -1,9 +1,12 @@
-import dg2627activities.U1.EJ2.U1Ex2;
-import dg2627activities.U2.EJ1.U2Ex1;
-import dg2627activities.U2.EJ2.U2Ex2;
-import dg2627activities.U2.EJ3.U2Ex3;
-import dg2627activities.U2.EJ4.U2Ex4;
+import dg2627activities.U2.Ex1.U2Ex1;
+import dg2627activities.U2.Ex2.U2Ex2;
+import dg2627activities.U2.Ex3.U2Ex3;
+import dg2627activities.U2.Ex4.U2Ex4;
+import dg2627activities.U2.Ex7.U2Ex7;
+import dg2627activities.U2.Ex5.U2Ex5;
+import dg2627activities.U2.Ex6.U2Ex6;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -12,7 +15,7 @@ public class Main {
 
 
     final static int UNIT_COUNT = 2;
-    final static int EXERCISE_LIMIT_UNIT2 = 4;
+    final static int[] RUNNABLE_EXERCISES_U2 = new int[]{1, 2, 3, 4, 5, 6, 7};
 
     public static void main(String[] args) {
 
@@ -32,8 +35,8 @@ public class Main {
                     System.out.println("No runnable exercises in unit 1");
                     break;
                 case 2:
-                    System.out.println("Select runnable exercises in unit 2: " + EXERCISE_LIMIT_UNIT2);
-                    var u2 = InputValidation(scan, EXERCISE_LIMIT_UNIT2);
+                    System.out.println("Select runnable exercises in unit 2: " + Arrays.toString(RUNNABLE_EXERCISES_U2));
+                    var u2 = InputValidation(scan, RUNNABLE_EXERCISES_U2[RUNNABLE_EXERCISES_U2.length - 1]);
                     exit = switch (u2) {
                         case 1 -> {
                             new U2Ex1(scan);
@@ -51,6 +54,21 @@ public class Main {
                             new U2Ex4(scan);
                             yield true;
                         }
+                        case 5 -> {
+                            new U2Ex5();
+                            yield true;
+                        }
+
+                        case 6 -> {
+                            new U2Ex6(scan);
+                            yield true;
+                        }
+
+                        case 7 -> {
+                            new U2Ex7(scan);
+                            yield true;
+                        }
+
                         default -> false;
                     };
                     break;

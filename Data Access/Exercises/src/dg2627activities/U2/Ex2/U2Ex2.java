@@ -1,4 +1,4 @@
-package dg2627activities.U2.EJ2;
+package dg2627activities.U2.Ex2;
 
 import java.util.Scanner;
 
