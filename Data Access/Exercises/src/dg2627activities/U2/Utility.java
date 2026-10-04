@@ -14,18 +14,24 @@ public class Utility {
             if (fileIn.isBlank()) {
                 error = "Error: The file path is empty.";
             }
-            if (fileIn.startsWith("\"") && fileIn.endsWith("\"")){
+            if (fileIn.startsWith("\"") && fileIn.endsWith("\"")) {
                 fileIn = fileIn.substring(1, fileIn.length() - 1);
             }
-            var pathRaw = Path.of(fileIn);
-            if (!Files.exists(pathRaw)) {
-                error = "No file with this path found: " + fileIn;
-                return;
+            try {
+                var pathRaw = Path.of(fileIn);
+                if (!Files.exists(pathRaw)) {
+                    error = "No file with this path found: " + fileIn;
+                    return;
+                }
+                if (!Files.isReadable(pathRaw)) {
+                    error = "The file is not readable: " + fileIn;
+                    return;
+                }
+                this.path = pathRaw;
+            } catch (Exception e) {
+                error = "Invalid path given: " + fileIn;
             }
-            if (!Files.isReadable(pathRaw)) {
-                error = "The file is not readable: " + fileIn;
-            }
-            this.path = pathRaw;
+
         }
 
         public Path getPath() {

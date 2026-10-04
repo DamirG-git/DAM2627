@@ -1,10 +1,14 @@
 import dg2627activities.U2.Ex1.U2Ex1;
+import dg2627activities.U2.Ex10.U2Ex10;
+import dg2627activities.U2.Ex11.U2Ex11;
 import dg2627activities.U2.Ex2.U2Ex2;
 import dg2627activities.U2.Ex3.U2Ex3;
 import dg2627activities.U2.Ex4.U2Ex4;
 import dg2627activities.U2.Ex7.U2Ex7;
 import dg2627activities.U2.Ex5.U2Ex5;
 import dg2627activities.U2.Ex6.U2Ex6;
+import dg2627activities.U2.Ex8.U2Ex8;
+import dg2627activities.U2.Ex9.U2Ex9;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -15,7 +19,7 @@ public class Main {
 
 
     final static int UNIT_COUNT = 2;
-    final static int[] RUNNABLE_EXERCISES_U2 = new int[]{1, 2, 3, 4, 5, 6, 7};
+    final static int[] RUNNABLE_EXERCISES_U2 = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 
     public static void main(String[] args) {
 
@@ -66,6 +70,26 @@ public class Main {
 
                         case 7 -> {
                             new U2Ex7(scan);
+                            yield true;
+                        }
+
+                        case 8 -> {
+                            new U2Ex8(scan);
+                            yield true;
+                        }
+
+                        case 9 -> {
+                            new U2Ex9(scan);
+                            yield true;
+                        }
+
+                        case 10 -> {
+                            new U2Ex10(scan);
+                            yield true;
+                        }
+
+                        case 11 -> {
+                            new U2Ex11(scan);
                             yield true;
                         }
 

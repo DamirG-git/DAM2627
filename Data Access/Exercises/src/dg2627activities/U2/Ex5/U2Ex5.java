@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class U2Ex5 {
-    final String folder = "Ejercicios/src/dg2627activities/U2/Ej5/";
+    final String folder = "Exercises/src/dg2627activities/U2/Ej5/";
 
     public U2Ex5() {
         try (FileInputStream fIn = new FileInputStream(folder + "testin.txt"); FileOutputStream fOut = new FileOutputStream(folder + "testout.txt")) {
