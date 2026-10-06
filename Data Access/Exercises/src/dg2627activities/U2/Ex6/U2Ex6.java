@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.util.Scanner;
 
+// 4.4. Activities 2
 public class U2Ex6 {
 
     public U2Ex6(Scanner sc) {

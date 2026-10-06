@@ -2,6 +2,7 @@ package dg2627activities.U2.Ex3;
 
 import java.util.Scanner;
 
+// 3.3. Activities 3
 public class U2Ex3 {
     public U2Ex3(Scanner scanner) {
         while (true) {

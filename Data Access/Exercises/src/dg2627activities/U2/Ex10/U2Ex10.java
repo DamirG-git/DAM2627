@@ -3,11 +3,11 @@ package dg2627activities.U2.Ex10;
 import dg2627activities.U2.Utility;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+// 5.4. Activities 3
 public class U2Ex10 {
 
 

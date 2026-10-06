@@ -4,6 +4,7 @@ import dg2627activities.U2.Ex3.U2Ex3;
 
 import java.util.Scanner;
 
+// 3.3. Activities 4
 public class U2Ex4 extends U2Ex3 {
     public U2Ex4(Scanner scanner) {
         super(scanner);

@@ -2,6 +2,7 @@ package dg2627activities.U2.Ex2;
 
 import java.util.Scanner;
 
+// 3.3. Activities 2
 public class U2Ex2 {
 
     public U2Ex2(Scanner scanner) {

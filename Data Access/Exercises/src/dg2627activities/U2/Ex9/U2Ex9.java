@@ -2,15 +2,13 @@ package dg2627activities.U2.Ex9;
 
 import dg2627activities.U2.Utility;
 
-import javax.swing.text.Utilities;
 import java.io.*;
 import java.nio.file.Path;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
+// 5.4. Activities 2
 public class U2Ex9 {
 
     final String folder = "Exercises/src/dg2627activities/U2/Ex9/output.txt";

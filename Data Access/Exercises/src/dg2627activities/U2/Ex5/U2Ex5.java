@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+// 4.4. Activities 1
 public class U2Ex5 {
     final String folder = "Exercises/src/dg2627activities/U2/Ej5/";
 

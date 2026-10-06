@@ -3,6 +3,7 @@ package dg2627activities.U2.Ex8;
 import java.io.*;
 import java.util.Scanner;
 
+// 5.4. Activities 1
 public class U2Ex8 {
 
     final String fileLoc = "Exercises/src/dg2627activities/U2/Ex8/output.txt";

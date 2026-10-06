@@ -2,10 +2,12 @@ package dg2627activities.U2.Ex7;
 
 import dg2627activities.U2.Utility;
 
-import java.io.*;
+import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.util.Scanner;
 
+
+// 4.4. Activities 3
 public class U2Ex7 {
 
     public static final String ERROR_HEADER_VALUE_NULL = "Header result was null, the provided file had an error.";

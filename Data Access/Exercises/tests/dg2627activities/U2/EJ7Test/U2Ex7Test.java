@@ -9,6 +9,7 @@ import java.nio.file.Path;
 
 import static org.junit.Assert.*;
 
+// 4.4. Activities 4
 public class U2Ex7Test {
 
     @Test

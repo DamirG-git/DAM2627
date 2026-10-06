@@ -5,10 +5,9 @@ import dg2627activities.U2.Utility;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
+// 5.4. Activities 4
 public class U2Ex11 {
 
 
