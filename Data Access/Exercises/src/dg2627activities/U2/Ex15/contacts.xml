@@ -1,4 +1,4 @@
-<contactList>
+<contactlist>
     <contact id='c001'>
         <name>Jose</name>
         <surname>García</surname>
@@ -6,7 +6,7 @@
             <work>jrgarcia@iesmarenostrum.com</work>
         </emails>
         <phones>
-            <cell>616116611</cell>
+            <home>616116611</home>
         </phones>
     </contact>
     <contact id='c002'>
@@ -25,8 +25,8 @@
         <name>Ana</name>
         <surname>Pérez</surname>
         <phones>
-            <cell>616116611</cell>
+            <home>616116611</home>
             <work>965119192</work>
         </phones>
     </contact>
-</contactList>
+</contactlist>

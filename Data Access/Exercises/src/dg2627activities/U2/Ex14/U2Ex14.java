@@ -4,11 +4,12 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.Scanner;
 
+// 8.2 Activities 2
 public class U2Ex14 {
 
-    final String folder = "Exercises/src/dg2627activities/U2/Ex14/";
-    final String xmlFileLoc = folder + "contacts.xml";
-    final String objFileLoc = folder + "contacts.obj";
+    protected final String folder = "Exercises/src/dg2627activities/U2/Ex14/";
+    protected final String xmlFileLoc = folder + "contacts.xml";
+    protected final String objFileLoc = folder + "contacts.obj";
 
     public U2Ex14(Scanner sc) {
 
@@ -49,6 +50,7 @@ public class U2Ex14 {
         System.out.println("Converting complete...");
     }
 
+
     private enum fileType {
         XML, OBJ, INVALID
     }
@@ -63,7 +65,7 @@ public class U2Ex14 {
         return fileType.INVALID;
     }
 
-    private void ToObject() {
+    protected void ToObject() {
         var handler = new myXMLContactsHandler();
         try {
             var saxParser = SAXParserFactory.newInstance().newSAXParser();

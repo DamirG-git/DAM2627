@@ -4,6 +4,8 @@ import dg2627activities.U2.Ex11.U2Ex11;
 import dg2627activities.U2.Ex12.U2Ex12;
 import dg2627activities.U2.Ex13.U2Ex13;
 import dg2627activities.U2.Ex14.U2Ex14;
+import dg2627activities.U2.Ex15.U2Ex15;
+import dg2627activities.U2.Ex16.U2Ex16;
 import dg2627activities.U2.Ex2.U2Ex2;
 import dg2627activities.U2.Ex3.U2Ex3;
 import dg2627activities.U2.Ex4.U2Ex4;
@@ -22,7 +24,7 @@ public class Main {
 
 
     final static int UNIT_COUNT = 2;
-    final static int[] RUNNABLE_EXERCISES_U2 = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    final static int[] RUNNABLE_EXERCISES_U2 = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,15,16};
 
     public static void main(String[] args) {
 
@@ -105,6 +107,15 @@ public class Main {
                         }
                         case 14 -> {
                             new U2Ex14(scan);
+                            yield true;
+                        }
+
+                        case 15 -> {
+                            new U2Ex15();
+                            yield true;
+                        }
+                        case 16 -> {
+                            new U2Ex16(scan);
                             yield true;
                         }
 
