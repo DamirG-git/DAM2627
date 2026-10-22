@@ -15,31 +15,26 @@ public class U2Ex14 {
         System.out.println("XML to OBJ and inverse convertor.");
         var fileType = isFileXML(); // Check file type
         switch (fileType) {
-            case XML:
-                System.out.println("Current file is XML, convert it to OBJ? Y/N");
-                break;
-            case OBJ:
-                System.out.println("Current file is OBJ, convert it to XML? Y/N");
-                break;
-            case INVALID:
+            case XML -> System.out.println("Current file is XML, convert it to OBJ? Y/N");
+            case OBJ -> System.out.println("Current file is OBJ, convert it to XML? Y/N");
+            case INVALID -> {
                 System.out.println("Current file does not exist or folder location is invalid.");
                 return;
+            }
         }
 
         while (true) {
             var in = sc.nextLine().trim().toUpperCase();
             switch (in) {
-                case "Y":
-                case "YES":
-                    System.out.println("Converting...");
-                    break;
-                case "NO":
-                case "N":
+                case "Y", "YES" -> System.out.println("Converting...");
+                case "NO", "N" -> {
                     System.out.println("Exiting...");
                     return;
-                default:
+                }
+                default -> {
                     System.out.println("Invalid input. Please try again.");
                     continue;
+                }
             }
             break;
         }

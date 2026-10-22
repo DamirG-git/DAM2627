@@ -29,31 +29,23 @@ public class myXMLContactsHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         var value = lineValue.toString().trim();
         switch (qName) {
-            case "name":
-                contacts.getLast().setName(value);
-                break;
-            case "surname":
-                contacts.getLast().setSurname(value);
-                break;
-            case "cell":
-            case "work":
-            case "home":
-                values.add(new MyLabelValue(qName, value));
-                break;
-            case "phones":
+            case "name" -> contacts.getLast().setName(value);
+            case "surname" -> contacts.getLast().setSurname(value);
+            case "cell", "work", "home" -> values.add(new MyLabelValue(qName, value));
+            case "phones" -> {
                 var contactPhone = contacts.getLast();
                 for (MyLabelValue v : values) {
                     contactPhone.setPhone(v.label(), v.value());
                 }
                 values.clear();
-                break;
-            case "emails":
+            }
+            case "emails" -> {
                 var contactEmail = contacts.getLast();
                 for (MyLabelValue v : values) {
                     contactEmail.setEmail(v.label(), v.value());
                 }
                 values.clear();
-                break;
+            }
         }
         lineValue.setLength(0);
     }
