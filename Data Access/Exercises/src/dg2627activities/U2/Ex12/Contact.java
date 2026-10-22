@@ -78,8 +78,11 @@ public class Contact implements Serializable {
     }
 
     public boolean isInvalidName(String name) {
-        return !Pattern.matches("^[A-Za-z ]+$", name);
+        return !Pattern.matches(
+                "^[\\p{L} ]+$", name
+        );
     }
+
 
     public String getSurname() {
         return surname;
@@ -95,8 +98,11 @@ public class Contact implements Serializable {
         return true;
     }
 
+
     public boolean isInvalidSurname(String surname) {
-        return !Pattern.matches("^[A-Za-z ]+$", surname);
+        return !Pattern.matches(
+                "^[\\p{L} ]+$", surname
+        );
     }
 
     @Override

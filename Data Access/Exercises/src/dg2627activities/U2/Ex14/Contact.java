@@ -7,16 +7,21 @@ import java.util.regex.Pattern;
 public class Contact implements Serializable {
     private String name;
     private String surname;
-    private ArrayList<Emails> emails;
-    private ArrayList<Phones> phones;
+    private final ArrayList<Emails> emails;
+    private final ArrayList<Phones> phones;
 
-    public record Emails(String typeOfMail, String email) {
+    public Contact() {
+        emails = new ArrayList<>();
+        phones = new ArrayList<>();
     }
 
-    public record Phones(String typeOfPhone, String phone) {
+    public record Emails(String typeOfMail, String email) implements Serializable {
     }
 
-    public ArrayList<Phones> getPhone() {
+    public record Phones(String typeOfPhone, String phone) implements Serializable {
+    }
+
+    public ArrayList<Phones> getPhones() {
         return phones;
     }
 
@@ -45,7 +50,7 @@ public class Contact implements Serializable {
             System.out.println("Invalid email: " + trimmed);
             return false;
         }
-        phones.add(new Phones(typeOfEmail.trim(), trimmed));
+        emails.add(new Emails(typeOfEmail.trim(), trimmed));
         return true;
     }
 
@@ -68,8 +73,9 @@ public class Contact implements Serializable {
     }
 
     public boolean isInvalidName(String name) {
-        return !Pattern.matches("^[A-Za-z ]+$", name);
+        return !Pattern.matches("^[\\p{L} ]+$", name);
     }
+
 
     public String getSurname() {
         return surname;
@@ -86,7 +92,7 @@ public class Contact implements Serializable {
     }
 
     public boolean isInvalidSurname(String surname) {
-        return !Pattern.matches("^[A-Za-z ]+$", surname);
+        return !Pattern.matches("^[\\p{L} ]+$", surname);
     }
 
     @Override
@@ -106,4 +112,40 @@ public class Contact implements Serializable {
     public String toString() {
         return "Contact: " + name + " " + surname + ", email: " + emails.toString() + ", phone: " + phones.toString();
     }
+
+    public String toXML(String id) {
+        var builder = new StringBuilder();
+        builder.append(generateSpacing(4)).append("<contact id=").append("'").append(id).append("'").append(">\n");
+        if (!name.isEmpty()) builder.append(generateSpacing(8)).append("<name>").append(name).append("</name>\n");
+        if (!surname.isEmpty()) builder.append(generateSpacing(8)).append("<surname>").append(surname).append("</surname>\n");
+        if (!emails.isEmpty()) {
+            builder.append(generateSpacing(8)).append("<emails>\n");
+            for (Emails email : emails) {
+                builder.append(generateSpacing(12)).append(xmlStartFormat(email.typeOfMail)).append(email.email).append(xmlEndFormat(email.typeOfMail));
+            }
+            builder.append(generateSpacing(8)).append("</emails>\n");
+        }
+        if (!phones.isEmpty()) {
+            builder.append(generateSpacing(8)).append("<phones>\n");
+            for (Phones phone : phones) {
+                builder.append(generateSpacing(12)).append(xmlStartFormat(phone.typeOfPhone)).append(phone.phone).append(xmlEndFormat(phone.typeOfPhone));
+            }
+            builder.append(generateSpacing(8)).append("</phones>\n");
+        }
+        builder.append(generateSpacing(4)).append("</contact>\n");
+        return builder.toString();
+    }
+
+    private String xmlStartFormat(String input) {
+        return "<" + input + ">";
+    }
+
+    private String xmlEndFormat(String input) {
+        return "</" + input + ">\n";
+    }
+
+    private String generateSpacing(int amount){
+        return " ".repeat(Math.max(0, amount));
+    }
+
 }
