@@ -11,7 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 // 8.3 Activities 1
-public class U2Ex15 {
+public class U2Ex8n4n1 {
 
 
     /*
@@ -25,7 +25,7 @@ public class U2Ex15 {
     final String folder = "Exercises/src/dg2627activities/U2/Ex15/";
     final String xmlFileLoc = folder + "contacts.xml";
 
-    public U2Ex15() {
+    public U2Ex8n4n1() {
 
         Document doc;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

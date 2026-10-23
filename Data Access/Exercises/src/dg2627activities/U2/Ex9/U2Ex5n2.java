@@ -9,11 +9,11 @@ import java.util.Collections;
 import java.util.Scanner;
 
 // 5.4. Activities 2
-public class U2Ex9 {
+public class U2Ex5n2 {
 
     final String folder = "Exercises/src/dg2627activities/U2/Ex9/output.txt";
 
-    public U2Ex9(Scanner sc) {
+    public U2Ex5n2(Scanner sc) {
 
 
         var pathResult = new Utility.PathResult();

@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 // 5.4. Activities 3
-public class U2Ex10 {
+public class U2Ex5n3 {
 
 
-    public U2Ex10(Scanner sc) {
+    public U2Ex5n3(Scanner sc) {
 
         System.out.println("Give me location of a file to read:");
         var pathResult = new Utility.PathResult();

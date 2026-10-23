@@ -8,14 +8,14 @@ import java.util.Scanner;
 
 
 // 4.4. Activities 3
-public class U2Ex7 {
+public class U2Ex4n3 {
 
     public static final String ERROR_HEADER_VALUE_NULL = "Header result was null, the provided file had an error.";
     public static final String ERROR_READ_BYTES_INSUFFICIENT = "Error: amount of bytes read is too small: %d bytes read out of 54";
 
-    public U2Ex7(){}
+    public U2Ex4n3(){}
 
-    public U2Ex7(Scanner sc) {
+    public U2Ex4n3(Scanner sc) {
         var pathResult = new Utility.PathResult();
         while (true) {
             try {

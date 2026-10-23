@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.util.Scanner;
 
 // 5.4. Activities 4
-public class U2Ex11 {
+public class U2Ex5n4 {
 
 
     record FoundText(int linePos, String text) {
     }
 
-    public U2Ex11(Scanner sc) {
+    public U2Ex5n4(Scanner sc) {
 
         System.out.println("Give me location of a file to read:");
         var pathResult = new Utility.PathResult();

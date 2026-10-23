@@ -1,7 +1,7 @@
 package dg2627activities.U2.Ex16;
 
 import dg2627activities.U2.Ex14.Contact;
-import dg2627activities.U2.Ex14.U2Ex14;
+import dg2627activities.U2.Ex14.U2Ex8n2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 // 8.3 Activities 2
-public class U2Ex16 extends U2Ex14 {
+public class U2Ex8n4n2 extends U2Ex8n2 {
 
-    public U2Ex16(Scanner sc) {
+    public U2Ex8n4n2(Scanner sc) {
         super(sc);
     }
 

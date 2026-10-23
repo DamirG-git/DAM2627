@@ -7,9 +7,9 @@ import java.nio.file.Path;
 import java.util.Scanner;
 
 // 4.4. Activities 2
-public class U2Ex6 {
+public class U2Ex4n2 {
 
-    public U2Ex6(Scanner sc) {
+    public U2Ex4n2(Scanner sc) {
 
         var pathResult = new Utility.PathResult();
         while (true) {

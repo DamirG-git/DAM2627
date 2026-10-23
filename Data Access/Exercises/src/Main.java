@@ -1,19 +1,19 @@
-import dg2627activities.U2.Ex1.U2Ex1;
-import dg2627activities.U2.Ex10.U2Ex10;
-import dg2627activities.U2.Ex11.U2Ex11;
-import dg2627activities.U2.Ex12.U2Ex12;
-import dg2627activities.U2.Ex13.U2Ex13;
-import dg2627activities.U2.Ex14.U2Ex14;
-import dg2627activities.U2.Ex15.U2Ex15;
-import dg2627activities.U2.Ex16.U2Ex16;
-import dg2627activities.U2.Ex2.U2Ex2;
-import dg2627activities.U2.Ex3.U2Ex3;
-import dg2627activities.U2.Ex4.U2Ex4;
-import dg2627activities.U2.Ex5.U2Ex5;
-import dg2627activities.U2.Ex6.U2Ex6;
-import dg2627activities.U2.Ex7.U2Ex7;
-import dg2627activities.U2.Ex8.U2Ex8;
-import dg2627activities.U2.Ex9.U2Ex9;
+import dg2627activities.U2.Ex1.U2Ex3n1;
+import dg2627activities.U2.Ex10.U2Ex5n3;
+import dg2627activities.U2.Ex11.U2Ex5n4;
+import dg2627activities.U2.Ex12.U2Ex7n1;
+import dg2627activities.U2.Ex13.U2Ex8n1;
+import dg2627activities.U2.Ex14.U2Ex8n2;
+import dg2627activities.U2.Ex15.U2Ex8n4n1;
+import dg2627activities.U2.Ex16.U2Ex8n4n2;
+import dg2627activities.U2.Ex2.U2Ex3n2;
+import dg2627activities.U2.Ex3.U2Ex3n3;
+import dg2627activities.U2.Ex4.U2Ex3n4;
+import dg2627activities.U2.Ex5.U2Ex4n1;
+import dg2627activities.U2.Ex6.U2Ex4n2;
+import dg2627activities.U2.Ex7.U2Ex4n3;
+import dg2627activities.U2.Ex8.U2Ex5n1;
+import dg2627activities.U2.Ex9.U2Ex5n2;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -48,74 +48,74 @@ public class Main {
                     var u2 = InputValidation(scan, RUNNABLE_EXERCISES_U2[RUNNABLE_EXERCISES_U2.length - 1]);
                     exit = switch (u2) {
                         case 1 -> {
-                            new U2Ex1(scan);
+                            new U2Ex3n1(scan);
                             yield true;
                         }
                         case 2 -> {
-                            new U2Ex2(scan);
+                            new U2Ex3n2(scan);
                             yield true;
                         }
                         case 3 -> {
-                            new U2Ex3(scan);
+                            new U2Ex3n3(scan);
                             yield true;
                         }
                         case 4 -> {
-                            new U2Ex4(scan);
+                            new U2Ex3n4(scan);
                             yield true;
                         }
                         case 5 -> {
-                            new U2Ex5();
+                            new U2Ex4n1();
                             yield true;
                         }
 
                         case 6 -> {
-                            new U2Ex6(scan);
+                            new U2Ex4n2(scan);
                             yield true;
                         }
 
                         case 7 -> {
-                            new U2Ex7(scan);
+                            new U2Ex4n3(scan);
                             yield true;
                         }
 
                         case 8 -> {
-                            new U2Ex8(scan);
+                            new U2Ex5n1(scan);
                             yield true;
                         }
 
                         case 9 -> {
-                            new U2Ex9(scan);
+                            new U2Ex5n2(scan);
                             yield true;
                         }
 
                         case 10 -> {
-                            new U2Ex10(scan);
+                            new U2Ex5n3(scan);
                             yield true;
                         }
 
                         case 11 -> {
-                            new U2Ex11(scan);
+                            new U2Ex5n4(scan);
                             yield true;
                         }
                         case 12 -> {
-                            new U2Ex12(scan);
+                            new U2Ex7n1(scan);
                             yield true;
                         }
                         case 13 -> {
-                            new U2Ex13();
+                            new U2Ex8n1();
                             yield true;
                         }
                         case 14 -> {
-                            new U2Ex14(scan);
+                            new U2Ex8n2(scan);
                             yield true;
                         }
 
                         case 15 -> {
-                            new U2Ex15();
+                            new U2Ex8n4n1();
                             yield true;
                         }
                         case 16 -> {
-                            new U2Ex16(scan);
+                            new U2Ex8n4n2(scan);
                             yield true;
                         }
 

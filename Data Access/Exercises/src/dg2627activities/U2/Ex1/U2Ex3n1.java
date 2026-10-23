@@ -3,10 +3,10 @@ package dg2627activities.U2.Ex1;
 import java.util.Scanner;
 
 // 3.3. Activities 1
-public class U2Ex1 {
+public class U2Ex3n1 {
 
 
-    public U2Ex1(Scanner scan) {
+    public U2Ex3n1(Scanner scan) {
         String name;
         String surname;
 

@@ -5,10 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 // 4.4. Activities 1
-public class U2Ex5 {
+public class U2Ex4n1 {
     final String folder = "Exercises/src/dg2627activities/U2/Ej5/";
 
-    public U2Ex5() {
+    public U2Ex4n1() {
         try (FileInputStream fIn = new FileInputStream(folder + "testin.txt"); FileOutputStream fOut = new FileOutputStream(folder + "testout.txt")) {
             System.out.println("Reading testin.txt");
             var buffer = new byte[128];

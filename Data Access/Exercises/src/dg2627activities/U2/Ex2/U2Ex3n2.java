@@ -3,9 +3,9 @@ package dg2627activities.U2.Ex2;
 import java.util.Scanner;
 
 // 3.3. Activities 2
-public class U2Ex2 {
+public class U2Ex3n2 {
 
-    public U2Ex2(Scanner scanner) {
+    public U2Ex3n2(Scanner scanner) {
         while (true) {
             System.out.println("Give me a date in format DD/MM/YYYY.");
             System.out.print("Day:");

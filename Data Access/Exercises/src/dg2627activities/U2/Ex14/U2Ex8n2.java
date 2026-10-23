@@ -5,13 +5,13 @@ import java.io.*;
 import java.util.Scanner;
 
 // 8.2 Activities 2
-public class U2Ex14 {
+public class U2Ex8n2 {
 
     protected final String folder = "Exercises/src/dg2627activities/U2/Ex14/";
     protected final String xmlFileLoc = folder + "contacts.xml";
     protected final String objFileLoc = folder + "contacts.obj";
 
-    public U2Ex14(Scanner sc) {
+    public U2Ex8n2(Scanner sc) {
 
         System.out.println("XML to OBJ and inverse convertor.");
         var fileType = isFileXML(); // Check file type

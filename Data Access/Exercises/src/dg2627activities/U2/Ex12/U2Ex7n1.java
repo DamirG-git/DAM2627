@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 // 7.1 Activities 1
 
-public class U2Ex12 {
+public class U2Ex7n1 {
 
 
     // Test data.
@@ -62,7 +62,7 @@ public class U2Ex12 {
     final String folder = "Exercises/src/dg2627activities/U2/Ex12/contacts.obj";
 
 
-    public U2Ex12(Scanner sc) {
+    public U2Ex7n1(Scanner sc) {
         var fileObj = new File(folder);
         if (!fileObj.exists()) {
             try {
@@ -266,7 +266,7 @@ public class U2Ex12 {
                         continue;
                     }
                     System.out.println("Searching for contact with phone number " + phone);
-                    userInputSearchCondition = U2Ex12.userInputSearchCondition.PHONE;
+                    userInputSearchCondition = U2Ex7n1.userInputSearchCondition.PHONE;
                     tempContactObj.setPhone(phone);
                     break;
 
@@ -280,7 +280,7 @@ public class U2Ex12 {
 
                     System.out.println("Searching for contact with name: " + name + " and surname: " + surname);
 
-                    userInputSearchCondition = U2Ex12.userInputSearchCondition.NAME;
+                    userInputSearchCondition = U2Ex7n1.userInputSearchCondition.NAME;
                     tempContactObj.setName(name);
                     tempContactObj.setSurname(surname);
                     break;
