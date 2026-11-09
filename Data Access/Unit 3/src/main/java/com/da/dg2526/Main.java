@@ -1,7 +1,8 @@
 package com.da.dg2526;
 
 import com.da.dg2526.Ex5.U3Ex5n3;
-import com.da.dg2526.Ex6.U3Ex6n1;
+import com.da.dg2526.Ex6.U3Ex6;
+import com.da.dg2526.Ex7.U3Ex7;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -10,8 +11,9 @@ public class Main {
 
 
     //final static int UNIT_COUNT = 2;
-    final static int[] RUNNABLE_EXERCISES_U3 = new int[]{5, 6};
-    final static int[] RUNNABLE_EXERCISES_U3_SUB6 = new int[]{1, 2,3};
+    final static int[] RUNNABLE_EXERCISES_U3 = new int[]{5, 6, 7};
+    final static int[] RUNNABLE_EXERCISES_U3_SUB6 = new int[]{1, 2, 3};
+    final static int[] RUNNABLE_EXERCISES_U3_SUB7 = new int[]{1, 2, 3, 4};
 
     public static void main(String[] args) {
 
@@ -30,18 +32,41 @@ public class Main {
                 }
                 case 6 -> {
                     System.out.println("Sub-unit " + u3 + " has " + RUNNABLE_EXERCISES_U3_SUB6.length + " subunits, chose one.");
-                    var sixChoice = InputValidation(scan, RUNNABLE_EXERCISES_U3[RUNNABLE_EXERCISES_U3.length - 1]);
+                    var sixChoice = InputValidation(scan, RUNNABLE_EXERCISES_U3_SUB6[RUNNABLE_EXERCISES_U3_SUB6.length - 1]);
                     switch (sixChoice) {
                         case 1 -> {
-                            new U3Ex6n1(scan);
+                            new U3Ex6(scan);
                             yield true;
                         }
                         case 2 -> {
-                            new U3Ex6n1(2);
+                            new U3Ex6(2);
                             yield true;
                         }
                         case 3 -> {
-                            new U3Ex6n1(3);
+                            new U3Ex6(3);
+                            yield true;
+                        }
+                    }
+                    yield true;
+                }
+                case 7 -> {
+                    System.out.println("Sub-unit " + u3 + " has " + RUNNABLE_EXERCISES_U3_SUB7.length + " subunits, chose one.");
+                    var sevenChoice = InputValidation(scan, RUNNABLE_EXERCISES_U3_SUB7[RUNNABLE_EXERCISES_U3_SUB7.length - 1]);
+                    switch (sevenChoice) {
+                        case 1 -> {
+                            new U3Ex7(scan, 1);
+                            yield true;
+                        }
+                        case 2 -> {
+                            new U3Ex7(scan, 2);
+                            yield true;
+                        }
+                        case 3 -> {
+                            new U3Ex7(scan, 3);
+                            yield true;
+                        }
+                        case 4 -> {
+                            System.out.println("Uhhhh this hub is valid as 7.4... woops?");
                             yield true;
                         }
                     }

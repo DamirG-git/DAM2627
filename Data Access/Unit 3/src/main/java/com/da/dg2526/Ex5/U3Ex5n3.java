@@ -1,9 +1,9 @@
 package com.da.dg2526.Ex5;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static com.da.dg2526.Utility.getConnectionVTInstitute;
 
 public class U3Ex5n3 {
 
@@ -30,7 +30,7 @@ public class U3Ex5n3 {
 
     public void callDb() {
 
-        try (var con = getConnection(); var statement = con.createStatement();) {
+        try (var con = getConnectionVTInstitute(); var statement = con.createStatement();) {
 
             String SQLsentence = "SELECT * FROM subjects ORDER BY code";
             ResultSet rs = statement.executeQuery(SQLsentence);
@@ -47,7 +47,7 @@ public class U3Ex5n3 {
     }
 
     public void addLanguages() throws ClassNotFoundException, SQLException {
-        try (var con = getConnection(); var statement = con.createStatement();) {
+        try (var con = getConnectionVTInstitute(); var statement = con.createStatement();) {
 
             String SQLsentence = "INSERT INTO subjects (name,year) VALUES('MARKUP LANGUAGES', 1)";
             var updated = statement.executeUpdate(SQLsentence);
@@ -56,7 +56,7 @@ public class U3Ex5n3 {
     }
 
     public void addHours() throws ClassNotFoundException, SQLException {
-        try (var con = getConnection(); var statement = con.createStatement();) {
+        try (var con = getConnectionVTInstitute(); var statement = con.createStatement();) {
             var SQLsentence = "ALTER TABLE subjects ADD COLUMN hours INTEGER";
             var updated = statement.executeUpdate(SQLsentence);
             System.out.println("Columns affected: " + updated);
@@ -64,11 +64,4 @@ public class U3Ex5n3 {
     }
 
 
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost:5432/VTInstitute";
-        String user = "postgres";
-        String password = "damir";
-        return DriverManager.getConnection(url, user, password);
-    }
 }

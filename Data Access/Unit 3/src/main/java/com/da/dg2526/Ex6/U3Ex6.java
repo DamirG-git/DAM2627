@@ -1,15 +1,14 @@
 package com.da.dg2526.Ex6;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-public class U3Ex6n1 {
+import static com.da.dg2526.Utility.getConnectionVTInstitute;
+
+public class U3Ex6 {
 
     final String text = """
             Possible commands: -exit (closes app), -end (concludes the input)
@@ -17,7 +16,7 @@ public class U3Ex6n1 {
             Example: SubjectName, 2
             """;
 
-    public U3Ex6n1(Scanner sc) {
+    public U3Ex6(Scanner sc) {
         System.out.println(text);
 
         var listInputs = new ArrayList<inputValidationResponse>();
@@ -59,7 +58,7 @@ public class U3Ex6n1 {
 
             }
         }
-        try (var conn = getConnection(); var statement = conn.prepareStatement("INSERT into subjects(name,year) values (?,?)")) {
+        try (var conn = getConnectionVTInstitute(); var statement = conn.prepareStatement("INSERT into subjects(name,year) values (?,?)")) {
             for (var input : listInputs) {
                 statement.setString(1, input.name());
                 statement.setInt(2, input.year());
@@ -74,7 +73,7 @@ public class U3Ex6n1 {
 
     }
 
-    public U3Ex6n1(int variation) {
+    public U3Ex6(int variation) {
         switch (variation) {
             case 2:
                 createTable();
@@ -85,17 +84,10 @@ public class U3Ex6n1 {
         }
     }
 
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost:5432/VTInstitute";
-        String user = "postgres";
-        String password = "damir";
-        return DriverManager.getConnection(url, user, password);
-    }
 
     // 6.2 requirement
     public void createTable() {
-        try (var conn = getConnection();
+        try (var conn = getConnectionVTInstitute();
              var tableStatement = conn.prepareStatement("CREATE TABLE IF NOT EXISTS   courses(code SERIAL PRIMARY KEY, name VARCHAR(90))");
              var insertStatement = conn.prepareStatement("INSERT INTO courses(name) values (?)")) {
 
@@ -112,7 +104,7 @@ public class U3Ex6n1 {
     }
 
     public void addNewTableToCourses() {
-        try (var conn = getConnection();
+        try (var conn = getConnectionVTInstitute();
              var prepStateAddColumn = conn.prepareStatement("ALTER TABLE subjects ADD COLUMN IF NOT EXISTS course INTEGER");
              var prepStateSetValuesCourse = conn.prepareStatement("UPDATE subjects SET course = ? WHERE code = ?");
              var prepStateSetExternalKey = conn.prepareStatement("ALTER TABLE subjects ADD CONSTRAINT fk_subject_courses FOREIGN KEY (course) REFERENCES courses(code)");
