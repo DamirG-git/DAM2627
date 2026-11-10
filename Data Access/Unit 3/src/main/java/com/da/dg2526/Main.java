@@ -3,6 +3,7 @@ package com.da.dg2526;
 import com.da.dg2526.Ex5.U3Ex5n3;
 import com.da.dg2526.Ex6.U3Ex6;
 import com.da.dg2526.Ex7.U3Ex7;
+import com.da.dg2526.Ex8.U3Ex8;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -11,7 +12,7 @@ public class Main {
 
 
     //final static int UNIT_COUNT = 2;
-    final static int[] RUNNABLE_EXERCISES_U3 = new int[]{5, 6, 7};
+    final static int[] RUNNABLE_EXERCISES_U3 = new int[]{5, 6, 7, 8};
     final static int[] RUNNABLE_EXERCISES_U3_SUB6 = new int[]{1, 2, 3};
     final static int[] RUNNABLE_EXERCISES_U3_SUB7 = new int[]{1, 2, 3, 4};
 
@@ -70,6 +71,11 @@ public class Main {
                             yield true;
                         }
                     }
+                    yield true;
+                }
+
+                case 8 -> {
+                    new U3Ex8(scan);
                     yield true;
                 }
 

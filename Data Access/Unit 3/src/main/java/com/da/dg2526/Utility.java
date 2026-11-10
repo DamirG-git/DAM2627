@@ -22,4 +22,5 @@ public class Utility {
         String url = "jdbc:postgresql://localhost:5432/employees";
         return DriverManager.getConnection(url, user, password);
     }
+
 }
