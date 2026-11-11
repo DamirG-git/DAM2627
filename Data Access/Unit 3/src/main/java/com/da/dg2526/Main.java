@@ -1,20 +1,24 @@
 package com.da.dg2526;
 
+import com.da.dg2526.Ex10.U3Ex10;
 import com.da.dg2526.Ex5.U3Ex5n3;
 import com.da.dg2526.Ex6.U3Ex6;
 import com.da.dg2526.Ex7.U3Ex7;
 import com.da.dg2526.Ex8.U3Ex8;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
 
     //final static int UNIT_COUNT = 2;
-    final static int[] RUNNABLE_EXERCISES_U3 = new int[]{5, 6, 7, 8};
+    final static int[] RUNNABLE_EXERCISES_U3 = new int[]{5, 6, 7, 8, 10};
     final static int[] RUNNABLE_EXERCISES_U3_SUB6 = new int[]{1, 2, 3};
     final static int[] RUNNABLE_EXERCISES_U3_SUB7 = new int[]{1, 2, 3, 4};
+    final static int[] RUNNABLE_EXERCISES_U3_SUB10 = new int[]{1, 3};
 
     public static void main(String[] args) {
 
@@ -79,6 +83,22 @@ public class Main {
                     yield true;
                 }
 
+                case 10 -> {
+                    System.out.println("Sub-unit " + u3 + " has " + Arrays.toString(RUNNABLE_EXERCISES_U3_SUB10) + " exercises, chose one.");
+                    var tenChoice = InputValidationSkippedValues(scan, RUNNABLE_EXERCISES_U3_SUB10,List.of(2));
+                    switch (tenChoice) {
+                        case 1 -> {
+                            new U3Ex10(1);
+                            yield true;
+                        }
+                        case 3 -> {
+                            new U3Ex10(3);
+                            yield true;
+                        }
+                    }
+                    yield true;
+                }
+
                 default -> {
                     System.out.println("Invalid input!");
                     yield false;
@@ -101,6 +121,29 @@ public class Main {
                 unit = Integer.parseInt(input);
                 if (unit < 0 || unit > limit) {
                     System.out.println("Value is out of range: " + limit + " is the limit.");
+                } else {
+                    break;
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input!");
+            }
+        }
+        return unit;
+    }
+
+    public static int InputValidationSkippedValues(Scanner scan, int[] array, List<Integer> skippedValues) {
+        int unit;
+        var limit = array[array.length-1];
+        while (true) {
+            var input = scan.nextLine();
+            if (input.equals("Exit")) {
+                throw new RuntimeException("Application exit called");
+            }
+            try {
+                unit = Integer.parseInt(input);
+                if (unit < 0 || unit > limit || skippedValues.contains(unit)) {
+                    System.out.println("Value is out of range: " + Arrays.toString(array) + " is the limit.");
                 } else {
                     break;
                 }

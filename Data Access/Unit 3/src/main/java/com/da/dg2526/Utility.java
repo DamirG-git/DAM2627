@@ -23,4 +23,10 @@ public class Utility {
         return DriverManager.getConnection(url, user, password);
     }
 
+    public static Connection getConnectionArt() throws ClassNotFoundException, SQLException {
+        Class.forName(driverName);
+        String url = "jdbc:postgresql://localhost:5432/Art";
+        return DriverManager.getConnection(url, user, password);
+    }
+
 }
