@@ -3,11 +3,9 @@ package org.finalactivitydg2627.repository;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.dto.FlightDTO;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +29,7 @@ public class FlightsRepo {
             try (var stmt = conn.prepareStatement(getFlightsQuery)) {
                 stmt.setInt(1, origin);
                 stmt.setInt(2, destination);
-                stmt.setDate(3, Date.valueOf(date));
+                stmt.setObject(3, date);
                 try (var result = stmt.executeQuery()) {
                     while (result.next()) {
                         flights.add(new FlightDTO(result.getString(1), result.getInt(2), result.getLong(3)));
@@ -40,9 +38,13 @@ public class FlightsRepo {
                 conn.commit();
                 return Optional.of(flights);
             } catch (SQLException e) {
-                conn.rollback();
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackException) {
+                    e.addSuppressed(rollbackException);
+                }
                 flights.clear();
-                return Optional.empty();
+                throw e;
             }
         }
     }

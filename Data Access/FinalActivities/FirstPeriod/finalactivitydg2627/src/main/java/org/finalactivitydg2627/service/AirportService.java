@@ -27,4 +27,16 @@ public class AirportService {
             return Collections.emptyList();
         }
     }
+
+    public List<AirportDTO> getDestinationAirports(int code) {
+        logger.log("Getting all airports that are destinations for this origin: "+code, ApplicationLogger.LogLevel.INFO);
+        try{
+            return airportRepository.getDestinationAirports(code);
+        }catch (SQLException e){
+            logger.log("Error obtaining airports: " + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            return Collections.emptyList();
+        }
+
+
+    }
 }

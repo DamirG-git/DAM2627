@@ -61,10 +61,4 @@ public class FlightsController {
 
 
     }
-
-    public void getOrigin(String[] args) {
-        logger.log("Verifying input values: " + Arrays.toString(args), ApplicationLogger.LogLevel.INFO);
-        var origin = Verification.basicIntegerVerification("source location",args[1],null,null);
-
-    }
 }

@@ -1,13 +1,13 @@
 package org.finalactivitydg2627;
 
-import java.sql.SQLException;
-import java.util.Arrays;
-
 import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.Utils.StoredProceduresSQL;
 import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
+
+import java.sql.SQLException;
+import java.util.Arrays;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -76,7 +76,8 @@ public class Main {
                         pController.AddPassengerFromXML(args[1]);
                         break;
                     case "-d", "-destinations":
-                        //TODO
+                        var aController = new AirportController();
+                        aController.getDestinationAirports(args[1]);
                         break;
                     default:
                         printUnknownCommand(command2);

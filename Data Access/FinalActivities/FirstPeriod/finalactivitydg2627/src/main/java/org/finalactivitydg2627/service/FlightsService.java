@@ -6,7 +6,6 @@ import org.finalactivitydg2627.repository.FlightsRepo;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

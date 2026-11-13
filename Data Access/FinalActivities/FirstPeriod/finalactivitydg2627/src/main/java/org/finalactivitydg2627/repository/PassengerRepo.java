@@ -5,7 +5,6 @@ import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.model.Passengers;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 public class PassengerRepo {
