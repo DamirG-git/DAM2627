@@ -45,7 +45,6 @@ public class Main {
             System.out.println(HELP);
             return;
         }
-        var unknownCommand = "Unknown command: ";
         switch (args.length) {
             case 1:
                 //-h, --help: show this help
@@ -113,6 +112,7 @@ public class Main {
 
     private static void printUnknownCommand(String command) {
         logger.log("Unknown command: "+command, ApplicationLogger.LogLevel.WARNING);
+        System.out.println("Unknown command: "+command);
         logger.log(HELP, ApplicationLogger.LogLevel.INFO);
         System.out.println(HELP);
     }

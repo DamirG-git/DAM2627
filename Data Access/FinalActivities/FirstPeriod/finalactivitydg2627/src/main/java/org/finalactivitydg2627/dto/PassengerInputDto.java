@@ -2,11 +2,11 @@ package org.finalactivitydg2627.dto;
 
 public class PassengerInputDto {
     public String getPassno() {
-        return code;
+        return passno;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setPassno(String passno) {
+        this.passno = passno;
     }
 
     public String getFirstName() {
@@ -41,9 +41,15 @@ public class PassengerInputDto {
         this.phone = phone;
     }
 
-    private String code;
+    private String passno;
     private String firstName;
     private String lastName;
     private String address;
     private String phone;
+
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName + " " + passno + " " + address + " " + phone ;
+    }
 }

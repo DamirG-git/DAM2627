@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PassengerService {
@@ -69,36 +70,46 @@ public class PassengerService {
             var phoneError = pas.setPhone(passenger.getPhone());
             var addressError = pas.setAddress(passenger.getAddress());
 
+
+
             if (firstnameError != null) {
-                errors.append(firstnameError);
+                appendError(errors, passenger.getPassno(), firstnameError);
                 addNew = false;
             }
             if (lastnameError != null) {
-                errors.append(lastnameError);
+                appendError(errors, passenger.getPassno(), lastnameError);
                 addNew = false;
             }
             if (passnoError != null) {
-                errors.append(passnoError);
+                appendError(errors, passenger.getPassno(), passnoError);
                 addNew = false;
             }
             if (phoneError != null) {
-                errors.append(phoneError);
+                appendError(errors, passenger.getPassno(), phoneError);
                 addNew = false;
             }
             if (addressError != null) {
-                errors.append(addressError);
+                appendError(errors, passenger.getPassno(), addressError);
                 addNew = false;
             }
             if (addNew) {
                 passengers.add(pas);
+                logger.log("Passenger: " + passenger + " passed verification.", ApplicationLogger.LogLevel.INFO);
             }
 
         }
         if (!errors.isEmpty()) {
             logger.log(errors.toString(), ApplicationLogger.LogLevel.ERROR);
-            return null;
+            return Collections.emptyList();
         }
         return passengers;
+    }
+
+    private void appendError(StringBuilder errors, String passno, String error) {
+        errors.append("Passenger: ")
+                .append(passno)
+                .append(" - ")
+                .append(error);
     }
 
 }

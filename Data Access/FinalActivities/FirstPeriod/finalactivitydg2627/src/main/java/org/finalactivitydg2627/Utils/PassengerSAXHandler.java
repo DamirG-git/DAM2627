@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PassengerSAXHandler extends DefaultHandler {
 
-    private StringBuilder contextBuilder;
+    private final StringBuilder contextBuilder = new StringBuilder();
 
     private final List<PassengerInputDto> passengers = new ArrayList<>();
     private PassengerInputDto currentPassenger;
@@ -35,7 +35,7 @@ public class PassengerSAXHandler extends DefaultHandler {
                 passengers.add(currentPassenger);
                 currentPassenger = null;
             }
-            case "passportno" -> currentPassenger.setCode(text);
+            case "passportno" -> currentPassenger.setPassno(text);
             case "firstname" -> currentPassenger.setFirstName(text);
             case "lastname" -> currentPassenger.setLastName(text);
             case "phone" -> currentPassenger.setPhone(text);

@@ -14,6 +14,7 @@ public class PassengerController {
         var rs = Verification.basicPathVerification("xml file", input);
         if (rs.message() != null) {
             logger.log(rs.message(), ApplicationLogger.LogLevel.WARNING);
+            return;
         }
         logger.log("Calling service for file reading: " + input, ApplicationLogger.LogLevel.INFO);
         passengerService.addPassengerFromXML(rs.result());

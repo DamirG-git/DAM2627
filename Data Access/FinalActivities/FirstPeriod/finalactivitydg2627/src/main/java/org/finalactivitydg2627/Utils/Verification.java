@@ -89,10 +89,13 @@ public class Verification {
         if (!Files.exists(file)) {
             return new ResultValue<>(null, label + " does not exist.\n");
         }
+        if(!Files.isRegularFile(file)) {
+            return new ResultValue<>(null, label + " is not a regular file.\n");
+        }
         if (!Files.isReadable(file)) {
             return new ResultValue<>(null, label + " is not a readable file.\n");
         }
-        if (!file.endsWith(".xml")) {
+        if (!file.getFileName().toString().toLowerCase().endsWith(".xml")) {
             return new ResultValue<>(null, label + " is not a valid XML file.\n");
         }
         return new ResultValue<>(file, null);
