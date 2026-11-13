@@ -9,7 +9,7 @@ public class PassengerController {
     private final ApplicationLogger logger = ApplicationLogger.getInstance();
     private final PassengerService passengerService = new PassengerService();
 
-    public void AddPassengerFromXML(String input) {
+    public void addPassengerFromXML(String input) {
         logger.log("Verifying XML file: " + input, ApplicationLogger.LogLevel.INFO);
         var rs = Verification.basicPathVerification("xml file", input);
         if (rs.message() != null) {

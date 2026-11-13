@@ -5,6 +5,7 @@ import org.finalactivitydg2627.Utils.StoredProceduresSQL;
 import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
+import org.finalactivitydg2627.controller.TicketsController;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -42,18 +43,17 @@ public class Main {
         if (args.length == 0) {
             logger.log("No input given", ApplicationLogger.LogLevel.ERROR);
             logger.log(HELP, ApplicationLogger.LogLevel.INFO);
-            System.out.println(HELP);
             return;
         }
         switch (args.length) {
             case 1:
                 //-h, --help: show this help
                 //-o, --origins: show the origins of the flights
+                logger.log("case 1 of tree", ApplicationLogger.LogLevel.DEBUG);
                 var command = args[0].trim().toLowerCase();
                 switch (command) {
                     case "-h", "--help":
                         logger.log(HELP, ApplicationLogger.LogLevel.INFO);
-                        System.out.println(HELP);
                         break;
                     case "-o", "--origins":
                         var aController = new AirportController();
@@ -67,12 +67,13 @@ public class Main {
             case 2:
                 //-a, --add <filename.xml>: add the passengers in the XML file to the database.
                 //-d, --destinations <origin>: show the destinations of the flights from origin
+                logger.log("case 2 of tree", ApplicationLogger.LogLevel.DEBUG);
                 var command2 = args[0].trim().toLowerCase();
 
                 switch (command2) {
                     case "-a", "--add":
                         var pController = new PassengerController();
-                        pController.AddPassengerFromXML(args[1]);
+                        pController.addPassengerFromXML(args[1]);
                         break;
                     case "-d", "--destinations":
                         var aController = new AirportController();
@@ -88,9 +89,11 @@ public class Main {
                 //-f, --flights <origin> <destination> <date>: show the flights available from origin to destination
                 //-b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date
                 var command4 = args[0].trim().toLowerCase();
+                logger.log("case 4 of tree", ApplicationLogger.LogLevel.DEBUG);
                 switch (command4) {
                     case "-b", "--buy":
-                        //TODO
+                        var ticketController = new TicketsController();
+                        ticketController.addTicket(args);
                         break;
                     case "-f", "--flights":
                         var flightsController = new FlightsController();
@@ -102,6 +105,7 @@ public class Main {
                 }
                 break;
             default:
+                logger.log("Amount of arguments: "+args.length, ApplicationLogger.LogLevel.DEBUG);
                 logger.log("Invalid number of arguments passed: " + args.length + "/4 max, " + Arrays.toString(args), ApplicationLogger.LogLevel.WARNING);
                 printUnknownCommand("");
 
@@ -112,9 +116,7 @@ public class Main {
 
     private static void printUnknownCommand(String command) {
         logger.log("Unknown command: "+command, ApplicationLogger.LogLevel.WARNING);
-        System.out.println("Unknown command: "+command);
         logger.log(HELP, ApplicationLogger.LogLevel.INFO);
-        System.out.println(HELP);
     }
 
 

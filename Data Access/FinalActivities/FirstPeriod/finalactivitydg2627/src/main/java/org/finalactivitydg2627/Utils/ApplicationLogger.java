@@ -39,7 +39,7 @@ public class ApplicationLogger {
         INFO, WARNING, ERROR, DEBUG
     }
 
-    private boolean debug = false;
+    private boolean debug = true;
 
     public void setDebug(boolean debug) {
         this.debug = debug;

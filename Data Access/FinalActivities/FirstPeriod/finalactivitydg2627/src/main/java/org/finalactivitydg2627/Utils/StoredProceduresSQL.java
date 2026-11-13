@@ -52,17 +52,19 @@ public class StoredProceduresSQL {
             
             GROUP BY f.flight_code, dst.iata, c.name, p.total_seats;
             $BODY$;
-            
-            
-            CREATE OR REPLACE FUNCTION dg2627_get_seats_available_for_booking(p_flightno varchar(10), p_date date)
+            END;
+            $$
+            """;
+
+    /* CREATE OR REPLACE FUNCTION dg2627_get_seats_available_for_booking(p_flightno varchar(10), p_date date)
                 RETURNS BIGINT
             LANGUAGE sql AS
             $BODY$
-            
+
             SELECT p.total_seats-COUNT(t.ticket_number) AS free_seats
             FROM flights f join planes p
                 on f.plane = p.plane_id
-            
+
                 LEFT JOIN tickets t
                     ON f.flight_code = t.flight_code
                     and t.date_of_travel = p_date
@@ -70,13 +72,13 @@ public class StoredProceduresSQL {
             WHERE f.flight_code = p_flightno
             group by p.total_seats;
             $BODY$;
-            
-            
+
+
             CREATE OR REPLACE FUNCTION dg2627_user_has_ticket_on_same_date(p_passno varchar(10), p_date date)
                 RETURNS BOOLEAN
             LANGUAGE sql AS
             $BODY$
-            
+
             SELECT EXISTS(
                 SELECT 1
                 FROM tickets t
@@ -85,13 +87,10 @@ public class StoredProceduresSQL {
                 AND t.date_of_cancellation is NULL
             )
             $BODY$;
-            END;
-            $$
-            """;
 
-    //var prepStIndexes = conn.prepareStatement(SQL_INDEXES) // Invalid
-    // prepStIndexes.execute();
-    /*private static final String SQL_INDEXES = """
+    var prepStIndexes = conn.prepareStatement(SQL_INDEXES) // Invalid
+    prepStIndexes.execute();
+    private static final String SQL_INDEXES = """
             DO $$ BEGIN
             IF NOT EXISTS(
                 SELECT 1

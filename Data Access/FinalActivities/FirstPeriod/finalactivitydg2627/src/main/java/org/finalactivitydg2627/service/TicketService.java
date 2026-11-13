@@ -3,6 +3,7 @@ package org.finalactivitydg2627.service;
 import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.repository.TicketRepo;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class TicketService {
@@ -16,14 +17,14 @@ public class TicketService {
         this.ticketRepo = new TicketRepo();
     }
 
-    public String buyTicket(String passno, String flight_code, LocalDate date) {
+    public TicketRepo.TicketPurchaseResult buyTicket(String passno, String flightCode, LocalDate date) {
 
-
-
-
-        return "";
-
-
+        try {
+            return ticketRepo.buyTicket(passno, flightCode, date);
+        } catch (SQLException e) {
+            logger.log("Error on purchasing new ticket: " + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            return TicketRepo.TicketPurchaseResult.EXCEPTION_ON_INSERT;
+        }
     }
 
 }

@@ -63,6 +63,15 @@ public class PassengerService {
         var passengers = new ArrayList<Passengers>();
         var errors = new StringBuilder();
         boolean commitTransaction = true;
+        commitTransaction = isCommitTransaction(passengersRawInput, errors, commitTransaction, passengers);
+        if (!errors.isEmpty()) {
+            logger.log(errors.toString(), ApplicationLogger.LogLevel.ERROR);
+        }
+        if (commitTransaction) return commitTransaction(passengers);
+        return Collections.emptyList();
+    }
+
+    private boolean isCommitTransaction(List<PassengerInputDto> passengersRawInput, StringBuilder errors, boolean commitTransaction, ArrayList<Passengers> passengers) {
         for (PassengerInputDto passenger : passengersRawInput) {
             var passengerModel = new Passengers();
             var addNew = true;
@@ -92,11 +101,7 @@ public class PassengerService {
             }
 
         }
-        if (!errors.isEmpty()) {
-            logger.log(errors.toString(), ApplicationLogger.LogLevel.ERROR);
-        }
-        if (commitTransaction) return commitTransaction(passengers);
-        return Collections.emptyList();
+        return commitTransaction;
     }
 
 
