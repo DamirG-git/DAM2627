@@ -2,17 +2,18 @@ package org.finalactivitydg2627.model;
 
 import org.finalactivitydg2627.Utils.Verification;
 
+import java.util.regex.Pattern;
+
 public class Passengers {
     private String address;//max100
     public String getAddress() {
         return address;
     }
 
-    public String setAddress(String address) {
+    public Verification.ResultValue<String> setAddress(String address) {
         var rs = Verification.basicStringVerification("address",address,null,100,null);
-        if(rs.result()==null) return rs.message();
-        this.address = address;
-        return null;
+        this.address = rs.result();
+        return rs;
     }
 
     private String passno; //not null max10
@@ -20,11 +21,10 @@ public class Passengers {
         return passno;
     }
 
-    public String setPassno(String passno) {
-        var rs = Verification.basicStringVerification("passport number",passno,null,10,null);
-        if(rs.result()==null) return rs.message();
-        this.passno = passno;
-        return null;
+    public Verification.ResultValue<String> setPassno(String passno) {
+        var rs = Verification.basicStringVerification("passport number",passno,null,10, Pattern.compile("^[A-Za-z\\d]{6,10}$"));
+        this.passno = rs.result();
+        return rs;
     }
 
     private String firstName; //not null max20
@@ -32,11 +32,10 @@ public class Passengers {
         return firstName;
     }
 
-    public String setFirstName(String firstName) {
-        var rs = Verification.basicStringVerification("first name",firstName,null,20,null);
-        if(rs.result()==null) return rs.message();
-        this.firstName = firstName;
-        return null;
+    public Verification.ResultValue<String> setFirstName(String firstName) {
+        var rs = Verification.basicStringVerification("first name",firstName,null,20, null);
+        this.firstName = rs.result();
+        return rs;
     }
 
 
@@ -45,11 +44,10 @@ public class Passengers {
         return lastName;
     }
 
-    public String setLastName(String lastName) {
+    public Verification.ResultValue<String> setLastName(String lastName) {
         var rs = Verification.basicStringVerification("last name",lastName,null,20,null);
-        if(rs.result()==null) return rs.message();
-        this.lastName = lastName;
-        return null;
+        this.lastName = rs.result();
+        return rs;
     }
 
     private String phone; //max12
@@ -57,10 +55,9 @@ public class Passengers {
         return phone;
     }
 
-    public String setPhone(String phone) {
-        var rs = Verification.basicStringVerification("phone",phone,null,20,null);
-        if(rs.result()==null) return rs.message();
-        this.phone = phone;
-        return null;
+    public Verification.ResultValue<String> setPhone(String phone) {
+        var rs = Verification.basicStringVerification("phone",phone,null,20,Pattern.compile("^\\+?\\d{7,15}$"));
+        this.phone = rs.result();
+        return rs;
     }
 }

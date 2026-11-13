@@ -18,15 +18,14 @@ public class FlightsRepo {
     }
 
 
-    public Optional<List<FlightDTO>> getFlights(int origin, int destination, LocalDate date) throws SQLException {
+    public Optional<List<FlightDTO>> getFlights(String origin, String destination, LocalDate date) throws SQLException {
         List<FlightDTO> flights = new ArrayList<>();
         try (var conn = connection.connect()) {
             //RETURNS TABLE(flight_code varchar, total_seats integer, free_seats bigint
-            var getFlightsQuery = "SELECT flight_code, airport_iata ,city_name ,total_seats, free_seats " +
-                    "FROM dg2627_get_available_flights_on_date(?,?,?)";
+            var getFlightsQuery = "SELECT flight_code, airport_iata ,city_name ,total_seats, free_seats FROM dg2627_get_available_flights_on_date(?,?,?)";
             try (var stmt = conn.prepareStatement(getFlightsQuery)) {
-                stmt.setInt(1, origin);
-                stmt.setInt(2, destination);
+                stmt.setString(1, origin);
+                stmt.setString(2, destination);
                 stmt.setObject(3, date);
                 try (var result = stmt.executeQuery()) {
                     while (result.next()) {

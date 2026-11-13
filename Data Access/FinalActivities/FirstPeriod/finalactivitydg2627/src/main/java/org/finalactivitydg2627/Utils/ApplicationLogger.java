@@ -53,10 +53,22 @@ public class ApplicationLogger {
 
     private void inLog(String message, LogLevel logLevel) {
         switch (logLevel) {
-            case INFO -> fileWriter.println("INFO: " + message);
-            case ERROR -> fileWriter.println("!ERROR!: " + message);
-            case DEBUG -> fileWriter.println("#DEBUG#: " + message);
-            case WARNING -> fileWriter.println("<WARNING>: " + message);
+            case INFO -> {
+                fileWriter.println("INFO: " + message);
+                System.out.printf("INFO: %s%n", message);
+            }
+            case ERROR -> {
+                fileWriter.println("!ERROR!: " + message);
+                System.out.printf("ERROR: %s%n", message);
+            }
+            case DEBUG -> {
+                fileWriter.println("#DEBUG#: " + message);
+                System.out.printf("#DEBUG#: %s%n", message);
+            }
+            case WARNING -> {
+                fileWriter.println("<WARNING>: " + message);
+                System.out.printf("<WARNING>: %s%n", message);
+            }
         }
         fileWriter.flush();
     }

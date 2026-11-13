@@ -2,6 +2,7 @@ package org.finalactivitydg2627.controller;
 
 import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.Utils.Verification;
+import org.finalactivitydg2627.dto.AirportDTO;
 import org.finalactivitydg2627.service.AirportService;
 
 public class AirportController {
@@ -22,31 +23,34 @@ public class AirportController {
 
             logger.log("Flight origin airports not found.", ApplicationLogger.LogLevel.ERROR);
         } else {
-            logger.log("Origin airports found...", ApplicationLogger.LogLevel.INFO);
             var builder = new StringBuilder();
+            builder.append("Successfully retrieved origin airports!\n");
             for (var airport : result) {
-                builder.append("Airport ")
-                        .append(airport.airportIata())
-                        .append(" (")
-                        .append(airport.airportName())
-                        .append(") in ")
-                        .append(airport.cityName())
-                        .append(" is the origin of flight ")
-                        .append(airport.flightCode())
-                        .append(".")
-                        .append("\n");
+                getOriginAirportMessage(airport, builder);
             }
             logger.log(builder.toString(), ApplicationLogger.LogLevel.INFO);
-            System.out.println(builder);
         }
 
     }
 
+    private static void getOriginAirportMessage(AirportDTO airport, StringBuilder builder) {
+        builder.append("    - ")
+                .append("Airport ")
+                .append(airport.airportIata())
+                .append(" (")
+                .append(airport.airportName())
+                .append(") in ")
+                .append(airport.cityName())
+                .append(" is the origin of flight ")
+                .append(airport.flightCode())
+                .append(".")
+                .append("\n");
+    }
+
     public void getDestinationAirports(String input) {
-        var originResult = Verification.basicIntegerVerification("destination", input, null, null);
+        var originResult = Verification.basicStringVerification("destination", input,null ,3,null);
         if (originResult.result() == null) {
             logger.log(originResult.message(), ApplicationLogger.LogLevel.ERROR);
-            System.out.println(originResult.message());
             return;
         }
         logger.log("Calling service for destinations...", ApplicationLogger.LogLevel.INFO);
@@ -56,26 +60,30 @@ public class AirportController {
             logger.log(message + " found!", ApplicationLogger.LogLevel.WARNING);
             return;
         }
-        logger.log("Destination airports found...", ApplicationLogger.LogLevel.INFO);
         var builder = new StringBuilder();
+        builder.append("Successfully retrieved destinations!\n");
         for (var airport : results) {
-            builder.append("Airport ")
-                    .append(airport.airportIata())
-                    .append(" (")
-                    .append(airport.airportName())
-                    .append(") located in ")
-                    .append(airport.cityName())
-                    .append(" is reachable from origin airport ")
-                    .append(originResult.result())
-                    .append(" via flight ")
-                    .append(airport.flightCode())
-                    .append(".")
-                    .append("\n");
+            getDestinationAirportMessage(airport, builder, originResult);
         }
         logger.log(builder.toString(), ApplicationLogger.LogLevel.INFO);
-        System.out.println(builder);
 
 
+    }
+
+    private static void getDestinationAirportMessage(AirportDTO airport, StringBuilder builder, Verification.ResultValue<String> originResult) {
+        builder.append("    - ")
+                .append("Airport ")
+                .append(airport.airportIata())
+                .append(" (")
+                .append(airport.airportName())
+                .append(") located in ")
+                .append(airport.cityName())
+                .append(" is reachable from origin airport ")
+                .append(originResult.result())
+                .append(" via flight ")
+                .append(airport.flightCode())
+                .append(".")
+                .append("\n");
     }
 
 

@@ -1,6 +1,7 @@
 package org.finalactivitydg2627.service;
 
 import org.finalactivitydg2627.Utils.ApplicationLogger;
+import org.finalactivitydg2627.Utils.MessageFormatter;
 import org.finalactivitydg2627.Utils.PassengerSAXHandler;
 import org.finalactivitydg2627.dto.PassengerInputDto;
 import org.finalactivitydg2627.model.Passengers;
@@ -15,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class PassengerService {
 
@@ -64,36 +64,30 @@ public class PassengerService {
         var errors = new StringBuilder();
         boolean commitTransaction = true;
         for (PassengerInputDto passenger : passengersRawInput) {
-            var pas = new Passengers();
+            var passengerModel = new Passengers();
             var addNew = true;
-            var firstnameError = pas.setFirstName(passenger.getFirstName());
-            var lastnameError = pas.setLastName(passenger.getLastName());
-            var passnoError = pas.setPassno(passenger.getPassno());
-            var phoneError = pas.setPhone(passenger.getPhone());
-            var addressError = pas.setAddress(passenger.getAddress());
+            var firstNameResult = passengerModel.setFirstName(passenger.getFirstName());
+            var lastNameResult = passengerModel.setLastName(passenger.getLastName());
+            var passportNumberResult = passengerModel.setPassno(passenger.getPassno());
+            var phoneResult = passenger.getPhone() == null ||
+                    passenger.getPhone().isEmpty() ?
+                    null : passengerModel.setPhone(passenger.getPhone());
+            var addressResult = passenger.getAddress() == null ||
+                    passenger.getAddress().isEmpty() ?
+                    null : passengerModel.setAddress(passenger.getAddress());
 
-
-
-            if (firstnameError != null) {
-                appendError(errors, passenger.getPassno(), firstnameError);
+            errors.append(MessageFormatter.multipleErrorsFormatter(firstNameResult, lastNameResult, passportNumberResult, phoneResult, addressResult));
+            var isValid =
+                    firstNameResult.result() != null &&
+                            lastNameResult.result() != null &&
+                            passportNumberResult.result() != null &&
+                            (phoneResult == null || phoneResult.result() != null) &&
+                            (addressResult == null || addressResult.result() != null);
+            if (!isValid) {
                 commitTransaction = addNew = false;
-            }
-            if (lastnameError != null) {
-                appendError(errors, passenger.getPassno(), lastnameError);
-                commitTransaction = addNew = false;
-            }
-            if (passnoError != null) {
-                appendError(errors, passenger.getPassno(), passnoError);
-                commitTransaction = addNew = false;
-            }
-            if (phoneError != null) {
-                appendError(errors, passenger.getPassno(), phoneError);
-            }
-            if (addressError != null) {
-                appendError(errors, passenger.getPassno(), addressError);
             }
             if (addNew) {
-                passengers.add(pas);
+                passengers.add(passengerModel);
                 logger.log("Passenger: " + passenger + " passed verification.", ApplicationLogger.LogLevel.INFO);
             }
 
@@ -101,35 +95,31 @@ public class PassengerService {
         if (!errors.isEmpty()) {
             logger.log(errors.toString(), ApplicationLogger.LogLevel.ERROR);
         }
-        if (commitTransaction) {
-            try {
-                passengerRepo.addPassengers(passengers);
-            }catch (SQLException e) {
-                logger.log("Database error on adding passenger: "+e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-                var next = e.getNextException();
-
-                while (next != null) {
-                    if (!next.getMessage().equals(e.getMessage())) {
-                        logger.log(
-                                "Additional database error: " + next.getMessage(),
-                                ApplicationLogger.LogLevel.ERROR
-                        );
-                    }
-                    next = next.getNextException();
-                }
-
-                return Collections.emptyList();
-            }
-            return passengers;
-        }
+        if (commitTransaction) return commitTransaction(passengers);
         return Collections.emptyList();
     }
 
-    private void appendError(StringBuilder errors, String passno, String error) {
-        errors.append("Passenger: ")
-                .append(passno)
-                .append(" - ")
-                .append(error);
+
+    private List<Passengers> commitTransaction(ArrayList<Passengers> passengers) {
+        try {
+            passengerRepo.addPassengers(passengers);
+        } catch (SQLException e) {
+            logger.log("Database error on adding passenger: " + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            var next = e.getNextException();
+
+            while (next != null) {
+                if (!next.getMessage().equals(e.getMessage())) {
+                    logger.log(
+                            "Additional database error: " + next.getMessage(),
+                            ApplicationLogger.LogLevel.ERROR
+                    );
+                }
+                next = next.getNextException();
+            }
+
+            return Collections.emptyList();
+        }
+        return passengers;
     }
 
 }

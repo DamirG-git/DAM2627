@@ -16,26 +16,41 @@ public class StoredProceduresSQL {
             DO $$ BEGIN
             
             DROP FUNCTION IF EXISTS dg2627_get_available_flights_on_date(int, int, date);
-            CREATE OR REPLACE FUNCTION dg2627_get_available_flights_on_date(p_source int, p_destination int, p_date date)
-            RETURNS TABLE(flight_code varchar,airport_iata varchar, city_name varchar, total_seats integer, free_seats bigint)
-                LANGUAGE sql AS
+            
+            CREATE OR REPLACE FUNCTION dg2627_get_available_flights_on_date(p_source varchar(3),p_destination varchar(3),p_date date
+            )
+            RETURNS TABLE(
+                flight_code varchar,
+                airport_iata varchar,
+                city_name varchar,
+                total_seats integer,
+                free_seats bigint
+            )
+            LANGUAGE sql AS
             $BODY$
+            SELECT f.flight_code, dst.iata, c.name, p.total_seats, p.total_seats - COUNT(t.ticket_number)
+            FROM flights f
+            LEFT JOIN tickets t
+                ON f.flight_code = t.flight_code
+                AND t.date_of_travel = p_date
+                AND t.date_of_cancellation IS NULL
             
-            SELECT f.flight_code, a.iata, c.name, p.total_seats, p.total_seats-COUNT(t.ticket_number)
+            JOIN planes p
+                ON f.plane = p.plane_id
             
-            FROM flights f left join tickets t
-                on f.flight_code = t.flight_code
-                and t.date_of_travel = p_date
-                and t.date_of_cancellation is NULL
+            JOIN airports src
+                ON f.source = src.code
             
-            left join planes p
-                on f.plane = p.plane_id
-            join airports a
-                on f.destination = a.code
-            join cities c
-                on c.code = a.code
-            where f.source = p_source and f.destination = p_destination
-            group by f.flight_code, p.total_seats, a.iata,c.name
+            JOIN airports dst
+                ON f.destination = dst.code
+            
+            JOIN cities c
+                ON dst.city = c.code
+            
+            WHERE src.iata = p_source
+                AND dst.iata = p_destination
+            
+            GROUP BY f.flight_code, dst.iata, c.name, p.total_seats;
             $BODY$;
             
             

@@ -20,10 +20,9 @@ public class PassengerSAXHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        contextBuilder.setLength(0);
         if (qName.equals("passenger")) {
             currentPassenger = new PassengerInputDto();
-        } else {
-            contextBuilder.setLength(0);
         }
     }
 

@@ -28,7 +28,7 @@ public class AirportService {
         }
     }
 
-    public List<AirportDTO> getDestinationAirports(int code) {
+    public List<AirportDTO> getDestinationAirports(String code) {
         logger.log("Getting all airports that are destinations for this origin: "+code, ApplicationLogger.LogLevel.INFO);
         try{
             return airportRepository.getDestinationAirports(code);

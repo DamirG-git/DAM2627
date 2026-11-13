@@ -19,7 +19,7 @@ public class FlightsService {
         flightsRepo = new FlightsRepo();
     }
 
-    public Optional<List<FlightDTO>> getFlights(int origin, int destination, LocalDate date) {
+    public Optional<List<FlightDTO>> getFlights(String origin, String destination, LocalDate date) {
         try {
             return flightsRepo.getFlights(origin,destination,date);
         } catch (SQLException e) {

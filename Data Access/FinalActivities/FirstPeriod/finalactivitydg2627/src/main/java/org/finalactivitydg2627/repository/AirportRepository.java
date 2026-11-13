@@ -5,7 +5,6 @@ import org.finalactivitydg2627.dto.AirportDTO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AirportRepository {
@@ -25,7 +24,7 @@ public class AirportRepository {
                     on a.code = f.source
                     join cities c
                     on a.city = c.code
-                ORDER BY a.iata;
+                ORDER BY a.iata, a.name, c.name, f.flight_code;
                 """;
         try (var conn = connection.connect()) {
             conn.setAutoCommit(false);
@@ -44,21 +43,23 @@ public class AirportRepository {
 
     }
 
-    public List<AirportDTO> getDestinationAirports(int code) throws SQLException {
+    public List<AirportDTO> getDestinationAirports(String code) throws SQLException {
         var airportsDtoList = new ArrayList<AirportDTO>();
         var sqlDestinationsQuery = """
-        SELECT DISTINCT a.name, a.iata, c.name, f.flight_code
+        SELECT DISTINCT dest.name, dest.iata, c.name, f.flight_code
             FROM flights f
-            JOIN airports a
-                ON f.destination = a.code
+            JOIN airports asource
+                ON f.source = asource.code
+            JOIN airports dest
+                ON f.destination = dest.code
             JOIN cities c
-                on a.city = c.code
-            WHERE f.source = ?
-        ORDER BY a.code;
-        """;
+                ON dest.city = c.code
+            WHERE asource.iata = ?
+        ORDER BY dest.iata, dest.name, c.name, f.flight_code;
+    """;
         try (var conn = connection.connect()) {
             try (var ps = conn.prepareStatement(sqlDestinationsQuery)) {
-                ps.setInt(1, code);
+                ps.setString(1, code);
                 try (var result = ps.executeQuery()) {
                     while (result.next()) {
                         airportsDtoList.add(

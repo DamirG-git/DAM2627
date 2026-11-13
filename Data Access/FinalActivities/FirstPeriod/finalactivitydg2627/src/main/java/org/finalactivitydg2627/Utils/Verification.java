@@ -103,16 +103,13 @@ public class Verification {
 
     public static ResultValue<LocalDate> basicDateVerification(String label, String input) {
         var rs = isEmptyInput(label, input);
-
         if (rs.result() == null) {
             return new ResultValue<>(null, rs.message());
         }
-
         input = rs.result();
-
         try {
             LocalDate localDate = LocalDate.parse(input);
-            return new ResultValue<>(localDate, "");
+            return new ResultValue<>(localDate, null);
         } catch (DateTimeParseException e) {
             return new ResultValue<>(null, label + " is an invalid date.\n");
         }
