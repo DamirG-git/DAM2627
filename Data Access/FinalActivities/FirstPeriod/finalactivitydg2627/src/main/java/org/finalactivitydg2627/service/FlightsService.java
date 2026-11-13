@@ -23,7 +23,7 @@ public class FlightsService {
         try {
             return flightsRepo.getFlights(origin,destination,date);
         } catch (SQLException e) {
-            logger.log("Error on fetching data:"+e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            logger.log("Error on fetching data: "+e.getMessage(), ApplicationLogger.LogLevel.ERROR);
             return Optional.empty();
         }
     }

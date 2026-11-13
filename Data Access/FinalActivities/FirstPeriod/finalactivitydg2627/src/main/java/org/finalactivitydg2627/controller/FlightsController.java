@@ -49,7 +49,11 @@ public class FlightsController {
             var flights = flightsOptional.get();
             var stringBuilder =  new StringBuilder();
             for(var flight: flights){
-                stringBuilder.append("Flight code: ").append(flight.flightCode()).append(" has ").append(flight.availableSeats()).append(" available seats out of ").append(flight.totalSeats()).append(" seats.\n");
+                stringBuilder.append("Flight: ")
+                        .append(flight.flightCode()).append(" from airport ")
+                        .append(flight.iataCode()).append(" in ")
+                        .append("(").append(flight.cityName()).append(")")
+                        .append(" has ").append(flight.availableSeats()).append(" available seats out of ").append(flight.totalSeats()).append(" seats.\n");
             }
 
             logger.log(stringBuilder.toString(), ApplicationLogger.LogLevel.INFO);

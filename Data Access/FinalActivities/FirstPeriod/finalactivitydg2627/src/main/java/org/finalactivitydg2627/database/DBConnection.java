@@ -15,41 +15,50 @@ public class DBConnection {
     private static final String URL;
     private static final String USER;
     private static final String PASSWORD;
+    private static final String DB_SCHEMA;
 
     private static class DatabaseException extends RuntimeException {
         public DatabaseException(String message, IOException e) {
-            super(message+e.getMessage(), e);
+            super(message, e);
         }
     }
 
     static {
-        try(var input = DBConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
-            if(input == null) {
+        try (var input = DBConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
                 logger.log("Properties file not found!", ApplicationLogger.LogLevel.ERROR);
-                throw new DatabaseException("Properties file not found!",null);
+                throw new DatabaseException("Properties file not found!", null);
             }
             properties.load(input);
             URL = properties.getProperty("db.url");
             USER = properties.getProperty("db.user");
             PASSWORD = properties.getProperty("db.password");
+            DB_SCHEMA = properties.getProperty("db.db_schema");
         } catch (IOException e) {
             logger.log("Could not load database configuration: ", ApplicationLogger.LogLevel.ERROR);
-            throw new DatabaseException("Could not load database configuration: ",e);
+            throw new DatabaseException("Could not load database configuration: ", e);
         }
     }
 
     private static final DBConnection instance = new DBConnection();
 
-    private  DBConnection() {}
+    private DBConnection() {
+    }
+
     public Connection connect() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        var conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        try {
+            conn.setSchema(DB_SCHEMA);
+            return conn;
+        } catch (SQLException e) {
+            conn.close();
+            throw e;
+        }
     }
 
     public static DBConnection getInstance() {
         return instance;
     }
-
-
 
 
 }

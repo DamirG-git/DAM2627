@@ -51,11 +51,11 @@ public class Main {
                 //-o, --origins: show the origins of the flights
                 var command = args[0].trim().toLowerCase();
                 switch (command) {
-                    case "-h", "-help":
+                    case "-h", "--help":
                         logger.log(HELP, ApplicationLogger.LogLevel.INFO);
                         System.out.println(HELP);
                         break;
-                    case "-o", "-origins":
+                    case "-o", "--origins":
                         var aController = new AirportController();
                         aController.getOriginAirports();
                         break;
@@ -70,11 +70,11 @@ public class Main {
                 var command2 = args[0].trim().toLowerCase();
 
                 switch (command2) {
-                    case "-a", "-add":
+                    case "-a", "--add":
                         var pController = new PassengerController();
                         pController.AddPassengerFromXML(args[1]);
                         break;
-                    case "-d", "-destinations":
+                    case "-d", "--destinations":
                         var aController = new AirportController();
                         aController.getDestinationAirports(args[1]);
                         break;
@@ -89,10 +89,10 @@ public class Main {
                 //-b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date
                 var command4 = args[0].trim().toLowerCase();
                 switch (command4) {
-                    case "-b", "-buy":
+                    case "-b", "--buy":
                         //TODO
                         break;
-                    case "-f", "-flights":
+                    case "-f", "--flights":
                         var flightsController = new FlightsController();
                         flightsController.getFlights(args);
                         break;

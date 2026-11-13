@@ -19,18 +19,20 @@ public class AirportRepository {
     public List<AirportDTO> getOriginAirports() throws SQLException {
         var airportsDtoList = new ArrayList<AirportDTO>();
         var sqlOriginsQuery = """
-                SELECT DISTINCT a.name, a.code, f.flight_code
+                SELECT DISTINCT a.iata, a.name,c.name, f.flight_code
                 FROM airports a
                     join flights f
                     on a.code = f.source
-                ORDER BY a.code;
+                    join cities c
+                    on a.city = c.code
+                ORDER BY a.iata;
                 """;
         try (var conn = connection.connect()) {
             conn.setAutoCommit(false);
             try (var ps = conn.prepareStatement(sqlOriginsQuery)) {
                 try (var result = ps.executeQuery()) {
                     while (result.next()) {
-                        airportsDtoList.add(new AirportDTO(result.getString(1), result.getInt(2), result.getString(3)));
+                        airportsDtoList.add(new AirportDTO(result.getString(1), result.getString(2), result.getString(3),result.getString(4)));
                     }
                     return airportsDtoList;
                 }
@@ -45,30 +47,28 @@ public class AirportRepository {
     public List<AirportDTO> getDestinationAirports(int code) throws SQLException {
         var airportsDtoList = new ArrayList<AirportDTO>();
         var sqlDestinationsQuery = """
-        SELECT DISTINCT a.name, a.code, f.flight_code
+        SELECT DISTINCT a.name, a.iata, c.name, f.flight_code
             FROM flights f
             JOIN airports a
                 ON f.destination = a.code
+            JOIN cities c
+                on a.city = c.code
             WHERE f.source = ?
         ORDER BY a.code;
         """;
         try (var conn = connection.connect()) {
-            conn.setAutoCommit(false);
             try (var ps = conn.prepareStatement(sqlDestinationsQuery)) {
                 ps.setInt(1, code);
                 try (var result = ps.executeQuery()) {
                     while (result.next()) {
-                        airportsDtoList.add(new AirportDTO(result.getString(1), result.getInt(2), result.getString(3)));
+                        airportsDtoList.add(
+                                new AirportDTO(result.getString(1),
+                                        result.getString(2),
+                                        result.getString(3),
+                                        result.getString(4)));
                     }
                     return airportsDtoList;
                 }
-            } catch (SQLException e) {
-                try {
-                    conn.rollback();
-                } catch (SQLException rollbackException) {
-                    e.addSuppressed(rollbackException);
-                }
-                throw e;
             }
         }
     }

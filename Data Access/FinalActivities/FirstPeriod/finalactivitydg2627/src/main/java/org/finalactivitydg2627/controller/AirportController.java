@@ -26,10 +26,12 @@ public class AirportController {
             var builder = new StringBuilder();
             for (var airport : result) {
                 builder.append("Airport ")
-                        .append(airport.airportCode())
+                        .append(airport.airportIata())
                         .append(" (")
                         .append(airport.airportName())
-                        .append(") is the origin of flight ")
+                        .append(") in ")
+                        .append(airport.cityName())
+                        .append(" is the origin of flight ")
                         .append(airport.flightCode())
                         .append(".")
                         .append("\n");
@@ -58,10 +60,12 @@ public class AirportController {
         var builder = new StringBuilder();
         for (var airport : results) {
             builder.append("Airport ")
-                    .append(airport.airportCode())
+                    .append(airport.airportIata())
                     .append(" (")
                     .append(airport.airportName())
-                    .append(") is reachable from origin airport ")
+                    .append(") located in ")
+                    .append(airport.cityName())
+                    .append(" is reachable from origin airport ")
                     .append(originResult.result())
                     .append(" via flight ")
                     .append(airport.flightCode())
