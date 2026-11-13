@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.Utils.StoredProceduresSQL;
+import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
 
@@ -56,10 +57,11 @@ public class Main {
                         System.out.println(HELP);
                         break;
                     case "-o", "-origins":
-                        //TODO confused as to what origins im supposed to report?
+                        var aController = new AirportController();
+                        aController.getOriginAirports();
                         break;
                     default:
-                        logger.log(unknownCommand + command, ApplicationLogger.LogLevel.WARNING);
+                        printUnknownCommand(command);
                         break;
                 }
                 break;
@@ -77,7 +79,7 @@ public class Main {
                         //TODO
                         break;
                     default:
-                        logger.log(unknownCommand + command2, ApplicationLogger.LogLevel.WARNING);
+                        printUnknownCommand(command2);
                         break;
 
                 }
@@ -95,18 +97,23 @@ public class Main {
                         flightsController.getFlights(args);
                         break;
                     default:
-                        logger.log(unknownCommand + command4, ApplicationLogger.LogLevel.WARNING);
+                        printUnknownCommand(command4);
                         break;
                 }
                 break;
             default:
                 logger.log("Invalid number of arguments passed: " + args.length + "/4 max, " + Arrays.toString(args), ApplicationLogger.LogLevel.WARNING);
-                logger.log(HELP, ApplicationLogger.LogLevel.INFO);
-                System.out.println(HELP);
+                printUnknownCommand("");
 
         }
 
 
+    }
+
+    private static void printUnknownCommand(String command) {
+        logger.log("Unknown command: "+command, ApplicationLogger.LogLevel.WARNING);
+        logger.log(HELP, ApplicationLogger.LogLevel.INFO);
+        System.out.println(HELP);
     }
 
 
