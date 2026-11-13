@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class PassengerService {
 
@@ -61,6 +62,7 @@ public class PassengerService {
     private List<Passengers> validatePassengers(List<PassengerInputDto> passengersRawInput) {
         var passengers = new ArrayList<Passengers>();
         var errors = new StringBuilder();
+        boolean commitTransaction = true;
         for (PassengerInputDto passenger : passengersRawInput) {
             var pas = new Passengers();
             var addNew = true;
@@ -74,23 +76,21 @@ public class PassengerService {
 
             if (firstnameError != null) {
                 appendError(errors, passenger.getPassno(), firstnameError);
-                addNew = false;
+                commitTransaction = addNew = false;
             }
             if (lastnameError != null) {
                 appendError(errors, passenger.getPassno(), lastnameError);
-                addNew = false;
+                commitTransaction = addNew = false;
             }
             if (passnoError != null) {
                 appendError(errors, passenger.getPassno(), passnoError);
-                addNew = false;
+                commitTransaction = addNew = false;
             }
             if (phoneError != null) {
                 appendError(errors, passenger.getPassno(), phoneError);
-                addNew = false;
             }
             if (addressError != null) {
                 appendError(errors, passenger.getPassno(), addressError);
-                addNew = false;
             }
             if (addNew) {
                 passengers.add(pas);
@@ -100,9 +100,29 @@ public class PassengerService {
         }
         if (!errors.isEmpty()) {
             logger.log(errors.toString(), ApplicationLogger.LogLevel.ERROR);
-            return Collections.emptyList();
         }
-        return passengers;
+        if (commitTransaction) {
+            try {
+                passengerRepo.addPassengers(passengers);
+            }catch (SQLException e) {
+                logger.log("Database error on adding passenger: "+e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+                var next = e.getNextException();
+
+                while (next != null) {
+                    if (!next.getMessage().equals(e.getMessage())) {
+                        logger.log(
+                                "Additional database error: " + next.getMessage(),
+                                ApplicationLogger.LogLevel.ERROR
+                        );
+                    }
+                    next = next.getNextException();
+                }
+
+                return Collections.emptyList();
+            }
+            return passengers;
+        }
+        return Collections.emptyList();
     }
 
     private void appendError(StringBuilder errors, String passno, String error) {
