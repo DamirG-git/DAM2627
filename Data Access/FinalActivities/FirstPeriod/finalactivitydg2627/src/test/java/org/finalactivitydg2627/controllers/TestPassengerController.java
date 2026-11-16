@@ -44,15 +44,25 @@ public class TestPassengerController {
     }
 
     @Test
-    public void addPassengers_fail() throws ParserConfigurationException,
+    public void addPassengers_fail_xmlFileInvalid() throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
         controller.importPassengerFromXml("invalid.xml");
 
         verify(passengerService, never()).addPassengerFromXML(testLoc);
-        verify(logger).log(contains(PassengerController.WARN_VALIDATION_FAILED), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(PassengerController.WARN_XML_PATH_VALIDATION_FAILED), eq(ApplicationLogger.LogLevel.WARNING));
 
     }
+
+    @Test
+    void addPassenger_fail_exception_DBPassengerInsertion() throws PassengerService.PassengerValidationException, SQLException, ParserConfigurationException, IOException, SAXException {
+
+        doThrow(new SQLException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
+        controller.importPassengerFromXml(testXml);
+
+        verify(logger).log(contains(PassengerController.ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER+"Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
+    }
+
 
     @Test
     public void addPassenger_fail_exception_ParserExc() throws ParserConfigurationException,

@@ -35,7 +35,6 @@ public class DBConnection {
             PASSWORD = properties.getProperty("db.password");
             DB_SCHEMA = properties.getProperty("db.db_schema");
         } catch (IOException e) {
-            logger.log("Could not load database configuration: ", ApplicationLogger.LogLevel.ERROR);
             throw new DatabaseException("Could not load database configuration: ", e);
         }
     }

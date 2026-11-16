@@ -25,12 +25,13 @@ public class PassengerController {
     }
 
     public static final String INFO_VALIDATING_XML_FILE = "Validating XML file: ";
-    public static final String WARN_VALIDATION_FAILED = "XML file is invalid!\n";
+    public static final String WARN_XML_PATH_VALIDATION_FAILED = "XML file is invalid!\n";
     public static final String ERROR_XML_FILE_PASSENGERS_HAD_ERROR = "XML file contained errors in passenger data.\n";
     public static final String INFO_CALLING_SERVICE = "Calling service for file reading: ";
     public static final String ERROR_PARSER_CONFIGURATION_EXCEPTION = "Parser configuration error:";
     public static final String ERROR_SAX_EXCEPTION = "SAX parser exception:";
     public static final String ERROR_IO_EXCEPTION = "IO exception:";
+    public static final String ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER = "Database error on adding passenger: ";
 
     public void importPassengerFromXml(String input) {
         try {
@@ -39,7 +40,7 @@ public class PassengerController {
             var rs = Verification.basicPathVerification("xml file", input);
 
             if (rs.message() != null) {
-                logger.log(WARN_VALIDATION_FAILED + errorMessageFormatter(rs.message()), ApplicationLogger.LogLevel.WARNING);
+                logger.log(WARN_XML_PATH_VALIDATION_FAILED + errorMessageFormatter(rs.message()), ApplicationLogger.LogLevel.WARNING);
                 return;
             }
 
@@ -55,7 +56,7 @@ public class PassengerController {
         } catch (IOException e) {
             logger.log(ERROR_IO_EXCEPTION + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
         } catch (SQLException e) {
-            logger.log("Database error on adding passenger: " + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            logger.log(ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
             var next = e.getNextException();
 
             while (next != null) {
