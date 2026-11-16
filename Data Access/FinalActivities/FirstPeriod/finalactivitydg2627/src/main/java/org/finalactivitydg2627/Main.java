@@ -1,14 +1,9 @@
 package org.finalactivitydg2627;
 
 import org.finalactivitydg2627.Utils.ApplicationLogger;
-import org.finalactivitydg2627.Utils.StoredProceduresSQL;
-import org.finalactivitydg2627.controller.AirportController;
-import org.finalactivitydg2627.controller.FlightsController;
-import org.finalactivitydg2627.controller.PassengerController;
-import org.finalactivitydg2627.controller.TicketsController;
+import org.finalactivitydg2627.database.DBConnection;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -16,107 +11,16 @@ public class Main {
 
     private static final ApplicationLogger logger = ApplicationLogger.getInstance();
 
+    public static final String ERROR_SQL_CONNECTION = "Failed to connect to database: ";
+
     public static void main(String[] args) {
-        try {
-            new StoredProceduresSQL().initialize(); // Create procedures
+        try (var ignored = DBConnection.getInstance().connect()) {
+            var commandExe = new CommandExecutor();
+            commandExe.inputLogic(args);
         } catch (SQLException e) {
-            ApplicationLogger.getInstance().log("Custom SQL functions failed to create: " + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-            throw new RuntimeException(e);
-        }
-        inputLogic(args);
-    }
-
-
-    private static final String HELP = """
-            Usage: flights [options]
-            
-            Options:
-                -h, --help: show this help
-                -a, --add <filename.xml>: add the passengers in the XML file to the database.
-                -f, --flights <origin> <destination> <date>: show the flights available from origin to destination
-                -b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date
-                -o, --origins: show the origins of the flights
-                -d, --destinations <origin>: show the destinations of the flights from origin
-            """;
-
-    private static void inputLogic(String[] args) {
-        if (args.length == 0) {
-            logger.log("No input given", ApplicationLogger.LogLevel.ERROR);
-            logger.log(HELP, ApplicationLogger.LogLevel.INFO);
-            return;
-        }
-        switch (args.length) {
-            case 1:
-                //-h, --help: show this help
-                //-o, --origins: show the origins of the flights
-                logger.log("case 1 of tree", ApplicationLogger.LogLevel.DEBUG);
-                var command = args[0].trim().toLowerCase();
-                switch (command) {
-                    case "-h", "--help":
-                        logger.log(HELP, ApplicationLogger.LogLevel.INFO);
-                        break;
-                    case "-o", "--origins":
-                        var aController = new AirportController();
-                        aController.getOriginAirports();
-                        break;
-                    default:
-                        printUnknownCommand(command);
-                        break;
-                }
-                break;
-            case 2:
-                //-a, --add <filename.xml>: add the passengers in the XML file to the database.
-                //-d, --destinations <origin>: show the destinations of the flights from origin
-                logger.log("case 2 of tree", ApplicationLogger.LogLevel.DEBUG);
-                var command2 = args[0].trim().toLowerCase();
-
-                switch (command2) {
-                    case "-a", "--add":
-                        var pController = new PassengerController();
-                        pController.addPassengerFromXML(args[1]);
-                        break;
-                    case "-d", "--destinations":
-                        var aController = new AirportController();
-                        aController.getDestinationAirports(args[1]);
-                        break;
-                    default:
-                        printUnknownCommand(command2);
-                        break;
-
-                }
-                break;
-            case 4:
-                //-f, --flights <origin> <destination> <date>: show the flights available from origin to destination
-                //-b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date
-                var command4 = args[0].trim().toLowerCase();
-                logger.log("case 4 of tree", ApplicationLogger.LogLevel.DEBUG);
-                switch (command4) {
-                    case "-b", "--buy":
-                        var ticketController = new TicketsController();
-                        ticketController.addTicket(args);
-                        break;
-                    case "-f", "--flights":
-                        var flightsController = new FlightsController();
-                        flightsController.getFlights(args);
-                        break;
-                    default:
-                        printUnknownCommand(command4);
-                        break;
-                }
-                break;
-            default:
-                logger.log("Amount of arguments: "+args.length, ApplicationLogger.LogLevel.DEBUG);
-                logger.log("Invalid number of arguments passed: " + args.length + "/4 max, " + Arrays.toString(args), ApplicationLogger.LogLevel.WARNING);
-                printUnknownCommand("");
-
+            logger.log(ERROR_SQL_CONNECTION + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
         }
 
-
-    }
-
-    private static void printUnknownCommand(String command) {
-        logger.log("Unknown command: "+command, ApplicationLogger.LogLevel.WARNING);
-        logger.log(HELP, ApplicationLogger.LogLevel.INFO);
     }
 
 

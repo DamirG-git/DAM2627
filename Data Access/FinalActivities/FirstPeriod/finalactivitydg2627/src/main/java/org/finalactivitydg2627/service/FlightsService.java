@@ -14,17 +14,19 @@ public class FlightsService {
     private final ApplicationLogger logger;
     private final FlightsRepo flightsRepo;
 
+
+
     public FlightsService() {
         logger = ApplicationLogger.getInstance();
         flightsRepo = new FlightsRepo();
     }
 
-    public Optional<List<FlightDTO>> getFlights(String origin, String destination, LocalDate date) {
-        try {
+    public FlightsService(ApplicationLogger logger, FlightsRepo flightsRepo) {
+        this.logger = logger;
+        this.flightsRepo = flightsRepo;
+    }
+
+    public Optional<List<FlightDTO>> getFlights(String origin, String destination, LocalDate date) throws SQLException {
             return flightsRepo.getFlights(origin,destination,date);
-        } catch (SQLException e) {
-            logger.log("Error on fetching data: "+e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-            return Optional.empty();
-        }
     }
 }

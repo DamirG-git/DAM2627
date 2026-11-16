@@ -45,8 +45,7 @@ public class TicketRepo {
         PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE,
         NO_SEATS_AVAILABLE,
         FLIGHT_NOT_FOUND,
-        FAILURE_ON_INSERT,
-        EXCEPTION_ON_INSERT
+        FAILED_TO_CREATE_NEW_TICKET
     }
 
 
@@ -90,7 +89,7 @@ public class TicketRepo {
                         if (rows > 0) {
                             return TicketPurchaseResult.SUCCESS;
                         }
-                        return TicketPurchaseResult.FAILURE_ON_INSERT;
+                        return TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET;
                     }
 
 

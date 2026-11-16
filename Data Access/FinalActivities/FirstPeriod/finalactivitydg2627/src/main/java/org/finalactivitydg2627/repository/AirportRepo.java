@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AirportRepository {
+public class AirportRepo {
 
     private final DBConnection connection;
 
-    public AirportRepository() {
+    public AirportRepo() {
         this.connection = DBConnection.getInstance();
     }
 

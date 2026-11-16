@@ -17,14 +17,15 @@ public class TicketService {
         this.ticketRepo = new TicketRepo();
     }
 
-    public TicketRepo.TicketPurchaseResult buyTicket(String passno, String flightCode, LocalDate date) {
+    public TicketService(ApplicationLogger logger, TicketRepo ticketRepo) {
+        this.logger = logger;
+        this.ticketRepo = ticketRepo;
+    }
 
-        try {
-            return ticketRepo.buyTicket(passno, flightCode, date);
-        } catch (SQLException e) {
-            logger.log("Error on purchasing new ticket: " + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-            return TicketRepo.TicketPurchaseResult.EXCEPTION_ON_INSERT;
-        }
+    public TicketRepo.TicketPurchaseResult buyTicket(String passportNum, String flightCode, LocalDate date) throws SQLException {
+
+        return ticketRepo.buyTicket(passportNum, flightCode, date);
+
     }
 
 }

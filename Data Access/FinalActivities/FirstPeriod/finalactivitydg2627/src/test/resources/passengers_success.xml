@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<passengers>
+    <passenger>
+        <passportno>AB123456</passportno>
+        <firstname>John</firstname>
+        <lastname>Smith</lastname>
+        <phone>+34612345678</phone>
+        <address>Alicante, Spain</address>
+    </passenger>
+    <passenger>
+        <passportno>CD987654</passportno>
+        <firstname>Maria</firstname>
+        <lastname>Garcia</lastname>
+        <phone>+34687654321</phone>
+        <address>Madrid, Spain</address>
+    </passenger>
+</passengers>

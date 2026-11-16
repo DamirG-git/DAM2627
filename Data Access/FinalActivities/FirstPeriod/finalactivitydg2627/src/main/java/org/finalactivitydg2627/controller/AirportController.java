@@ -5,35 +5,55 @@ import org.finalactivitydg2627.Utils.Verification;
 import org.finalactivitydg2627.dto.AirportDTO;
 import org.finalactivitydg2627.service.AirportService;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class AirportController {
 
 
     private final ApplicationLogger logger;
     private final AirportService airportService;
 
+    public AirportController(ApplicationLogger logger, AirportService airportService) {
+        this.logger = logger;
+        this.airportService = airportService;
+    }
+
     public AirportController() {
         this.airportService = new AirportService();
         logger = ApplicationLogger.getInstance();
     }
 
-    public void getOriginAirports() {
-        logger.log("Calling service for airports...", ApplicationLogger.LogLevel.INFO);
-        var result = airportService.getOriginAirports();
-        if (result.isEmpty()) {
+    public static final String INFO_CALLING_SERVICE = "Calling service for ";
+    public static final String EXCEPTION_SERVICE_AIRPORTS = "Error obtaining airports: ";
+    public static final String WARN_ORIGIN_AIRPORTS_NOT_FOUND = "Origin airports not found.";
+    public static final String INFO_RETRIEVED_ORIGINS = "Successfully retrieved origin airports!\n";
 
-            logger.log("Flight origin airports not found.", ApplicationLogger.LogLevel.ERROR);
+    public void findOriginAirports() {
+        logger.log(INFO_CALLING_SERVICE + "airports...", ApplicationLogger.LogLevel.INFO);
+
+        List<AirportDTO> result;
+        try {
+            result = airportService.getOriginAirports();
+        } catch (SQLException e) {
+            logger.log(EXCEPTION_SERVICE_AIRPORTS + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            return;
+        }
+
+        if (result.isEmpty()) {
+            logger.log(WARN_ORIGIN_AIRPORTS_NOT_FOUND, ApplicationLogger.LogLevel.WARNING);
         } else {
             var builder = new StringBuilder();
-            builder.append("Successfully retrieved origin airports!\n");
+            builder.append(INFO_RETRIEVED_ORIGINS);
             for (var airport : result) {
-                getOriginAirportMessage(airport, builder);
+                findOriginAirportMessage(airport, builder);
             }
             logger.log(builder.toString(), ApplicationLogger.LogLevel.INFO);
         }
 
     }
 
-    private static void getOriginAirportMessage(AirportDTO airport, StringBuilder builder) {
+    private static void findOriginAirportMessage(AirportDTO airport, StringBuilder builder) {
         builder.append("    - ")
                 .append("Airport ")
                 .append(airport.airportIata())
@@ -47,30 +67,42 @@ public class AirportController {
                 .append("\n");
     }
 
-    public void getDestinationAirports(String input) {
-        var originResult = Verification.basicStringVerification("destination", input,null ,3,null);
+    public static final String WARN_NO_DESTINATIONS_FOUND = "No destinations found for origin airport ";
+    public static final String INFO_RETRIEVED_DESTINATIONS = "Successfully retrieved destinations!\n";
+
+    public void findDestinationAirports(String input) {
+        var originResult = Verification.basicStringVerification("origin airport", input, null, 3, null);
         if (originResult.result() == null) {
             logger.log(originResult.message(), ApplicationLogger.LogLevel.ERROR);
             return;
         }
-        logger.log("Calling service for destinations...", ApplicationLogger.LogLevel.INFO);
-        var results = airportService.getDestinationAirports(originResult.result());
+
+        logger.log(INFO_CALLING_SERVICE + "destinations...", ApplicationLogger.LogLevel.INFO);
+
+        List<AirportDTO> results;
+        try {
+            results = airportService.getDestinationAirports(originResult.result());
+        } catch (SQLException e) {
+            logger.log(EXCEPTION_SERVICE_AIRPORTS + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            return;
+        }
+
         if (results.isEmpty()) {
-            var message = "No destinations found for origin airport " + originResult.result() + ".";
-            logger.log(message + " found!", ApplicationLogger.LogLevel.WARNING);
+            var message = WARN_NO_DESTINATIONS_FOUND + originResult.result() + ".";
+            logger.log(message, ApplicationLogger.LogLevel.WARNING);
             return;
         }
         var builder = new StringBuilder();
-        builder.append("Successfully retrieved destinations!\n");
+        builder.append(INFO_RETRIEVED_DESTINATIONS);
         for (var airport : results) {
-            getDestinationAirportMessage(airport, builder, originResult);
+            findDestinationAirportMessage(airport, builder, originResult);
         }
         logger.log(builder.toString(), ApplicationLogger.LogLevel.INFO);
 
 
     }
 
-    private static void getDestinationAirportMessage(AirportDTO airport, StringBuilder builder, Verification.ResultValue<String> originResult) {
+    private static void findDestinationAirportMessage(AirportDTO airport, StringBuilder builder, Verification.ResultValue<String> originResult) {
         builder.append("    - ")
                 .append("Airport ")
                 .append(airport.airportIata())

@@ -14,117 +14,84 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PassengerService {
 
 
-    private final ApplicationLogger logger = ApplicationLogger.getInstance();
-    private final PassengerRepo passengerRepo = new PassengerRepo();
+    private final ApplicationLogger logger;
+    private final PassengerRepo passengerRepo;
+
+    public PassengerService() {
+        logger = ApplicationLogger.getInstance();
+        passengerRepo = new PassengerRepo();
+    }
+
+    public PassengerService(ApplicationLogger logger, PassengerRepo passengerRepo) {
+        this.logger = logger;
+        this.passengerRepo = passengerRepo;
+    }
 
 
-    public void addPassengerFromXML(Path input) {
+    public void addPassengerFromXML(Path input) throws ParserConfigurationException, SAXException, IOException, PassengerValidationException, SQLException {
         var factory = SAXParserFactory.newInstance();
-        try {
-            var saxParser = factory.newSAXParser();
-            var handler = new PassengerSAXHandler();
-            saxParser.parse(input.toFile(), handler);
 
-            var inputXml = handler.getPassengers();
-            var results = validatePassengers(inputXml);
-            if (results == null) {
-                logger.log("Input failed on service level.", ApplicationLogger.LogLevel.ERROR);
-                return;
-            }
-            addPassengers(results);
+        var saxParser = factory.newSAXParser();
+        var handler = new PassengerSAXHandler();
+        saxParser.parse(input.toFile(), handler);
 
-        } catch (ParserConfigurationException e) {
-            logger.log("Parser configuration error:" + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            logger.log("Sax parser error:" + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            logger.log("IO error:" + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-            throw new RuntimeException(e);
+        var inputXml = handler.getPassengers();
+        addPassengers(inputXml);
+    }
+
+    public static class PassengerValidationException extends Exception {
+        public PassengerValidationException(String message) {
+            super(message);
         }
     }
 
-    private void addPassengers(List<Passengers> results) {
-        try {
-            passengerRepo.addPassengers(results);
-        } catch (SQLException e) {
-            logger.log("Error while inserting passenger into DB:" + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-        }
-    }
+    public static final String INFO_PASSENGER_VERIFIED = "Passenger: %s passed verification.";
+    public static final String DEBUG_PASSENGER_VALID = "Passenger validation failed, commit canceled.";
 
-    private List<Passengers> validatePassengers(List<PassengerInputDto> passengersRawInput) {
+    private void addPassengers(List<PassengerInputDto> passengersRawInput) throws PassengerValidationException, SQLException {
         var passengers = new ArrayList<Passengers>();
         var errors = new StringBuilder();
-        boolean commitTransaction = true;
-        commitTransaction = isCommitTransaction(passengersRawInput, errors, commitTransaction, passengers);
+        var commitTransaction = true;
+        for (PassengerInputDto passengerInputDto : passengersRawInput) {
+            var result = processPassenger(passengerInputDto, errors);
+            if (result != null) {
+                passengers.add(result);
+                logger.log(String.format(INFO_PASSENGER_VERIFIED, result), ApplicationLogger.LogLevel.INFO);
+            } else if (commitTransaction) {
+                commitTransaction = false;
+                logger.log(DEBUG_PASSENGER_VALID, ApplicationLogger.LogLevel.DEBUG);
+            }
+        }
         if (!errors.isEmpty()) {
-            logger.log(errors.toString(), ApplicationLogger.LogLevel.ERROR);
+            throw new PassengerValidationException(errors.toString());
         }
-        if (commitTransaction) return commitTransaction(passengers);
-        return Collections.emptyList();
+        if (commitTransaction) passengerRepo.addPassengers(passengers);
     }
 
-    private boolean isCommitTransaction(List<PassengerInputDto> passengersRawInput, StringBuilder errors, boolean commitTransaction, ArrayList<Passengers> passengers) {
-        for (PassengerInputDto passenger : passengersRawInput) {
-            var passengerModel = new Passengers();
-            var addNew = true;
-            var firstNameResult = passengerModel.setFirstName(passenger.getFirstName());
-            var lastNameResult = passengerModel.setLastName(passenger.getLastName());
-            var passportNumberResult = passengerModel.setPassno(passenger.getPassno());
-            var phoneResult = passenger.getPhone() == null ||
-                    passenger.getPhone().isEmpty() ?
-                    null : passengerModel.setPhone(passenger.getPhone());
-            var addressResult = passenger.getAddress() == null ||
-                    passenger.getAddress().isEmpty() ?
-                    null : passengerModel.setAddress(passenger.getAddress());
+    private Passengers processPassenger(PassengerInputDto passengerInputDto, StringBuilder errors) {
+        var passModel = new Passengers();
+        var nameValidation = passModel.setFirstName(passengerInputDto.getFirstName());
+        var lastNameValidation = passModel.setLastName(passengerInputDto.getLastName());
+        var passportNoValidation = passModel.setPassno(passengerInputDto.getPassno());
+        var phoneValidation = passengerInputDto.getPhone() != null ?
+                passModel.setPhone(passengerInputDto.getPhone()) : null;
+        var addressValidation = passengerInputDto.getAddress() != null ?
+                passModel.setAddress(passengerInputDto.getAddress()) : null;
+        var isValid =
+                nameValidation.result() != null &&
+                        lastNameValidation.result() != null &&
+                        passportNoValidation.result() != null &&
+                        (phoneValidation == null || phoneValidation.result() != null) &&
+                        (addressValidation == null || addressValidation.result() != null);
+        errors.append(MessageFormatter.multipleErrorsFormatter(
+                nameValidation, lastNameValidation, passportNoValidation, phoneValidation, addressValidation));
+        return isValid ? passModel : null;
 
-            errors.append(MessageFormatter.multipleErrorsFormatter(firstNameResult, lastNameResult, passportNumberResult, phoneResult, addressResult));
-            var isValid =
-                    firstNameResult.result() != null &&
-                            lastNameResult.result() != null &&
-                            passportNumberResult.result() != null &&
-                            (phoneResult == null || phoneResult.result() != null) &&
-                            (addressResult == null || addressResult.result() != null);
-            if (!isValid) {
-                commitTransaction = addNew = false;
-            }
-            if (addNew) {
-                passengers.add(passengerModel);
-                logger.log("Passenger: " + passenger + " passed verification.", ApplicationLogger.LogLevel.INFO);
-            }
-
-        }
-        return commitTransaction;
-    }
-
-
-    private List<Passengers> commitTransaction(ArrayList<Passengers> passengers) {
-        try {
-            passengerRepo.addPassengers(passengers);
-        } catch (SQLException e) {
-            logger.log("Database error on adding passenger: " + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
-            var next = e.getNextException();
-
-            while (next != null) {
-                if (!next.getMessage().equals(e.getMessage())) {
-                    logger.log(
-                            "Additional database error: " + next.getMessage(),
-                            ApplicationLogger.LogLevel.ERROR
-                    );
-                }
-                next = next.getNextException();
-            }
-
-            return Collections.emptyList();
-        }
-        return passengers;
     }
 
 }

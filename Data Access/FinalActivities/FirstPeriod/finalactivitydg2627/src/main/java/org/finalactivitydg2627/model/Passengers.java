@@ -60,4 +60,12 @@ public class Passengers {
         this.phone = rs.result();
         return rs;
     }
+
+    @Override
+    public String toString() {
+        var result = firstName + " " + lastName + " " + passno;
+        result = address == null ? result : result + ", " + address;
+        result = phone == null ? result : result + ", " + phone;
+        return result;
+    }
 }
