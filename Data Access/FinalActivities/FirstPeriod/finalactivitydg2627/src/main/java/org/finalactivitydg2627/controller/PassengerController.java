@@ -32,6 +32,8 @@ public class PassengerController {
     public static final String ERROR_SAX_EXCEPTION = "SAX parser exception:";
     public static final String ERROR_IO_EXCEPTION = "IO exception:";
     public static final String ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER = "Database error on adding passenger: ";
+    public static final String WARN_DUPLICATED_KEY_FORMATTED = "The passenger with passport: %s already exists!";
+    public static final String ERROR_SQL_STATE_NULL = "The sql state is null: ";
 
     public void importPassengerFromXml(String input) {
         try {
@@ -57,10 +59,24 @@ public class PassengerController {
             logger.log(ERROR_IO_EXCEPTION + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
         } catch (SQLException e) {
             logger.log(ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+            if (e.getSQLState() == null) {
+                logger.log(ERROR_SQL_STATE_NULL + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+                return;
+            }
+            if (e.getSQLState().equals("23505")) {
+                var start = e.getMessage().indexOf("=(") + 2;
+                var end = e.getMessage().indexOf(")", start);
+                var value = e.getMessage().substring(start, end);
+                logger.log(String.format(WARN_DUPLICATED_KEY_FORMATTED, value), ApplicationLogger.LogLevel.WARNING);
+
+            }
+
+            var errorMessage = e.getMessage();
+            var sqlState = e.getSQLState();
             var next = e.getNextException();
 
             while (next != null) {
-                if (!next.getMessage().equals(e.getMessage())) {
+                if (!next.getMessage().equals(errorMessage) && !next.getSQLState().equals(sqlState)) {
                     logger.log(
                             "Additional database error: " + next.getMessage(),
                             ApplicationLogger.LogLevel.ERROR

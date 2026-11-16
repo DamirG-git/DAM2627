@@ -3,6 +3,7 @@ package org.finalactivitydg2627.repository;
 import org.finalactivitydg2627.database.DBConnection;
 
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDate;
 
 public class TicketRepo {
@@ -83,7 +84,7 @@ public class TicketRepo {
                         pstTicketAddNewTicket.setString(1, passno);
                         pstTicketAddNewTicket.setObject(2, date);
                         pstTicketAddNewTicket.setString(3, flightCode);
-                        pstTicketAddNewTicket.setInt(4, 100000);
+                        pstTicketAddNewTicket.setNull(4, Types.NUMERIC);
                         var rows = pstTicketAddNewTicket.executeUpdate();
                         conn.commit();
                         if (rows > 0) {

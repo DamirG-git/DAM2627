@@ -56,11 +56,12 @@ public class TestPassengerController {
 
     @Test
     void addPassenger_fail_exception_DBPassengerInsertion() throws PassengerService.PassengerValidationException, SQLException, ParserConfigurationException, IOException, SAXException {
-
         doThrow(new SQLException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
         controller.importPassengerFromXml(testXml);
 
-        verify(logger).log(contains(PassengerController.ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER+"Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
+
+        verify(logger).log(contains(PassengerController.ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER + "Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
+        verify(logger).log(contains(PassengerController.ERROR_SQL_STATE_NULL + "Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
     }
 
 
