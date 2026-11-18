@@ -6,19 +6,17 @@ import org.finalactivitydg2627.repository.TicketRepo;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class TicketService {
+public class TicketService  extends AbstractService {
 
 
-    private final ApplicationLogger logger;
     private final TicketRepo ticketRepo;
 
     public TicketService() {
-        this.logger = ApplicationLogger.getInstance();
         this.ticketRepo = new TicketRepo();
     }
 
     public TicketService(ApplicationLogger logger, TicketRepo ticketRepo) {
-        this.logger = logger;
+        super(logger);
         this.ticketRepo = ticketRepo;
     }
 

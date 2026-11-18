@@ -23,7 +23,7 @@ public class TestPassengerController {
 
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         passengerService = mock(PassengerService.class);
         logger = mock(ApplicationLogger.class);
         controller = new PassengerController(logger, passengerService);
@@ -34,7 +34,7 @@ public class TestPassengerController {
     private final Path testLoc = Path.of(testXml);
 
     @Test
-    public void addPassengers_success() throws ParserConfigurationException,
+    void addPassengers_success() throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
         controller.importPassengerFromXml(testXml);
@@ -44,7 +44,7 @@ public class TestPassengerController {
     }
 
     @Test
-    public void addPassengers_fail_xmlFileInvalid() throws ParserConfigurationException,
+    void addPassengers_fail_xmlFileInvalid() throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
         controller.importPassengerFromXml("invalid.xml");
@@ -66,7 +66,7 @@ public class TestPassengerController {
 
 
     @Test
-    public void addPassenger_fail_exception_ParserExc() throws ParserConfigurationException,
+    void addPassenger_fail_exception_ParserExc() throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new ParserConfigurationException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
@@ -77,7 +77,7 @@ public class TestPassengerController {
     }
 
     @Test
-    public void addPassenger_fail_exception_SaxExc() throws ParserConfigurationException,
+    void addPassenger_fail_exception_SaxExc() throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new SAXException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
@@ -88,7 +88,7 @@ public class TestPassengerController {
     }
 
     @Test
-    public void addPassenger_fail_exception_IOExc()
+    void addPassenger_fail_exception_IOExc()
             throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
@@ -101,13 +101,13 @@ public class TestPassengerController {
     }
 
     @Test
-    public void addPassenger_fail_exception_PassValidExc()
+    void addPassenger_fail_exception_PassValidExc()
             throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new PassengerService.PassengerValidationException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
         controller.importPassengerFromXml(testXml);
-        verify(logger).log(contains(PassengerController.ERROR_XML_FILE_PASSENGERS_HAD_ERROR + "Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
+        verify(logger).log(contains(PassengerController.ERROR_XML_FILE_PASSENGERS_HAD_ERROR + "Test Exception"), eq(ApplicationLogger.LogLevel.WARNING));
     }
 }
 

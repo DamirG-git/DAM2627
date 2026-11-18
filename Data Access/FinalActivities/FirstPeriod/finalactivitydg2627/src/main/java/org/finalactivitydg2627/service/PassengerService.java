@@ -16,19 +16,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PassengerService {
+public class PassengerService extends AbstractService {
 
 
-    private final ApplicationLogger logger;
     private final PassengerRepo passengerRepo;
 
     public PassengerService() {
-        logger = ApplicationLogger.getInstance();
+
         passengerRepo = new PassengerRepo();
     }
 
     public PassengerService(ApplicationLogger logger, PassengerRepo passengerRepo) {
-        this.logger = logger;
+        super(logger);
         this.passengerRepo = passengerRepo;
     }
 

@@ -1,29 +1,18 @@
 package org.finalactivitydg2627.repository;
 
 import org.finalactivitydg2627.Utils.ApplicationLogger;
-import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.model.Passengers;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class PassengerRepo {
-
-
-    private final DBConnection dbConnection;
-    private final ApplicationLogger logger;
-
-    public PassengerRepo() {
-        dbConnection = DBConnection.getInstance();
-        logger = ApplicationLogger.getInstance();
-    }
-
+public class PassengerRepo extends AbstractRepo {
 
     public void addPassengers(List<Passengers> input) throws SQLException {
         if (input == null || input.isEmpty()) {
             return;
         }
-        try (var conn = dbConnection.connect();
+        try (var conn = connection.connect();
              var psAddPassenger = conn.prepareStatement("INSERT INTO passengers(passportno,firstname,lastname,address,phone) values(?,?,?,?,?)")) {
             conn.setAutoCommit(false);
             try {
@@ -36,7 +25,7 @@ public class PassengerRepo {
                     psAddPassenger.addBatch();
                 }
                 var execution = psAddPassenger.executeBatch();
-                logger.log("Adding passengers " + execution.length+" to DB.\"", ApplicationLogger.LogLevel.INFO);
+                logger.log("Adding passengers " + execution.length + " to DB.\"", ApplicationLogger.LogLevel.INFO);
                 conn.commit();
             } catch (SQLException e) {
                 try {

@@ -3,6 +3,8 @@ package org.finalactivitydg2627.controllers;
 import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.dto.AirportDTO;
+import org.finalactivitydg2627.repository.AirportRepo;
+import org.finalactivitydg2627.repository.AbstractRepo;
 import org.finalactivitydg2627.service.AirportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +52,7 @@ public class TestAirportController {
 
         controller.findOriginAirports();
         verify(airportService).getOriginAirports();
-        verify(logger).log(contains(AirportController.WARN_ORIGIN_AIRPORTS_NOT_FOUND),eq(ApplicationLogger.LogLevel.WARNING)
+        verify(logger).log(contains(AirportController.WARN_ORIGIN_AIRPORTS_NOT_FOUND), eq(ApplicationLogger.LogLevel.WARNING)
         );
     }
 
@@ -66,7 +68,8 @@ public class TestAirportController {
     @Test
     void getDestinationAirports_success() throws SQLException {
         var destination = "TST";
-        when(airportService.getDestinationAirports(destination)).thenReturn(Collections.singletonList(new AirportDTO("San Francisco International", "TST", "San Francisco", "UA456")));
+        var returnValue = new AbstractRepo.RepoResultValue<>(Collections.singletonList(new AirportDTO("San Francisco International", "TST", "San Francisco", "UA456")), AirportRepo.AirportStatus.FOUND);
+        when(airportService.getDestinationAirports(destination)).thenReturn(returnValue);
 
         controller.findDestinationAirports(destination);
         verify(airportService).getDestinationAirports(destination);
@@ -76,10 +79,21 @@ public class TestAirportController {
     @Test
     void getDestinationAirports_fail_noDestinationFound() throws SQLException {
         var destination = "TST";
-        when(airportService.getDestinationAirports(destination)).thenReturn(Collections.emptyList());
+        var returnValue = new AbstractRepo.RepoResultValue<List<AirportDTO>,AirportRepo.AirportStatus>(Collections.emptyList(), AirportRepo.AirportStatus.FOUND);
+        when(airportService.getDestinationAirports(destination)).thenReturn(returnValue);
         controller.findDestinationAirports(destination);
         verify(airportService).getDestinationAirports(destination);
-        verify(logger).log(contains(AirportController.WARN_NO_DESTINATIONS_FOUND+destination), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(AirportController.WARN_NO_DESTINATIONS_FOUND + destination), eq(ApplicationLogger.LogLevel.WARNING));
+    }
+
+    @Test
+    void getDestinationAirports_fail_noDestinationExists() throws SQLException {
+        var destination = "TST";
+        var returnValue = new AbstractRepo.RepoResultValue<List<AirportDTO>,AirportRepo.AirportStatus>(null, AirportRepo.AirportStatus.NOT_FOUND);
+        when(airportService.getDestinationAirports(destination)).thenReturn(returnValue);
+        controller.findDestinationAirports(destination);
+        verify(airportService).getDestinationAirports(destination);
+        verify(logger).log(contains(AirportController.WARN_NO_SUCH_AIRPORT_EXISTS + destination), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     @Test
@@ -89,7 +103,7 @@ public class TestAirportController {
         when(airportService.getDestinationAirports(destination)).thenThrow(new SQLException(error));
         controller.findDestinationAirports(destination);
         verify(airportService).getDestinationAirports(destination);
-        verify(logger).log(contains(AirportController.EXCEPTION_SERVICE_AIRPORTS+error), eq(ApplicationLogger.LogLevel.ERROR));
+        verify(logger).log(contains(AirportController.ERROR_ON_OBTAINING_AIRPORTS + error), eq(ApplicationLogger.LogLevel.ERROR));
     }
 
 

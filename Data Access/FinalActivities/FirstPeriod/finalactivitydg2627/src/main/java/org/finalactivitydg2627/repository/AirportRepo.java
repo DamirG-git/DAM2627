@@ -1,19 +1,14 @@
 package org.finalactivitydg2627.repository;
 
-import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.dto.AirportDTO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AirportRepo {
+public class AirportRepo extends AbstractRepo {
 
-    private final DBConnection connection;
 
-    public AirportRepo() {
-        this.connection = DBConnection.getInstance();
-    }
 
     public List<AirportDTO> getOriginAirports() throws SQLException {
         var airportsDtoList = new ArrayList<AirportDTO>();
@@ -42,9 +37,18 @@ public class AirportRepo {
         }
 
     }
+    public enum AirportStatus {
+        FOUND,
+        NOT_FOUND,
+    }
 
-    public List<AirportDTO> getDestinationAirports(String code) throws SQLException {
+    public RepoResultValue<List<AirportDTO>,AirportStatus> getDestinationAirports(String code) throws SQLException {
         var airportsDtoList = new ArrayList<AirportDTO>();
+        var sqlAirportExistsQuery = """
+                SELECT 1 FROM airports a
+                where a.iata  = ?
+                """;
+
         var sqlDestinationsQuery = """
         SELECT DISTINCT dest.name, dest.iata, c.name, f.flight_code
             FROM flights f
@@ -58,6 +62,15 @@ public class AirportRepo {
         ORDER BY dest.iata, dest.name, c.name, f.flight_code;
     """;
         try (var conn = connection.connect()) {
+            try (var ps = conn.prepareStatement(sqlAirportExistsQuery)) {
+                ps.setString(1, code);
+                try (var result = ps.executeQuery()) {
+                    if(!result.next() ) {
+                        return new RepoResultValue<>(null, AirportStatus.NOT_FOUND);
+                    }
+                }
+            }
+
             try (var ps = conn.prepareStatement(sqlDestinationsQuery)) {
                 ps.setString(1, code);
                 try (var result = ps.executeQuery()) {
@@ -68,7 +81,7 @@ public class AirportRepo {
                                         result.getString(3),
                                         result.getString(4)));
                     }
-                    return airportsDtoList;
+                    return new RepoResultValue<>(airportsDtoList, AirportStatus.FOUND);
                 }
             }
         }

@@ -17,7 +17,7 @@ public class TestTicketController {
     private TicketController controller;
     private TicketService ticketService;
     private ApplicationLogger logger;
-    private TestInputs testInput = new TestInputs();
+    private final TestInputs testInput = new TestInputs();
 
     @BeforeEach
     void setup() {
@@ -31,8 +31,8 @@ public class TestTicketController {
 
         public String passport = "TEST123456";
         public String flightCode = "TES";
-        public String dateRaw = "2002-05-14";
-        public LocalDate date = LocalDate.parse(dateRaw);
+        public LocalDate date = LocalDate.now();
+        public String dateRaw = date.toString();
 
         public String[] inputs = {"COMMAND_IRRELEVANT", passport, flightCode, dateRaw};
     }
@@ -64,7 +64,7 @@ public class TestTicketController {
 
         controller.insertTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
-        verify(logger).log(contains(String.format(TicketController.WARN_PASS_HAS_TICKET_ON_SAME_DATE_FORMATTED,testInput.passport, testInput.date)), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(String.format(TicketController.WARN_PASS_HAS_TICKET_ON_SAME_DATE_FORMATTED_PASSPORT_DATE,testInput.passport, testInput.date)), eq(ApplicationLogger.LogLevel.WARNING));
 
     }
 
@@ -84,7 +84,7 @@ public class TestTicketController {
 
         controller.insertTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
-        verify(logger).log(contains(String.format(TicketController.WARN_NO_SEATS_AVAILABLE_FORMATTED, testInput.flightCode, testInput.date)), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(String.format(TicketController.WARN_NO_SEATS_AVAILABLE_FORMATTED_FLIGHT_DATE, testInput.flightCode, testInput.date)), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     @Test

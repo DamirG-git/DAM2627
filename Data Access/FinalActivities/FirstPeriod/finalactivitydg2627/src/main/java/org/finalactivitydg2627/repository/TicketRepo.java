@@ -1,19 +1,11 @@
 package org.finalactivitydg2627.repository;
 
-import org.finalactivitydg2627.database.DBConnection;
-
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
 
-public class TicketRepo {
+public class TicketRepo  extends AbstractRepo {
 
-
-    private final DBConnection connection;
-
-    public TicketRepo() {
-        connection = DBConnection.getInstance();
-    }
 
 
     private static final String SQL_TICKET_ON_SAME_DATE = """
@@ -72,11 +64,11 @@ public class TicketRepo {
                     try (var stmtFreeSeats = pstFlightHasFreeSeats.executeQuery();
                          var pstTicketAddNewTicket = conn.prepareStatement(SQL_TICKET_ADD_NEW_TICKET);) {
                         if (stmtFreeSeats.next()) {
-                            if(stmtFreeSeats.getLong(1) <= 0){
+                            if (stmtFreeSeats.getLong(1) <= 0) {
                                 conn.rollback();
                                 return TicketPurchaseResult.NO_SEATS_AVAILABLE;
                             }
-                        }else{
+                        } else {
                             conn.rollback();
                             return TicketPurchaseResult.FLIGHT_NOT_FOUND;
                         }

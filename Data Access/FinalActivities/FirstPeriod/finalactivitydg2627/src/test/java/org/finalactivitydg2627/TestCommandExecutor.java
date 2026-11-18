@@ -43,8 +43,8 @@ public class TestCommandExecutor {
 
         public final String destinationTestValue = "DEST";
         public final String addTestValue = "ADD";
-        public final String[] buyTestValues = {"TESTPASSPORT", "TESTFLIGHT", "TESTDATE"};
-        public final String[] flightsTestValue = {"TESTORIGIN", "TESTDESTINATION", "TESTDATE"};
+        public final String[] buyTestValues = {"TEST PASSPORT", "TESTFLIGHT", "TEST DATE"};
+        public final String[] flightsTestValue = {"TEST ORIGIN", "DESTINATION", "TEST DATE"};
     }
 
     @BeforeEach

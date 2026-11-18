@@ -3,30 +3,28 @@ package org.finalactivitydg2627.service;
 import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.dto.FlightDTO;
 import org.finalactivitydg2627.repository.FlightsRepo;
+import org.finalactivitydg2627.repository.AbstractRepo;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-public class FlightsService {
+public class FlightsService extends AbstractService {
 
-    private final ApplicationLogger logger;
     private final FlightsRepo flightsRepo;
 
 
 
     public FlightsService() {
-        logger = ApplicationLogger.getInstance();
         flightsRepo = new FlightsRepo();
     }
 
     public FlightsService(ApplicationLogger logger, FlightsRepo flightsRepo) {
-        this.logger = logger;
+        super(logger);
         this.flightsRepo = flightsRepo;
     }
 
-    public Optional<List<FlightDTO>> getFlights(String origin, String destination, LocalDate date) throws SQLException {
+    public AbstractRepo.RepoResultValue<List<FlightDTO>, FlightsRepo.AirportResult> getFlights(String origin, String destination, LocalDate date) throws SQLException {
             return flightsRepo.getFlights(origin,destination,date);
     }
 }

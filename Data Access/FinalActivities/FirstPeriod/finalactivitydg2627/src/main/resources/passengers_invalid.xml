@@ -1,0 +1,14 @@
+<passengers>
+    <passenger>
+        <passportno>Y12345612317</passportno>
+        <firstname>Jose</firstname>
+        <lastname>García</lastname>
+        <address>666 Noname Road, The forgotten City, USA</address>
+        <phone>6161166111a</phone>
+    </passenger>
+    <passenger>
+        <firstname>Antonio</firstname>
+        <lastname>Luque</lastname>
+        <phone>13213132141241221132412</phone>
+    </passenger>
+</passengers>

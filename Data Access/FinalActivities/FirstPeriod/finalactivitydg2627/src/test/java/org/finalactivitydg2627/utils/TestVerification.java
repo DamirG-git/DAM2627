@@ -13,7 +13,7 @@ public class TestVerification {
     private String label;
     private String input;
     private Integer minIntOrLength;
-    private Integer maxIntOrLenght;
+    private Integer maxIntOrLength;
     private LocalDate minDate;
     private LocalDate maxDate;
     private Pattern pattern;
@@ -23,7 +23,7 @@ public class TestVerification {
     void verifyGeneralValue_fail_whiteSpaceOrEmpty() {
         label = "test";
         input = " ";
-        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLenght, pattern);
+        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLength, pattern);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
@@ -33,7 +33,7 @@ public class TestVerification {
     @Test
     void verifyGeneralValue_fail_null() {
         label = "test";
-        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLenght, pattern);
+        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLength, pattern);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
@@ -45,7 +45,7 @@ public class TestVerification {
         label = "test";
         input = "Y1234567";
 
-        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLenght, pattern);
+        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLength, pattern);
         assertNotNull(result);
         assertNull(result.message());
         assertEquals(input, result.result());
@@ -57,7 +57,7 @@ public class TestVerification {
         label = "test";
         input = "12";
         minIntOrLength = 3;
-        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLenght, pattern);
+        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLength, pattern);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
@@ -68,8 +68,8 @@ public class TestVerification {
     void verifyString_fail_maxLength() {
         label = "test";
         input = "1234";
-        maxIntOrLenght = 3;
-        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLenght, pattern);
+        maxIntOrLength = 3;
+        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLength, pattern);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
@@ -81,7 +81,7 @@ public class TestVerification {
         label = "test";
         input = "1234";
         pattern = Pattern.compile("[A-Z]\\d{7}");
-        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLenght, pattern);
+        var result = Verification.basicStringVerification(label, input, minIntOrLength, maxIntOrLength, pattern);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
@@ -94,7 +94,7 @@ public class TestVerification {
         label = "test";
         input = "1234";
         int resultTest = 1234;
-        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLenght);
+        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLength);
         assertNotNull(result);
         assertNull(result.message());
         assertNotNull(result.result());
@@ -105,7 +105,7 @@ public class TestVerification {
     void verifyInt_fail_whiteSpaceOrEmpty() {
         label = "test";
         input = " ";
-        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLenght);
+        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLength);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
@@ -117,7 +117,7 @@ public class TestVerification {
         label = "test";
         input = "9";
         minIntOrLength = 10;
-        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLenght);
+        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLength);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
@@ -128,8 +128,8 @@ public class TestVerification {
     void verifyInt_fail_maxInt() {
         label = "test";
         input = "11";
-        maxIntOrLenght = 10;
-        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLenght);
+        maxIntOrLength = 10;
+        var result = Verification.basicIntegerVerification(label, input, minIntOrLength, maxIntOrLength);
         assertNotNull(result);
         assertNull(result.result());
         assertNotNull(result.message());
