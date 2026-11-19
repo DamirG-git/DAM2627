@@ -88,6 +88,15 @@ public class TestTicketController {
     }
 
     @Test
+    void addTicket_failure_passengerNotFound() throws SQLException {
+        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.PASSENGER_DOES_NOT_EXIST);
+
+        controller.insertTicket(testInput.inputs);
+        verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
+        verify(logger).log(contains(String.format(TicketController.WARN_PASSENGER_DOES_NOT_EXIST_FORMATTED_PASSPORT, testInput.passport)), eq(ApplicationLogger.LogLevel.WARNING));
+    }
+
+    @Test
     void addTicket_failure_failureOnInsert() throws SQLException {
         when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET);
 
