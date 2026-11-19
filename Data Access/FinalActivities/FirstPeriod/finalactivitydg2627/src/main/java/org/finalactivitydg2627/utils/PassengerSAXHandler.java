@@ -1,6 +1,6 @@
-package org.finalactivitydg2627.Utils;
+package org.finalactivitydg2627.utils;
 
-import org.finalactivitydg2627.dto.PassengerInputDto;
+import org.finalactivitydg2627.dto.PassengerRawDTO;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -11,10 +11,10 @@ public class PassengerSAXHandler extends DefaultHandler {
 
     private final StringBuilder contextBuilder = new StringBuilder();
 
-    private final List<PassengerInputDto> passengers = new ArrayList<>();
-    private PassengerInputDto currentPassenger;
+    private final List<PassengerRawDTO> passengers = new ArrayList<>();
+    private PassengerRawDTO currentPassenger;
 
-    public List<PassengerInputDto> getPassengers() {
+    public List<PassengerRawDTO> getPassengers() {
         return passengers;
     }
 
@@ -22,7 +22,7 @@ public class PassengerSAXHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         contextBuilder.setLength(0);
         if (qName.equals("passenger")) {
-            currentPassenger = new PassengerInputDto();
+            currentPassenger = new PassengerRawDTO();
         }
     }
 

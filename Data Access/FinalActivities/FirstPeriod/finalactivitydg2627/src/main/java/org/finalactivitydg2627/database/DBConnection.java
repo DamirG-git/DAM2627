@@ -1,6 +1,6 @@
 package org.finalactivitydg2627.database;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.io.IOException;
 import java.sql.Connection;

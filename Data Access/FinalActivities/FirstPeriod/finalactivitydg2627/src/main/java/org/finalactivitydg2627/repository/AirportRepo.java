@@ -1,8 +1,8 @@
 package org.finalactivitydg2627.repository;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.dto.AirportDTO;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +11,10 @@ import java.util.List;
 
 public class AirportRepo extends AbstractRepo {
 
-    public AirportRepo() {
+    public AirportRepo() {}
+
+    public AirportRepo(ApplicationLogger logger) {
+        super(logger);
     }
 
     public AirportRepo(DBConnection connection, ApplicationLogger logger) {

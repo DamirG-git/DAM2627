@@ -1,8 +1,8 @@
 package org.finalactivitydg2627.controllers;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.service.PassengerService;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -37,31 +37,31 @@ public class TestPassengerController {
     void addPassengers_success() throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
-        controller.importPassengerFromXml(testXml);
+        controller.importPassengersFromXml(testXml);
 
         verify(passengerService).addPassengerFromXML(testLoc);
-        verify(logger).log(contains(PassengerController.INFO_CALLING_SERVICE), eq(ApplicationLogger.LogLevel.INFO));
+        verify(logger).log(contains(PassengerController.INFO_IMPORTING_PASSENGERS_FROM_XML), eq(ApplicationLogger.LogLevel.INFO));
     }
 
     @Test
     void addPassengers_fail_xmlFileInvalid() throws ParserConfigurationException,
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
-        controller.importPassengerFromXml("invalid.xml");
+        controller.importPassengersFromXml("invalid.xml");
 
         verify(passengerService, never()).addPassengerFromXML(testLoc);
-        verify(logger).log(contains(PassengerController.WARN_XML_PATH_VALIDATION_FAILED), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(PassengerController.WARN_INVALID_XML_FILE_PATH), eq(ApplicationLogger.LogLevel.WARNING));
 
     }
 
     @Test
     void addPassenger_fail_exception_DBPassengerInsertion() throws PassengerService.PassengerValidationException, SQLException, ParserConfigurationException, IOException, SAXException {
         doThrow(new SQLException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
-        controller.importPassengerFromXml(testXml);
+        controller.importPassengersFromXml(testXml);
 
 
-        verify(logger).log(contains(PassengerController.ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER + "Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
-        verify(logger).log(contains(PassengerController.ERROR_SQL_STATE_NULL + "Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
+        verify(logger).log(contains(PassengerController.ERROR_INSERTING_PASSENGER + "Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
+        verify(logger).log(contains(PassengerController.ERROR_MISSING_SQL_STATE + "Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
     }
 
 
@@ -71,7 +71,7 @@ public class TestPassengerController {
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new ParserConfigurationException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
 
-        controller.importPassengerFromXml(testXml);
+        controller.importPassengersFromXml(testXml);
 
         verify(logger).log(contains("Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
     }
@@ -82,7 +82,7 @@ public class TestPassengerController {
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new SAXException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
 
-        controller.importPassengerFromXml(testXml);
+        controller.importPassengersFromXml(testXml);
 
         verify(logger).log(contains("Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
     }
@@ -94,7 +94,7 @@ public class TestPassengerController {
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new IOException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
 
-        controller.importPassengerFromXml(testXml);
+        controller.importPassengersFromXml(testXml);
 
 
         verify(logger).log(contains("Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));
@@ -106,8 +106,8 @@ public class TestPassengerController {
             IOException, SAXException,
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new PassengerService.PassengerValidationException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
-        controller.importPassengerFromXml(testXml);
-        verify(logger).log(contains(PassengerController.WARN_XML_FILE_PASSENGERS_HAD_ERROR + "Test Exception"), eq(ApplicationLogger.LogLevel.WARNING));
+        controller.importPassengersFromXml(testXml);
+        verify(logger).log(contains(PassengerController.WARN_XML_PASSENGER_VALIDATION_FAILED + "Test Exception"), eq(ApplicationLogger.LogLevel.WARNING));
     }
 }
 

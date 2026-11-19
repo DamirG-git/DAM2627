@@ -1,9 +1,9 @@
 package org.finalactivitydg2627.service;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.dto.AirportDTO;
 import org.finalactivitydg2627.repository.AbstractRepo;
 import org.finalactivitydg2627.repository.AirportRepo;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -19,6 +19,11 @@ public class AirportService  extends AbstractService {
     public AirportService(ApplicationLogger logger, AirportRepo airportRepo) {
         super(logger);
         this.airportRepo = airportRepo;
+    }
+
+    public AirportService(ApplicationLogger logger) {
+        super(logger);
+        airportRepo = new AirportRepo(logger);
     }
 
     public List<AirportDTO> getOriginAirports() throws SQLException {

@@ -1,8 +1,8 @@
 package org.finalactivitydg2627.repository;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.dto.FlightDTO;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,6 +13,10 @@ import java.util.List;
 public class FlightsRepo extends AbstractRepo {
 
     public FlightsRepo() {
+    }
+
+    public FlightsRepo(ApplicationLogger logger) {
+        super(logger);
     }
 
     public FlightsRepo(DBConnection connection, ApplicationLogger logger) {
@@ -42,25 +46,30 @@ public class FlightsRepo extends AbstractRepo {
 
             var exists = validateAirports(conn, origin, destination);
             if (exists == AirportResult.SUCCESS) {
-                try (var stmt = conn.prepareStatement(GET_FLIGHTS_FUNC)) {
-                    stmt.setString(1, origin);
-                    stmt.setString(2, destination);
-                    stmt.setObject(3, date);
-                    try (var result = stmt.executeQuery()) {
-                        while (result.next()) {
-                            flights.add(
-                                    new FlightDTO(
-                                            result.getString(1),
-                                            result.getString(2),
-                                            result.getString(3),
-                                            result.getInt(4),
-                                            result.getLong(5)));
-                        }
-                    }
-                    return new RepoResultValue<>(flights, AirportResult.SUCCESS);
-                }
+                return getAirportsResults(origin, destination, date, conn, flights);
             }
             return new RepoResultValue<>(null, exists);
+        }
+    }
+
+    private static RepoResultValue<List<FlightDTO>, AirportResult> getAirportsResults(
+            String origin, String destination, LocalDate date, Connection conn, List<FlightDTO> flights) throws SQLException {
+        try (var stmt = conn.prepareStatement(GET_FLIGHTS_FUNC)) {
+            stmt.setString(1, origin);
+            stmt.setString(2, destination);
+            stmt.setObject(3, date);
+            try (var result = stmt.executeQuery()) {
+                while (result.next()) {
+                    flights.add(
+                            new FlightDTO(
+                                    result.getString(1),
+                                    result.getString(2),
+                                    result.getString(3),
+                                    result.getInt(4),
+                                    result.getLong(5)));
+                }
+            }
+            return new RepoResultValue<>(flights, AirportResult.SUCCESS);
         }
     }
 

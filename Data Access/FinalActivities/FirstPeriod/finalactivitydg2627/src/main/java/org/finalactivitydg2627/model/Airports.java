@@ -1,6 +1,6 @@
 package org.finalactivitydg2627.model;
 
-import org.finalactivitydg2627.Utils.Verification;
+import org.finalactivitydg2627.utils.ApplicationValidator;
 
 import java.util.regex.Pattern;
 
@@ -46,7 +46,7 @@ public class Airports {
         this.code = code;
     }
 
-    public static Verification.ResultValue<String> validateIata(String iata){
-        return Verification.basicStringVerification("IATA", iata, 3, 3, Pattern.compile("^[A-Z]{3}$"));
+    public static ApplicationValidator.ResultValue<String> validateIata(String iata){
+        return ApplicationValidator.basicStringVerification("IATA", iata, 3, 3, Pattern.compile("^[A-Z]{3}$"));
     }
 }

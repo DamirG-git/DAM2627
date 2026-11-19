@@ -1,6 +1,6 @@
 package org.finalactivitydg2627.dto;
 
-public class PassengerInputDto {
+public class PassengerRawDTO {
     public String getPassno() {
         return passno;
     }

@@ -1,11 +1,11 @@
 package org.finalactivitydg2627.controllers;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.dto.FlightDTO;
 import org.finalactivitydg2627.repository.AbstractRepo;
 import org.finalactivitydg2627.repository.FlightsRepo;
 import org.finalactivitydg2627.service.FlightsService;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -62,10 +62,10 @@ public class TestFlightsController {
         var returnValue = new AbstractRepo.RepoResultValue<>(List.of(output), FlightsRepo.AirportResult.SUCCESS);
         when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenReturn(returnValue);
 
-        controller.findFlights(testInput.testInputsRawValid);
+        controller.displayFlights(testInput.testInputsRawValid);
 
         verify(flightsService).getFlights(testInput.origin, testInput.destination, testInput.date);
-        verify(logger).log(contains(FlightsController.INFO_SUCCESS_GET_FLIGHTS), eq(ApplicationLogger.LogLevel.INFO));
+        verify(logger).log(contains(FlightsController.INFO_FLIGHTS_RETRIEVED), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains("TST"), eq(ApplicationLogger.LogLevel.INFO));
 
     }
@@ -78,10 +78,10 @@ public class TestFlightsController {
         );
         when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenReturn(returnValue);
 
-        controller.findFlights(testInput.testInputsRawInvalid);
+        controller.displayFlights(testInput.testInputsRawInvalid);
 
         verify(flightsService, never()).getFlights(testInput.origin, testInput.destination, testInput.date);
-        verify(logger).log(contains(FlightsController.WARN_VALIDATION_FAILED), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(FlightsController.WARN_INPUT_VALIDATION_FAILED), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     @Test
@@ -92,13 +92,13 @@ public class TestFlightsController {
                 FlightsRepo.AirportResult.SUCCESS
         );
         when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenReturn(returnValue);
-        controller.findFlights(testInput.testInputsRawValid);
+        controller.displayFlights(testInput.testInputsRawValid);
 
         verify(flightsService).getFlights(testInput.origin, testInput.destination, testInput.date);
 
         verify(logger).log(contains(
                         String.format(
-                                FlightsController.WARN_NO_FLIGHTS_FOUND_FORMATTED_ORIGIN_DEST_DATE,
+                                FlightsController.WARN_NO_FLIGHTS_FOUND_FORMAT_FORMAT_ORIGIN_DEST_DATE,
                                 testInput.origin,
                                 testInput.destination,
                                 testInput.date)),
@@ -113,13 +113,13 @@ public class TestFlightsController {
                 FlightsRepo.AirportResult.NO_ORIGIN_OR_DESTINATION_FOUND
         );
         when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenReturn(returnValue);
-        controller.findFlights(testInput.testInputsRawValid);
+        controller.displayFlights(testInput.testInputsRawValid);
 
         verify(flightsService).getFlights(testInput.origin, testInput.destination, testInput.date);
 
         verify(logger).log(contains(
                         String.format(
-                                FlightsController.WARN_NO_ORIGIN_OR_DESTINATION_FOUND_FORMATTED_ORIGIN_DEST,
+                                FlightsController.WARN_ORIGIN_OR_DESTINATION_NOT_FOUND_FORMAT_ORIGIN_DEST,
                                 testInput.origin,
                                 testInput.destination)),
                 eq(ApplicationLogger.LogLevel.WARNING));
@@ -133,12 +133,12 @@ public class TestFlightsController {
                 FlightsRepo.AirportResult.NO_ORIGIN_AIRPORT_FOUND
         );
         when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenReturn(returnValue);
-        controller.findFlights(testInput.testInputsRawValid);
+        controller.displayFlights(testInput.testInputsRawValid);
 
         verify(flightsService).getFlights(testInput.origin, testInput.destination, testInput.date);
 
         verify(logger).log(contains(
-                        FlightsController.WARN_NO_ORIGIN_AIRPORT_FOUND +
+                        FlightsController.WARN_ORIGIN_AIRPORT_NOT_FOUND +
                                 testInput.origin),
                 eq(ApplicationLogger.LogLevel.WARNING));
     }
@@ -151,12 +151,12 @@ public class TestFlightsController {
                 FlightsRepo.AirportResult.NO_DESTINATION_AIRPORT_FOUND
         );
         when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenReturn(returnValue);
-        controller.findFlights(testInput.testInputsRawValid);
+        controller.displayFlights(testInput.testInputsRawValid);
 
         verify(flightsService).getFlights(testInput.origin, testInput.destination, testInput.date);
 
         verify(logger).log(contains(
-                        FlightsController.WARN_NO_DESTINATION_AIRPORT_FOUND +
+                        FlightsController.WARN_DESTINATION_AIRPORT_NOT_FOUND +
                                 testInput.destination),
                 eq(ApplicationLogger.LogLevel.WARNING));
     }
@@ -165,7 +165,7 @@ public class TestFlightsController {
     void getFlights_failure_Exception() throws SQLException {
         when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenThrow(new SQLException("Test Exception"));
 
-        controller.findFlights(testInput.testInputsRawValid);
+        controller.displayFlights(testInput.testInputsRawValid);
 
         verify(flightsService).getFlights(testInput.origin, testInput.destination, testInput.date);
         verify(logger).log(contains("Test Exception"), eq(ApplicationLogger.LogLevel.ERROR));

@@ -1,4 +1,4 @@
-package org.finalactivitydg2627.Utils;
+package org.finalactivitydg2627.utils;
 
 public class MessageFormatter {
 
@@ -7,7 +7,7 @@ public class MessageFormatter {
     }
 
 
-    public static String multipleErrorsFormatter(Verification.ResultValue<?>... messages) {
+    public static String multipleErrorsFormatter(ApplicationValidator.ResultValue<?>... messages) {
         var builder = new StringBuilder();
         boolean first = true;
         for (var message : messages) {

@@ -1,8 +1,8 @@
 package org.finalactivitydg2627.repository;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.model.Passengers;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

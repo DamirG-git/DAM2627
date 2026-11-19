@@ -1,8 +1,8 @@
 package org.finalactivitydg2627.repository;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.model.Passengers;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -10,6 +10,11 @@ import java.util.List;
 public class PassengerRepo extends AbstractRepo {
 
     public PassengerRepo() {}
+
+    public PassengerRepo(ApplicationLogger logger) {
+        super(logger);
+    }
+
     public PassengerRepo(DBConnection connection, ApplicationLogger logger) {
         super(connection,logger);
     }
@@ -29,6 +34,7 @@ public class PassengerRepo extends AbstractRepo {
                     psAddPassenger.setString(4, p.getAddress());
                     psAddPassenger.setString(5, p.getPhone());
                     psAddPassenger.addBatch();
+
                 }
                 var execution = psAddPassenger.executeBatch();
                 conn.commit();

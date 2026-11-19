@@ -1,9 +1,9 @@
 package org.finalactivitydg2627.service;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.dto.FlightDTO;
 import org.finalactivitydg2627.repository.AbstractRepo;
 import org.finalactivitydg2627.repository.FlightsRepo;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -17,6 +17,11 @@ public class FlightsService extends AbstractService {
 
     public FlightsService() {
         flightsRepo = new FlightsRepo();
+    }
+
+    public FlightsService(ApplicationLogger logger) {
+        super(logger);
+        flightsRepo = new FlightsRepo(logger);
     }
 
     public FlightsService(ApplicationLogger logger, FlightsRepo flightsRepo) {

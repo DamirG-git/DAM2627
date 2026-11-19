@@ -1,4 +1,4 @@
-package org.finalactivitydg2627.Utils;
+package org.finalactivitydg2627.utils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,13 +7,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 
-public class Verification {
+public class ApplicationValidator {
 
     public record ResultValue<T>(T result, String message) {
     }
 
 
-    private Verification() {
+    private ApplicationValidator() {
     }
 
 

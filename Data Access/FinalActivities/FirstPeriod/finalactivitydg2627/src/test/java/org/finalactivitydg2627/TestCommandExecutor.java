@@ -1,10 +1,10 @@
 package org.finalactivitydg2627;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.controller.TicketController;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,28 +61,28 @@ public class TestCommandExecutor {
 
     @Test
     public void inputLogic_help_success() {
-        commandExecutor.inputLogic(testInput.helpCommand);
-        verify(logger).log(contains(CommandExecutor.HELP), eq(ApplicationLogger.LogLevel.INFO));
+        commandExecutor.executeCommand(testInput.helpCommand);
+        verify(logger).log(contains(CommandExecutor.HELP_MESSAGE), eq(ApplicationLogger.LogLevel.INFO));
     }
 
     @Test
     public void inputLogic_origins_success() {
-        commandExecutor.inputLogic(testInput.originsCommand);
-        verify(airportController).findOriginAirports();
+        commandExecutor.executeCommand(testInput.originsCommand);
+        verify(airportController).displayOriginAirports();
     }
 
     @Test
     public void inputLogic_destinations_success() {
         String[] input = {testInput.destinationsCommand, testInput.destinationTestValue};
-        commandExecutor.inputLogic(input);
-        verify(airportController).findDestinationAirports(input[1]);
+        commandExecutor.executeCommand(input);
+        verify(airportController).displayDestinationAirports(input[1]);
     }
 
     @Test
     public void inputLogic_destination_failure() {
         String[] input = {testInput.destinationsCommand};
-        commandExecutor.inputLogic(input);
-        verify(airportController, never()).findDestinationAirports(anyString());
+        commandExecutor.executeCommand(input);
+        verify(airportController, never()).displayDestinationAirports(anyString());
         verify(logger).log(contains(CommandExecutor.DEST_INSTR), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
@@ -92,30 +92,30 @@ public class TestCommandExecutor {
                 testInput.flightsTestValue[0], //origin
                 testInput.flightsTestValue[1], //destination
                 testInput.flightsTestValue[2]}; //date
-        commandExecutor.inputLogic(input);
-        verify(flightsController).findFlights(input);
+        commandExecutor.executeCommand(input);
+        verify(flightsController).displayFlights(input);
     }
 
     @Test
     public void inputLogic_flights_failure() {
         String[] input = {testInput.flightsCommand};
-        commandExecutor.inputLogic(input);
-        verify(flightsController, never()).findFlights(any());
+        commandExecutor.executeCommand(input);
+        verify(flightsController, never()).displayFlights(any());
         verify(logger).log(contains(CommandExecutor.FLIGHT_INSTR), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     @Test
     public void inputLogic_add_success() {
         String[] input = {testInput.addCommand, testInput.addTestValue};
-        commandExecutor.inputLogic(input);
-        verify(passengerController).importPassengerFromXml(testInput.addTestValue);
+        commandExecutor.executeCommand(input);
+        verify(passengerController).importPassengersFromXml(testInput.addTestValue);
     }
 
     @Test
     public void inputLogic_add_failure() {
         String[] input = {testInput.addCommand};
-        commandExecutor.inputLogic(input);
-        verify(passengerController, never()).importPassengerFromXml(anyString());
+        commandExecutor.executeCommand(input);
+        verify(passengerController, never()).importPassengersFromXml(anyString());
         verify(logger).log(contains(CommandExecutor.ADD_INSTR), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
@@ -125,14 +125,14 @@ public class TestCommandExecutor {
                 testInput.buyTestValues[0], //Passport
                 testInput.buyTestValues[1], //Flight
                 testInput.buyTestValues[2]}; //Date
-        commandExecutor.inputLogic(input);
-        verify(ticketController).insertTicket(input);
+        commandExecutor.executeCommand(input);
+        verify(ticketController).purchaseTicket(input);
     }
     @Test
     public void inputLogic_buy_failure() {
         String[] input = {testInput.buyCommand};
-        commandExecutor.inputLogic(input);
-        verify(ticketController, never()).insertTicket(any());
+        commandExecutor.executeCommand(input);
+        verify(ticketController, never()).purchaseTicket(any());
         verify(logger).log(contains(CommandExecutor.BUY_INSTR), eq(ApplicationLogger.LogLevel.WARNING));
     }
 

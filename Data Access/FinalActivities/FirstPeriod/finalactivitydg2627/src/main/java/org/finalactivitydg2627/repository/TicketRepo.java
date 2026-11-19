@@ -1,7 +1,7 @@
 package org.finalactivitydg2627.repository;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.database.DBConnection;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -11,6 +11,10 @@ public class TicketRepo extends AbstractRepo {
 
 
     public TicketRepo() {
+    }
+
+    public TicketRepo(ApplicationLogger logger) {
+        super(logger);
     }
 
     public TicketRepo(DBConnection connection, ApplicationLogger logger) {

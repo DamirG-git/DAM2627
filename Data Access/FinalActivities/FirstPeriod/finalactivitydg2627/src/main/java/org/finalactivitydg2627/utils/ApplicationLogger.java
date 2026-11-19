@@ -1,4 +1,4 @@
-package org.finalactivitydg2627.Utils;
+package org.finalactivitydg2627.utils;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

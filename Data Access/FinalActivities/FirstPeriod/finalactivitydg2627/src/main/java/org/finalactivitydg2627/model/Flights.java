@@ -1,6 +1,6 @@
 package org.finalactivitydg2627.model;
 
-import org.finalactivitydg2627.Utils.Verification;
+import org.finalactivitydg2627.utils.ApplicationValidator;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,7 +29,7 @@ public class Flights {
         return codeSourceAirport;
     }
 
-    public Verification.ResultValue<String> setCodeSourceAirport(String codeSourceAirport) {
+    public ApplicationValidator.ResultValue<String> setCodeSourceAirport(String codeSourceAirport) {
         var result = validateAirportCode("source location", codeSourceAirport);
         this.codeSourceAirport = result.result();
         return result;
@@ -39,14 +39,14 @@ public class Flights {
         return codeDestinationAirport;
     }
 
-    public Verification.ResultValue<String> setCodeDestinationAirport(String codeDestinationAirport) {
+    public ApplicationValidator.ResultValue<String> setCodeDestinationAirport(String codeDestinationAirport) {
         var result = validateAirportCode("destination location", codeDestinationAirport);
         this.codeDestinationAirport = result.result();
         return result;
     }
 
-    public Verification.ResultValue<String> validateAirportCode(String label, String input){
-        return Verification.basicStringVerification(label, input == null ? null : input.toUpperCase(), 3, null, null);
+    public ApplicationValidator.ResultValue<String> validateAirportCode(String label, String input){
+        return ApplicationValidator.basicStringVerification(label, input == null ? null : input.toUpperCase(), 3, null, null);
     }
 
     public LocalTime getArrivalTime() {
@@ -97,15 +97,15 @@ public class Flights {
         this.planeCode = planeCode;
     }
 
-    public Verification.ResultValue<LocalDate> validateFlightDate(String input){
-        return Verification.basicDateVerification("date", input, LocalDate.now(), null);
+    public ApplicationValidator.ResultValue<LocalDate> validateFlightDate(String input){
+        return ApplicationValidator.basicDateVerification("date", input, LocalDate.now(), null);
     }
 
     public LocalDate getTravelDate() {
         return travelDate;
     }
 
-    public Verification.ResultValue<LocalDate> setTravelDate(String travelDate) {
+    public ApplicationValidator.ResultValue<LocalDate> setTravelDate(String travelDate) {
         var result = validateFlightDate(travelDate);
         this.travelDate = result.result();
         return result;

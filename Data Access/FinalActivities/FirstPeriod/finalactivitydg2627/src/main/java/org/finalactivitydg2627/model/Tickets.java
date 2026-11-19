@@ -1,6 +1,6 @@
 package org.finalactivitydg2627.model;
 
-import org.finalactivitydg2627.Utils.Verification;
+import org.finalactivitydg2627.utils.ApplicationValidator;
 
 import java.time.LocalDate;
 
@@ -43,14 +43,14 @@ public class Tickets {
         return travelDate;
     }
 
-    public Verification.ResultValue<LocalDate> setTravelDate(String travelDate) {
+    public ApplicationValidator.ResultValue<LocalDate> setTravelDate(String travelDate) {
         var result = validateTravelDate(travelDate);
         this.travelDate = result.result();
         return result;
     }
 
-    public Verification.ResultValue<LocalDate> validateTravelDate(String travelDate) {
-        return Verification.basicDateVerification("date", travelDate, LocalDate.now(), null);
+    public ApplicationValidator.ResultValue<LocalDate> validateTravelDate(String travelDate) {
+        return ApplicationValidator.basicDateVerification("date", travelDate, LocalDate.now(), null);
     }
 
     public LocalDate getCancellationDate() {
@@ -65,28 +65,28 @@ public class Tickets {
         return passportCode;
     }
 
-    public Verification.ResultValue<String> setPassportCode(String passportCode) {
+    public ApplicationValidator.ResultValue<String> setPassportCode(String passportCode) {
         var result = validatePassportCode(passportCode);
         this.passportCode = result.result();
         return result;
     }
 
-    public Verification.ResultValue<String> validatePassportCode(String passportCode) {
-        return Verification.basicStringVerification("passport", passportCode, null, 10, null);
+    public ApplicationValidator.ResultValue<String> validatePassportCode(String passportCode) {
+        return ApplicationValidator.basicStringVerification("passport", passportCode, null, 10, null);
     }
 
     public String getFlightCode() {
         return flightCode;
     }
 
-    public Verification.ResultValue<String> setFlightCode(String flightCode) {
+    public ApplicationValidator.ResultValue<String> setFlightCode(String flightCode) {
         var result = validateFlightCode(flightCode);
         this.flightCode = result.result();
         return result;
     }
 
-    public Verification.ResultValue<String> validateFlightCode(String flightCode) {
-        return Verification.basicStringVerification("flight code", flightCode, null, 10, null);
+    public ApplicationValidator.ResultValue<String> validateFlightCode(String flightCode) {
+        return ApplicationValidator.basicStringVerification("flight code", flightCode, null, 10, null);
     }
 
     public int getPrice() {

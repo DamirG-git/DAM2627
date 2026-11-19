@@ -1,7 +1,7 @@
 package org.finalactivitydg2627.service;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.repository.TicketRepo;
+import org.finalactivitydg2627.utils.ApplicationLogger;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -13,6 +13,11 @@ public class TicketService  extends AbstractService {
 
     public TicketService() {
         this.ticketRepo = new TicketRepo();
+    }
+
+    public TicketService(ApplicationLogger logger) {
+        super(logger);
+        ticketRepo = new TicketRepo(logger);
     }
 
     public TicketService(ApplicationLogger logger, TicketRepo ticketRepo) {

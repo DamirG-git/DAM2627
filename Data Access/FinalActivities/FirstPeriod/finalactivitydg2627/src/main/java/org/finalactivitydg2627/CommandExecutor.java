@@ -1,11 +1,11 @@
 package org.finalactivitydg2627;
 
-import org.finalactivitydg2627.Utils.ApplicationLogger;
-import org.finalactivitydg2627.Utils.StoredProceduresSQL;
 import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.controller.TicketController;
+import org.finalactivitydg2627.utils.ApplicationLogger;
+import org.finalactivitydg2627.utils.StoredProceduresSQL;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -17,15 +17,6 @@ public class CommandExecutor {
     private final FlightsController flightsController;
     private final PassengerController passengerController;
     private final TicketController ticketController;
-
-
-    public CommandExecutor() {
-        logger = ApplicationLogger.getInstance();
-        airportController = new AirportController();
-        flightsController = new FlightsController();
-        passengerController = new PassengerController();
-        ticketController = new TicketController();
-    }
 
     public CommandExecutor(ApplicationLogger logger) {
         this.logger = logger;
@@ -43,7 +34,7 @@ public class CommandExecutor {
         this.logger = logger;
     }
 
-    public static final String HELP = """
+    public static final String HELP_MESSAGE = """
             Usage: flights [options]
             
             Options:
@@ -56,48 +47,48 @@ public class CommandExecutor {
             """;
 
 
-    public static final String WARN_NO_INPUT_GIVEN = "No input was provided.";
+    public static final String WARN_NO_INPUT_PROVIDED = "No input was provided.";
 
 
-    public void inputLogic(String[] args) {
+    public void executeCommand(String[] args) {
         if (args.length == 0) {
-            logger.log(WARN_NO_INPUT_GIVEN, ApplicationLogger.LogLevel.WARNING);
+            logger.log(WARN_NO_INPUT_PROVIDED, ApplicationLogger.LogLevel.WARNING);
             return;
         }
         switch (args[0].trim().toLowerCase()) {
             case "-h", "--help":
-                helpMessage();
+                displayHelp();
                 break;
             case "-o", "--origins":
-                origins();
+                displayOriginAirports();
                 break;
             case "-a", "--add":
-                add(args);
+                handleAddCommand(args);
                 break;
             case "-d", "--destinations":
-                destinations(args);
+                handleDestinationsCommand(args);
                 break;
             case "-b", "--buy":
-                buy(args);
+                handleBuyCommand(args);
                 break;
             case "-f", "--flights":
-                flights(args);
+                handleFlightsCommand(args);
                 break;
             default:
-                printUnknownCommand(args[0]);
+                displayUnknownCommand(args[0]);
 
         }
     }
 
     //-h, --help: show this help
-    public void helpMessage() {
-        logger.log(HELP,
+    public void displayHelp() {
+        logger.log(HELP_MESSAGE,
                 ApplicationLogger.LogLevel.INFO);
     }
 
     //-o, --origins: show the origins of the flights
-    public void origins() {
-        airportController.findOriginAirports();
+    public void displayOriginAirports() {
+        airportController.displayOriginAirports();
     }
 
 
@@ -106,15 +97,15 @@ public class CommandExecutor {
             "-d, --destinations <origin>: show the destinations of the flights from origin";
     public static final int DEST_MAX_ARGS = 2;
 
-    public void destinations(String[] args) {
+    public void handleDestinationsCommand(String[] args) {
         if (args.length != DEST_MAX_ARGS) {
-            logger.log(messageInvalidAmountOfArguments(args, DEST_MAX_ARGS),
+            logger.log(formatInvalidArgumentCountMessage(args, DEST_MAX_ARGS),
                     ApplicationLogger.LogLevel.WARNING);
             logger.log(DEST_INSTR,
                     ApplicationLogger.LogLevel.WARNING);
             return;
         }
-        airportController.findDestinationAirports(args[1]);
+        airportController.displayDestinationAirports(args[1]);
     }
 
     //-a, --add <filename.xml>: add the passengers in the XML file to the database.
@@ -122,15 +113,15 @@ public class CommandExecutor {
             "-a, --add <filename.xml>: add the passengers in the XML file to the database.";
     public static final int ADD_MAX_ARGS = 2;
 
-    public void add(String[] args) {
+    public void handleAddCommand(String[] args) {
         if (args.length != 2) {
-            logger.log(messageInvalidAmountOfArguments(args, ADD_MAX_ARGS),
+            logger.log(formatInvalidArgumentCountMessage(args, ADD_MAX_ARGS),
                     ApplicationLogger.LogLevel.WARNING);
             logger.log(ADD_INSTR,
                     ApplicationLogger.LogLevel.WARNING);
             return;
         }
-        passengerController.importPassengerFromXml(args[1]);
+        passengerController.importPassengersFromXml(args[1]);
     }
 
 
@@ -138,20 +129,20 @@ public class CommandExecutor {
             "-b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date";
     public static final int BUY_MAX_ARGS = 4;
 
-    public void buy(String[] args) {
+    public void handleBuyCommand(String[] args) {
         if (args.length != BUY_MAX_ARGS) {
-            logger.log(messageInvalidAmountOfArguments(args, BUY_MAX_ARGS),
+            logger.log(formatInvalidArgumentCountMessage(args, BUY_MAX_ARGS),
                     ApplicationLogger.LogLevel.WARNING);
             logger.log(BUY_INSTR,
                     ApplicationLogger.LogLevel.WARNING);
             return;
         }
-        ticketController.insertTicket(args);
+        ticketController.purchaseTicket(args);
     }
 
-    public static final String DEBUG_CREATING_PROCEDURE =
+    public static final String DEBUG_STORED_PROCEDURES_INITIALIZED =
             "Created or replaced stored procedures!";
-    public static final String ERROR_SQL_FUNCTION_CREATION_FAILURE =
+    public static final String ERROR_STORED_PROCEDURE_INITIALIZATION =
             "Custom SQL functions failed to create: ";
 
 
@@ -159,41 +150,41 @@ public class CommandExecutor {
             "-f, --flights <origin> <destination> <date>: show the flights available from origin to destination";
     public static final int FLIGHTS_MAX_ARGS = 4;
 
-    public void flights(String[] args) {
+    public void handleFlightsCommand(String[] args) {
         if (args.length != FLIGHTS_MAX_ARGS) {
             logger.log(FLIGHT_INSTR,
                     ApplicationLogger.LogLevel.WARNING);
-            logger.log(messageInvalidAmountOfArguments(args, FLIGHTS_MAX_ARGS),
+            logger.log(formatInvalidArgumentCountMessage(args, FLIGHTS_MAX_ARGS),
                     ApplicationLogger.LogLevel.WARNING);
             return;
         }
         try {
             new StoredProceduresSQL().initialize();
-            logger.log(DEBUG_CREATING_PROCEDURE,
+            logger.log(DEBUG_STORED_PROCEDURES_INITIALIZED,
                     ApplicationLogger.LogLevel.DEBUG);// Create procedures
         } catch (SQLException e) {
-            logger.log(ERROR_SQL_FUNCTION_CREATION_FAILURE + e.getMessage(),
+            logger.log(ERROR_STORED_PROCEDURE_INITIALIZATION + e.getMessage(),
                     ApplicationLogger.LogLevel.ERROR);
             return;
         }
-        flightsController.findFlights(args);
+        flightsController.displayFlights(args);
 
     }
 
-    public static final String ERROR_UNKNOWN_COMMAND =
+    public static final String WARN_UNKNOWN_COMMAND =
             "Unknown command: ";
-    public static final String WARN_INVALID_AMOUNT_OF_ARGUMENTS_FORMATTED =
+    public static final String WARN_INVALID_ARGUMENT_COUNT_FORMAT_COUNT_ARGS =
             "Invalid amount of arguments passed: %d/%d max, %s";
 
-    public static String messageInvalidAmountOfArguments(String[] args, int max) {
+    public static String formatInvalidArgumentCountMessage(String[] args, int max) {
         return String.format(
-                WARN_INVALID_AMOUNT_OF_ARGUMENTS_FORMATTED, args.length, max, Arrays.toString(args));
+                WARN_INVALID_ARGUMENT_COUNT_FORMAT_COUNT_ARGS, args.length, max, Arrays.toString(args));
 
     }
 
-    private void printUnknownCommand(String command) {
-        logger.log(ERROR_UNKNOWN_COMMAND + command, ApplicationLogger.LogLevel.WARNING);
-        logger.log(HELP, ApplicationLogger.LogLevel.INFO);
+    private void displayUnknownCommand(String command) {
+        logger.log(WARN_UNKNOWN_COMMAND + command, ApplicationLogger.LogLevel.WARNING);
+        logger.log(HELP_MESSAGE, ApplicationLogger.LogLevel.INFO);
     }
 
 }
