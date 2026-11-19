@@ -5,5 +5,5 @@ public record FlightDTO(
         String iataCode,
         String cityName,
         int totalSeats,
-        long availableSeats
+        long freeSeats
 ) {}

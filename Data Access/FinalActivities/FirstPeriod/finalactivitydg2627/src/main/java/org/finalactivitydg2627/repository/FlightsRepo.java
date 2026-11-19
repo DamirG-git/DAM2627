@@ -1,6 +1,7 @@
 package org.finalactivitydg2627.repository;
 
 import org.finalactivitydg2627.Utils.ApplicationLogger;
+import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.dto.FlightDTO;
 
 import java.sql.Connection;
@@ -10,6 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlightsRepo extends AbstractRepo {
+
+    public FlightsRepo() {
+    }
+
+    public FlightsRepo(DBConnection connection, ApplicationLogger logger) {
+        super(connection, logger);
+    }
+
     private static final String GET_FLIGHTS_FUNC = """
             SELECT flight_code, airport_iata ,city_name ,total_seats, free_seats
             FROM dg2627_get_available_flights_on_date(?,?,?)
@@ -61,14 +70,14 @@ public class FlightsRepo extends AbstractRepo {
 
         var foundOrigin = true;
         var foundDestination = true;
-        try (var stsm = conn.prepareStatement("SELECT 1 FROM airports a where a.iata = ?")) {
-            stsm.setString(1, origin);
-            try (var rs = stsm.executeQuery()) {
+        try (var statement = conn.prepareStatement("SELECT 1 FROM airports a where a.iata = ?")) {
+            statement.setString(1, origin);
+            try (var rs = statement.executeQuery()) {
                 if (!rs.next()) foundOrigin = false;
 
             }
-            stsm.setString(1, destination);
-            try (var rs = stsm.executeQuery()) {
+            statement.setString(1, destination);
+            try (var rs = statement.executeQuery()) {
                 if (!rs.next()) foundDestination = false;
 
             }

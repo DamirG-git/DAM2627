@@ -34,6 +34,7 @@ public class TicketController extends AbstractController {
     public static final String WARN_NO_SEATS_AVAILABLE_FORMATTED_FLIGHT_DATE =
             "No seats are available on flight ( %s ) on  %s .";
     public static final String WARN_FAILED_TO_CREATE_NEW_TICKET = "Failed to create a new ticket.";
+    public static final String WARN_PASSENGER_DOES_NOT_EXIST_FORMATTED_PASSPORT = "Passenger (%s) does not exist!";
 
     public static final String ERROR_ON_PURCHASE = "Error on purchasing new ticket: ";
 
@@ -47,7 +48,7 @@ public class TicketController extends AbstractController {
         var errors = MessageFormatter.multipleErrorsFormatter(passportNumResult, flightResult, dateResult);
 
         if (!errors.isEmpty()) {
-            logger.log( WARN_INPUT_VALIDATION_FAIL + errors, ApplicationLogger.LogLevel.WARNING);
+            logger.log(WARN_INPUT_VALIDATION_FAIL + errors, ApplicationLogger.LogLevel.WARNING);
             return;
         }
         var passport = passportNumResult.result();
@@ -64,18 +65,23 @@ public class TicketController extends AbstractController {
 
         switch (result) {
             case PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE ->
-                    logger.log(String.format(WARN_PASS_HAS_TICKET_ON_SAME_DATE_FORMATTED_PASSPORT_DATE,passport, date),
+                    logger.log(String.format(WARN_PASS_HAS_TICKET_ON_SAME_DATE_FORMATTED_PASSPORT_DATE, passport, date),
                             ApplicationLogger.LogLevel.WARNING);
 
-            case FLIGHT_NOT_FOUND -> logger.log(String.format(WARN_FLIGHT_NOT_FOUND_FORMATTED,flight),
+            case FLIGHT_NOT_FOUND -> logger.log(String.format(WARN_FLIGHT_NOT_FOUND_FORMATTED, flight),
                     ApplicationLogger.LogLevel.WARNING);
 
             case NO_SEATS_AVAILABLE -> logger.log(
-                    String.format(WARN_NO_SEATS_AVAILABLE_FORMATTED_FLIGHT_DATE,flight,date),
+                    String.format(WARN_NO_SEATS_AVAILABLE_FORMATTED_FLIGHT_DATE, flight, date),
                     ApplicationLogger.LogLevel.WARNING);
 
             case SUCCESS -> logger.log(INFO_SUCCESS_TICKET,
                     ApplicationLogger.LogLevel.INFO);
+
+            case PASSENGER_DOES_NOT_EXIST ->
+                    logger.log(
+                            String.format(WARN_PASSENGER_DOES_NOT_EXIST_FORMATTED_PASSPORT, passport),
+                            ApplicationLogger.LogLevel.WARNING);
 
             case FAILED_TO_CREATE_NEW_TICKET -> logger.log(WARN_FAILED_TO_CREATE_NEW_TICKET,
                     ApplicationLogger.LogLevel.WARNING);
