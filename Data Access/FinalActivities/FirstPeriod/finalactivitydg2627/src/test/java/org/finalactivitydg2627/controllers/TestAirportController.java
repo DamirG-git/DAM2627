@@ -20,6 +20,7 @@ public class TestAirportController {
     private AirportService airportService;
     private ApplicationLogger logger;
     private AirportController controller;
+    private final TestInputs testInputs = new TestInputs();
 
     @BeforeEach
     void setUp() {
@@ -29,12 +30,23 @@ public class TestAirportController {
         controller = new AirportController(logger, airportService);
     }
 
+    class TestInputs{
+        AirportDTO airportDto1;
+        AirportDTO airportDto2;
+
+
+        public TestInputs(){
+            airportDto1 = new AirportDTO("Frankfurt Airport","FRA","Frankfurt","LH123");
+            airportDto2 = new AirportDTO("San Francisco International","SFO","San Francisco","UA456");
+        }
+    }
+
     @Test
     void getOriginAirports_success() throws SQLException {
-        var airports = List.of(
-                new AirportDTO("Frankfurt Airport", "FRA", "Frankfurt", "LH123"),
-                new AirportDTO("San Francisco International", "SFO", "San Francisco", "UA456")
-        );
+
+
+
+        var airports = List.of(testInputs.airportDto1,testInputs.airportDto2);
 
         when(airportService.getOriginAirports()).thenReturn(airports);
 
@@ -70,7 +82,8 @@ public class TestAirportController {
     @Test
     void getDestinationAirports_success() throws SQLException {
         var destination = "TST";
-        var returnValue = new AbstractRepo.RepoResultValue<>(Collections.singletonList(new AirportDTO("San Francisco International", "TST", "San Francisco", "UA456")), AirportRepo.AirportStatus.FOUND);
+        testInputs.airportDto1.setAirportIata(destination);
+        var returnValue = new AbstractRepo.RepoResultValue<>(Collections.singletonList(testInputs.airportDto1), AirportRepo.AirportStatus.FOUND);
         when(airportService.getDestinationAirports(destination)).thenReturn(returnValue);
 
         controller.findDestinationAirports(destination);

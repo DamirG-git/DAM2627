@@ -4,6 +4,7 @@ import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.dto.AirportDTO;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +32,7 @@ public class AirportRepo extends AbstractRepo {
         try (var conn = connection.connect()) {
             try (var ps = conn.prepareStatement(sqlOriginsQuery)) {
                 try (var result = ps.executeQuery()) {
-                    while (result.next()) {
-                        airportsDtoList.add(new AirportDTO(result.getString(1), result.getString(2), result.getString(3), result.getString(4)));
-                    }
+                    addAirport(airportsDtoList, result);
                     return airportsDtoList;
                 }
             } catch (SQLException e) {
@@ -81,16 +80,17 @@ public class AirportRepo extends AbstractRepo {
             try (var ps = conn.prepareStatement(sqlDestinationsQuery)) {
                 ps.setString(1, code);
                 try (var result = ps.executeQuery()) {
-                    while (result.next()) {
-                        airportsDtoList.add(
-                                new AirportDTO(result.getString(1),
-                                        result.getString(2),
-                                        result.getString(3),
-                                        result.getString(4)));
-                    }
+                    addAirport(airportsDtoList, result);
                     return new RepoResultValue<>(airportsDtoList, AirportStatus.FOUND);
                 }
             }
+        }
+    }
+
+    private void addAirport(ArrayList<AirportDTO> airportsDtoList, ResultSet result) throws SQLException {
+        while (result.next()) {
+            var airportDto = new AirportDTO(result.getString(1), result.getString(2), result.getString(3), result.getString(4));
+            airportsDtoList.add(airportDto);
         }
     }
 }

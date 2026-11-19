@@ -96,9 +96,9 @@ public class FlightsController extends AbstractController {
 
     private void getFlightsMessage(FlightDTO flight, StringBuilder stringBuilder) {
         stringBuilder.append("  - ").append("Flight: ")
-                .append(flight.flightCode()).append(" from airport ")
-                .append(flight.iataCode()).append(" in ")
-                .append("(").append(flight.cityName()).append(")")
-                .append(" has ").append(flight.freeSeats()).append(" available seats out of ").append(flight.totalSeats()).append(" seats.\n");
+                .append(flight.getFlightCode()).append(" from airport ")
+                .append(flight.getIataCode()).append(" in ")
+                .append("(").append(flight.getCityName()).append(")")
+                .append(" has ").append(flight.getFreeSeats()).append(" available seats out of ").append(flight.getTotalSeats()).append(" seats.\n");
     }
 }

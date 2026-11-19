@@ -47,13 +47,13 @@ public class TestFlightsRepo {
         assertEquals(FlightsRepo.AirportResult.SUCCESS, result.codeEnum());
         for (var airport : result.value()) {
             assertNotNull(airport);
-            assertNotNull(airport.flightCode());
-            assertNotNull(airport.iataCode());
-            assertNotNull(airport.cityName());
+            assertNotNull(airport.getFlightCode());
+            assertNotNull(airport.getIataCode());
+            assertNotNull(airport.getCityName());
 
-            assertTrue(airport.totalSeats() > 0);
-            assertTrue(airport.freeSeats() >= 0);
-            assertTrue(airport.freeSeats() <= airport.totalSeats());
+            assertTrue(airport.getTotalSeats() > 0);
+            assertTrue(airport.getFreeSeats() >= 0);
+            assertTrue(airport.getFreeSeats() <= airport.getTotalSeats());
         }
     }
 

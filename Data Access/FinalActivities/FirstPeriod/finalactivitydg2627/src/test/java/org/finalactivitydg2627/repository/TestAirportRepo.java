@@ -36,10 +36,10 @@ public class TestAirportRepo {
         assertFalse(results.isEmpty());
 
         for(var airport : results) {
-            assertNotNull(airport.airportIata());
-            assertNotNull(airport.airportName());
-            assertNotNull(airport.cityName());
-            assertNotNull(airport.flightCode());
+            assertNotNull(airport.getAirportIata());
+            assertNotNull(airport.getAirportName());
+            assertNotNull(airport.getCityName());
+            assertNotNull(airport.getFlightCode());
         }
     }
 

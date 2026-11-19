@@ -68,7 +68,7 @@ public class AirportController extends AbstractController {
         var totalFlights = 0;
         for (var airport : result) {
 
-            if (!lastAirport.equals(airport.airportIata())) {
+            if (!lastAirport.equals(airport.getAirportIata())) {
                 // Get new airport. Add all flight codes if there were any.
                 if (!flightCodes.isEmpty()) {
                     appendFlightCodes(flightCodes, messageBuilder, totalFlights);
@@ -77,12 +77,12 @@ public class AirportController extends AbstractController {
 
                 // Create new message for airport.
                 findOriginAirportMessage(airport, messageBuilder);
-                flightCodes.append(airport.flightCode());
-                lastAirport = airport.airportIata();
+                flightCodes.append(airport.getAirportIata());
+                lastAirport = airport.getAirportIata();
 
             } else {
                 // Save airport codes if its same airport.
-                flightCodes.append(", ").append(airport.flightCode());
+                flightCodes.append(", ").append(airport.getFlightCode());
                 totalFlights++;
             }
         }
@@ -106,11 +106,11 @@ public class AirportController extends AbstractController {
     private static void findOriginAirportMessage(AirportDTO airport, StringBuilder builder) {
         builder.append("    - ")
                 .append("Airport ")
-                .append(airport.airportIata())
+                .append(airport.getAirportIata())
                 .append(" (")
-                .append(airport.airportName())
+                .append(airport.getAirportName())
                 .append(") in ")
-                .append(airport.cityName())
+                .append(airport.getCityName())
                 .append(" is the origin of flight");
     }
 
@@ -162,15 +162,15 @@ public class AirportController extends AbstractController {
     private static void findDestinationAirportMessage(AirportDTO airport, StringBuilder builder, Verification.ResultValue<String> originResult) {
         builder.append("    - ")
                 .append("Airport ")
-                .append(airport.airportIata())
+                .append(airport.getAirportIata())
                 .append(" (")
-                .append(airport.airportName())
+                .append(airport.getAirportName())
                 .append(") located in ")
-                .append(airport.cityName())
+                .append(airport.getCityName())
                 .append(" is reachable from origin airport ")
                 .append(originResult.result())
                 .append(" via flight ")
-                .append(airport.flightCode())
+                .append(airport.getFlightCode())
                 .append(".")
                 .append("\n");
     }
