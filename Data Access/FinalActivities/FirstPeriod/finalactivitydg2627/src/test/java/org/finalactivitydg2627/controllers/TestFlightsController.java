@@ -29,8 +29,9 @@ public class TestFlightsController {
         public final String command = "COMMAND IRRELEVANT";
         public final String origin = "ORG";
         public final String destination = "DES";
-        public final String dateRaw = "2001-01-01";
-        public final LocalDate date = LocalDate.parse(dateRaw);
+
+        public final LocalDate date = LocalDate.now().plusDays(1);
+        public final String dateRaw = date.toString();
 
         public final String[] testInputsRawValid = {
                 command,

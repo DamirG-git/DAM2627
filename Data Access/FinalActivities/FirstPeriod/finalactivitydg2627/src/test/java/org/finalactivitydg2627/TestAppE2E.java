@@ -40,7 +40,7 @@ public class TestAppE2E {
                 -d, --destinations <origin>: show the destinations of the flights from origin
             """;
 
-    private class TestInput {
+    private static class TestInput {
         public String[] helpCommand = {"--help"};
         public String[] originsCommand = {"--origins"};
         public String addCommand = "--add";
@@ -131,13 +131,10 @@ public class TestAppE2E {
 
     // Flight controller END
 
-    // Passenger controller START
-    private final String testXml = "src/test/resources/passengers_test_db_input.xml";
-    private final String testXmlFail = "src/test/resources/passengers_fail.xml";
-    private final String testXmlFailDuplicate = "src/test/resources/passengers_fail_duplicate.xml";
-
     @Test
     void addPassengers_success() throws SQLException {
+        // Passenger controller START
+        String testXml = "src/test/resources/passengers_test_db_input.xml";
         String[] input = {testInputs.addCommand, testXml};
         commandExecutor.inputLogic(input);
         verify(logger).log(contains(PassengerController.INFO_VALIDATING_XML_FILE), eq(ApplicationLogger.LogLevel.INFO));
@@ -160,6 +157,7 @@ public class TestAppE2E {
 
     @Test
     void addPassengers_failure_failedVerification() {
+        String testXmlFail = "src/test/resources/passengers_fail.xml";
         String[] input = {testInputs.addCommand, testXmlFail};
         commandExecutor.inputLogic(input);
         verify(logger).log(contains(PassengerController.INFO_CALLING_SERVICE + testXmlFail), eq(ApplicationLogger.LogLevel.INFO));
@@ -168,6 +166,7 @@ public class TestAppE2E {
 
     @Test
     void addPassengers_failure_sqlErrorDuplicateKey() {
+        String testXmlFailDuplicate = "src/test/resources/passengers_fail_duplicate.xml";
         String[] input = {testInputs.addCommand, testXmlFailDuplicate};
         commandExecutor.inputLogic(input);
         verify(logger).log(contains(PassengerController.INFO_CALLING_SERVICE + testXmlFailDuplicate), eq(ApplicationLogger.LogLevel.INFO));

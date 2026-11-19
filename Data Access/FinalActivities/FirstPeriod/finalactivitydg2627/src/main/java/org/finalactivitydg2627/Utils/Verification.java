@@ -116,8 +116,8 @@ public class Verification {
 
 
     public static final String VALUE_INVALID_DATE = " is an invalid date.\n";
-    public static final String DATE_BELOW_MIN = " the date cannot be earlier than: %s%n.";
-    public static final String DATE_ABOVE_MAX = " the date cannot be later than: %s%n.";
+    public static final String DATE_BELOW_MIN = " the date cannot be earlier than: %s.%n";
+    public static final String DATE_ABOVE_MAX = " the date cannot be later than: %s.%n";
 
     public static ResultValue<LocalDate> basicDateVerification(String label, String input, LocalDate min, LocalDate max) {
         var rs = isEmptyInput(label, input);

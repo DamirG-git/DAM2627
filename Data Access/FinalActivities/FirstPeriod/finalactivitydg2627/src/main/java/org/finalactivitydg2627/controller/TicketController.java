@@ -3,6 +3,7 @@ package org.finalactivitydg2627.controller;
 import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.Utils.MessageFormatter;
 import org.finalactivitydg2627.Utils.Verification;
+import org.finalactivitydg2627.model.Tickets;
 import org.finalactivitydg2627.repository.TicketRepo;
 import org.finalactivitydg2627.service.TicketService;
 
@@ -46,9 +47,11 @@ public class TicketController extends AbstractController {
 
     public void insertTicket(String[] args) {
         logger.log("Verifying buying input: " + Arrays.toString(args), ApplicationLogger.LogLevel.INFO);
-        var passportNumResult = Verification.basicStringVerification("passport", args[1], null, 10, null);
-        var flightResult = Verification.basicStringVerification("flight code", args[2], null, 10, null);
-        var dateResult = Verification.basicDateVerification("date", args[3], LocalDate.now(), null);
+        var ticket = new Tickets();
+
+        var passportNumResult = ticket.setPassportCode(args[1]);
+        var flightResult = ticket.setFlightCode(args[2]);
+        var dateResult = ticket.setTravelDate(args[3]);
 
         var errors = MessageFormatter.multipleErrorsFormatter(passportNumResult, flightResult, dateResult);
 
@@ -56,13 +59,10 @@ public class TicketController extends AbstractController {
             logger.log(WARN_INPUT_VALIDATION_FAIL + errors, ApplicationLogger.LogLevel.WARNING);
             return;
         }
-        var passport = passportNumResult.result();
-        var flight = flightResult.result();
-        var date = dateResult.result();
 
         TicketRepo.TicketPurchaseResult result;
         try {
-            result = ticketService.buyTicket(passport, flight, date);
+            result = ticketService.buyTicket(ticket.getPassportCode(), ticket.getFlightCode(), ticket.getTravelDate());
         } catch (SQLException e) {
             logger.log(ERROR_ON_PURCHASE + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
             return;
@@ -70,23 +70,22 @@ public class TicketController extends AbstractController {
 
         switch (result) {
             case PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE ->
-                    logger.log(String.format(WARN_PASS_HAS_TICKET_ON_SAME_DATE_FORMATTED_PASSPORT_DATE, passport, date),
+                    logger.log(String.format(WARN_PASS_HAS_TICKET_ON_SAME_DATE_FORMATTED_PASSPORT_DATE, ticket.getPassportCode(), ticket.getTravelDate()),
                             ApplicationLogger.LogLevel.WARNING);
 
-            case FLIGHT_NOT_FOUND -> logger.log(String.format(WARN_FLIGHT_NOT_FOUND_FORMATTED, flight),
+            case FLIGHT_NOT_FOUND -> logger.log(String.format(WARN_FLIGHT_NOT_FOUND_FORMATTED, ticket.getFlightCode()),
                     ApplicationLogger.LogLevel.WARNING);
 
             case NO_SEATS_AVAILABLE -> logger.log(
-                    String.format(WARN_NO_SEATS_AVAILABLE_FORMATTED_FLIGHT_DATE, flight, date),
+                    String.format(WARN_NO_SEATS_AVAILABLE_FORMATTED_FLIGHT_DATE, ticket.getFlightCode(), ticket.getTravelDate()),
                     ApplicationLogger.LogLevel.WARNING);
 
             case SUCCESS -> logger.log(INFO_SUCCESS_TICKET,
                     ApplicationLogger.LogLevel.INFO);
 
-            case PASSENGER_DOES_NOT_EXIST ->
-                    logger.log(
-                            String.format(WARN_PASSENGER_DOES_NOT_EXIST_FORMATTED_PASSPORT, passport),
-                            ApplicationLogger.LogLevel.WARNING);
+            case PASSENGER_DOES_NOT_EXIST -> logger.log(
+                    String.format(WARN_PASSENGER_DOES_NOT_EXIST_FORMATTED_PASSPORT, ticket.getPassportCode()),
+                    ApplicationLogger.LogLevel.WARNING);
 
             case FAILED_TO_CREATE_NEW_TICKET -> logger.log(WARN_FAILED_TO_CREATE_NEW_TICKET,
                     ApplicationLogger.LogLevel.WARNING);

@@ -4,6 +4,7 @@ import org.finalactivitydg2627.Utils.ApplicationLogger;
 import org.finalactivitydg2627.Utils.MessageFormatter;
 import org.finalactivitydg2627.Utils.Verification;
 import org.finalactivitydg2627.dto.FlightDTO;
+import org.finalactivitydg2627.model.Flights;
 import org.finalactivitydg2627.service.FlightsService;
 
 import java.sql.SQLException;
@@ -42,9 +43,11 @@ public class FlightsController extends AbstractController {
 
     public void findFlights(String[] args) {
         logger.log(INFO_VALIDATING_INPUT + Arrays.toString(args), ApplicationLogger.LogLevel.INFO);
-        var origin = Verification.basicStringVerification("source location", args[1] == null ? null : args[1].toUpperCase(), 3, null, null);
-        var destination = Verification.basicStringVerification("destination location", args[2] == null ? null : args[2].toUpperCase(), 3, null, null);
-        var date = Verification.basicDateVerification("date", args[3], null, null);
+        var flight = new Flights();
+
+        var origin = flight.setCodeSourceAirport(args[1]);
+        var destination = flight.setCodeDestinationAirport(args[2]);
+        var date = flight.setTravelDate(args[3]);
 
 
         var errors = MessageFormatter.multipleErrorsFormatter(origin, destination, date);
@@ -54,9 +57,9 @@ public class FlightsController extends AbstractController {
         }
         logger.log(INFO_ATTEMPT_TO_GET_FLIGHTS, ApplicationLogger.LogLevel.INFO);
         try {
-            var flightsRepoResult = flightsService.getFlights(origin.result(),
-                    destination.result(),
-                    date.result());
+            var flightsRepoResult = flightsService.getFlights(flight.getCodeSourceAirport(),
+                    flight.getCodeDestinationAirport(),
+                    flight.getTravelDate());
             var code = flightsRepoResult.codeEnum();
             switch (code) {
                 case NO_DESTINATION_AIRPORT_FOUND:
@@ -79,8 +82,8 @@ public class FlightsController extends AbstractController {
                     var flights = flightsRepoResult.value();
                     var stringBuilder = new StringBuilder();
                     stringBuilder.append(INFO_SUCCESS_GET_FLIGHTS);
-                    for (var flight : flights) {
-                        getFlightsMessage(flight, stringBuilder);
+                    for (var flightDto : flights) {
+                        getFlightsMessage(flightDto, stringBuilder);
                     }
                     logger.log(stringBuilder.toString(), ApplicationLogger.LogLevel.INFO);
                     break;
