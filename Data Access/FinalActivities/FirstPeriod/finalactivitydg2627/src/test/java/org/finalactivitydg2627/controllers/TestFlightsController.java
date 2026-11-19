@@ -118,7 +118,7 @@ public class TestFlightsController {
 
         verify(logger).log(contains(
                         String.format(
-                                FlightsController.WARN_NO_ORIGIN_OR_DESTINATION_FOUND_FORMATTED_DEST_ORIGIN,
+                                FlightsController.WARN_NO_ORIGIN_OR_DESTINATION_FOUND_FORMATTED_ORIGIN_DEST,
                                 testInput.origin,
                                 testInput.destination)),
                 eq(ApplicationLogger.LogLevel.WARNING));

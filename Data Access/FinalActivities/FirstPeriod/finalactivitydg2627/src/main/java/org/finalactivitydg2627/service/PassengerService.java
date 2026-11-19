@@ -26,13 +26,18 @@ public class PassengerService extends AbstractService {
         passengerRepo = new PassengerRepo();
     }
 
+    public PassengerService(ApplicationLogger logger) {
+        super(logger);
+        passengerRepo = new PassengerRepo();
+    }
+
     public PassengerService(ApplicationLogger logger, PassengerRepo passengerRepo) {
         super(logger);
         this.passengerRepo = passengerRepo;
     }
 
 
-    public void addPassengerFromXML(Path input) throws ParserConfigurationException, SAXException, IOException, PassengerValidationException, SQLException {
+    public Integer addPassengerFromXML(Path input) throws ParserConfigurationException, SAXException, IOException, PassengerValidationException, SQLException {
         var factory = SAXParserFactory.newInstance();
 
         var saxParser = factory.newSAXParser();
@@ -40,7 +45,7 @@ public class PassengerService extends AbstractService {
         saxParser.parse(input.toFile(), handler);
 
         var inputXml = handler.getPassengers();
-        addPassengers(inputXml);
+        return addPassengers(inputXml);
     }
 
     public static class PassengerValidationException extends Exception {
@@ -52,7 +57,7 @@ public class PassengerService extends AbstractService {
     public static final String INFO_PASSENGER_VERIFIED = "Passenger: %s passed verification.";
     public static final String DEBUG_PASSENGER_VALID = "Passenger validation failed, commit canceled.";
 
-    private void addPassengers(List<PassengerInputDto> passengersRawInput) throws PassengerValidationException, SQLException {
+    private Integer addPassengers(List<PassengerInputDto> passengersRawInput) throws PassengerValidationException, SQLException {
         var passengers = new ArrayList<Passengers>();
         var errors = new StringBuilder();
         var commitTransaction = true;
@@ -69,7 +74,8 @@ public class PassengerService extends AbstractService {
         if (!errors.isEmpty()) {
             throw new PassengerValidationException(errors.toString());
         }
-        if (commitTransaction) passengerRepo.addPassengers(passengers);
+        if (commitTransaction) return passengerRepo.addPassengers(passengers);
+        return null;
     }
 
     private Passengers processPassenger(PassengerInputDto passengerInputDto, StringBuilder errors) {

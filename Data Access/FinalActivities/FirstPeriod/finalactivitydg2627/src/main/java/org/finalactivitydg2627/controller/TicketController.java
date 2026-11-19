@@ -18,6 +18,11 @@ public class TicketController extends AbstractController {
         ticketService = new TicketService();
     }
 
+    public TicketController(ApplicationLogger logger) {
+        super(logger);
+        ticketService = new TicketService();
+    }
+
     public TicketController(ApplicationLogger logger, TicketService ticketService) {
         super(logger);
         this.ticketService = ticketService;

@@ -1,0 +1,17 @@
+<passengers>
+    <passenger>
+        <passportno>TEST9001</passportno>
+        <firstname>John</firstname>
+        <lastname>Smith</lastname>
+    </passenger>
+    <passenger>
+        <passportno>TEST9001</passportno>
+        <firstname>Samuel</firstname>
+        <lastname>Smith</lastname>
+    </passenger>
+    <passenger>
+        <passportno>TEST9001</passportno>
+        <firstname>Van</firstname>
+        <lastname>Smith</lastname>
+    </passenger>
+</passengers>

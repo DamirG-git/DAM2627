@@ -25,7 +25,14 @@ public class CommandExecutor {
         flightsController = new FlightsController();
         passengerController = new PassengerController();
         ticketController = new TicketController();
+    }
 
+    public CommandExecutor(ApplicationLogger logger) {
+        this.logger = logger;
+        airportController = new AirportController(logger);
+        flightsController = new FlightsController(logger);
+        passengerController = new PassengerController(logger);
+        ticketController = new TicketController(logger);
     }
 
     public CommandExecutor(ApplicationLogger logger, AirportController airportController, FlightsController flightsController, PassengerController passengerController, TicketController ticketController) {
@@ -80,8 +87,6 @@ public class CommandExecutor {
                 printUnknownCommand(args[0]);
 
         }
-        logger.close();
-
     }
 
     //-h, --help: show this help

@@ -101,6 +101,7 @@ public class TicketRepo extends AbstractRepo {
                             conn.commit();
                             return TicketPurchaseResult.SUCCESS;
                         }
+                        conn.rollback();
                         return TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET;
                     }
 

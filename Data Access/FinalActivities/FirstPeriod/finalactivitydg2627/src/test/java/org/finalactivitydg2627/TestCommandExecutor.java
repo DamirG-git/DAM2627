@@ -33,7 +33,7 @@ public class TestCommandExecutor {
                 -d, --destinations <origin>: show the destinations of the flights from origin
             """;
 
-    private class TestInput {
+    private static class TestInput {
         public String[] helpCommand = {"--help"};
         public String[] originsCommand = {"--origins"};
         public String addCommand = "--add";

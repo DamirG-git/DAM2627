@@ -107,7 +107,7 @@ public class TestPassengerController {
             PassengerService.PassengerValidationException, SQLException {
         doThrow(new PassengerService.PassengerValidationException("Test Exception")).when(passengerService).addPassengerFromXML(testLoc);
         controller.importPassengerFromXml(testXml);
-        verify(logger).log(contains(PassengerController.ERROR_XML_FILE_PASSENGERS_HAD_ERROR + "Test Exception"), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(PassengerController.WARN_XML_FILE_PASSENGERS_HAD_ERROR + "Test Exception"), eq(ApplicationLogger.LogLevel.WARNING));
     }
 }
 

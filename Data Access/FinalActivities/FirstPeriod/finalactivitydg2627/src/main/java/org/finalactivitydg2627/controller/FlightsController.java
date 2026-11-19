@@ -17,6 +17,11 @@ public class FlightsController extends AbstractController {
         flightsService = new FlightsService();
     }
 
+    public FlightsController(ApplicationLogger logger) {
+        super(logger);
+        flightsService = new FlightsService();
+    }
+
     public FlightsController(ApplicationLogger logger, FlightsService flightsService) {
         super(logger);
         this.flightsService = flightsService;
@@ -30,15 +35,15 @@ public class FlightsController extends AbstractController {
     public static final String WARN_NO_ORIGIN_AIRPORT_FOUND = "No origin airport found with IATA: ";
     public static final String WARN_NO_DESTINATION_AIRPORT_FOUND = "No destination airport found with IATA: ";
 
-    public static final String WARN_NO_ORIGIN_OR_DESTINATION_FOUND_FORMATTED_DEST_ORIGIN = "No origin IATA (%s) or destination IATA (%s) have been found in the database.";
+    public static final String WARN_NO_ORIGIN_OR_DESTINATION_FOUND_FORMATTED_ORIGIN_DEST = "No origin IATA (%s) or destination IATA (%s) have been found in the database.";
     public static final String WARN_NO_FLIGHTS_FOUND_FORMATTED_ORIGIN_DEST_DATE = "No flights found with these parameters: origin (%s), destination (%s), date (%s).";
 
     public static final String ERROR_GET_FLIGHTS = "Error on fetching data: ";
 
     public void findFlights(String[] args) {
         logger.log(INFO_VALIDATING_INPUT + Arrays.toString(args), ApplicationLogger.LogLevel.INFO);
-        var origin = Verification.basicStringVerification("source location", args[1].toUpperCase(), 3, null, null);
-        var destination = Verification.basicStringVerification("destination location", args[2].toUpperCase(), 3, null, null);
+        var origin = Verification.basicStringVerification("source location", args[1] == null ? null : args[1].toUpperCase(), 3, null, null);
+        var destination = Verification.basicStringVerification("destination location", args[2] == null ? null : args[2].toUpperCase(), 3, null, null);
         var date = Verification.basicDateVerification("date", args[3], null, null);
 
 
@@ -61,7 +66,7 @@ public class FlightsController extends AbstractController {
                     logger.log(WARN_NO_ORIGIN_AIRPORT_FOUND + origin.result(), ApplicationLogger.LogLevel.WARNING);
                     return;
                 case NO_ORIGIN_OR_DESTINATION_FOUND:
-                    logger.log(String.format(WARN_NO_ORIGIN_OR_DESTINATION_FOUND_FORMATTED_DEST_ORIGIN, origin.result(), destination.result()), ApplicationLogger.LogLevel.WARNING);
+                    logger.log(String.format(WARN_NO_ORIGIN_OR_DESTINATION_FOUND_FORMATTED_ORIGIN_DEST, origin.result(), destination.result()), ApplicationLogger.LogLevel.WARNING);
                     return;
                 case SUCCESS:
                     if (flightsRepoResult.value().isEmpty()) {

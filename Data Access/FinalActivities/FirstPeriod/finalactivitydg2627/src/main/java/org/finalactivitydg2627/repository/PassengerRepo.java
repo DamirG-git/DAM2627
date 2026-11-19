@@ -14,9 +14,9 @@ public class PassengerRepo extends AbstractRepo {
         super(connection,logger);
     }
 
-    public void addPassengers(List<Passengers> input) throws SQLException {
+    public Integer addPassengers(List<Passengers> input) throws SQLException {
         if (input == null || input.isEmpty()) {
-            return;
+            return null;
         }
         try (var conn = connection.connect();
              var psAddPassenger = conn.prepareStatement("INSERT INTO passengers(passportno,firstname,lastname,address,phone) values(?,?,?,?,?)")) {
@@ -31,8 +31,8 @@ public class PassengerRepo extends AbstractRepo {
                     psAddPassenger.addBatch();
                 }
                 var execution = psAddPassenger.executeBatch();
-                logger.log("Adding passengers " + execution.length + " to DB.\"", ApplicationLogger.LogLevel.INFO);
                 conn.commit();
+                return execution.length;
             } catch (SQLException e) {
                 try {
                     conn.rollback();

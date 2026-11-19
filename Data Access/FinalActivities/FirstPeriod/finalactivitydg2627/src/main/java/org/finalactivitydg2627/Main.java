@@ -20,6 +20,7 @@ public class Main {
         } catch (SQLException e) {
             logger.log(ERROR_SQL_CONNECTION + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
         }
+        logger.close();
 
     }
 

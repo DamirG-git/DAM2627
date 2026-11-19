@@ -41,6 +41,7 @@ public class TestAirportController {
         controller.findOriginAirports();
 
         verify(airportService).getOriginAirports();
+        verify(logger).log(contains(AirportController.INFO_CALLING_SERVICE_ORIGIN_AIRPORTS),eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(AirportController.INFO_RETRIEVED_ORIGINS), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains("FRA"), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains("SFO"), eq(ApplicationLogger.LogLevel.INFO));
@@ -52,6 +53,7 @@ public class TestAirportController {
 
         controller.findOriginAirports();
         verify(airportService).getOriginAirports();
+        verify(logger).log(contains(AirportController.INFO_CALLING_SERVICE_ORIGIN_AIRPORTS),eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(AirportController.WARN_ORIGIN_AIRPORTS_NOT_FOUND), eq(ApplicationLogger.LogLevel.WARNING)
         );
     }
@@ -72,8 +74,17 @@ public class TestAirportController {
         when(airportService.getDestinationAirports(destination)).thenReturn(returnValue);
 
         controller.findDestinationAirports(destination);
+        verify(logger).log(contains(AirportController.INFO_CALLING_SERVICE_DESTINATION_AIRPORTS),eq(ApplicationLogger.LogLevel.INFO));
         verify(airportService).getDestinationAirports(destination);
+        verify(logger).log(contains(AirportController.INFO_RETRIEVED_DESTINATIONS), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains("TST"), eq(ApplicationLogger.LogLevel.INFO));
+    }
+    @Test
+    void getDestinationAirports_fail_invalidAirportCode() throws SQLException {
+        var destination = "000";
+        controller.findDestinationAirports(destination);
+        verify(airportService,never()).getDestinationAirports(destination);
+        verify(logger).log(contains(AirportController.WARN_INVALID_AIRPORT_CODE), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     @Test

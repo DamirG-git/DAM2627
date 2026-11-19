@@ -16,6 +16,11 @@ public class PassengerController extends AbstractController  {
     public PassengerController() {
         passengerService = new PassengerService();
     }
+    public PassengerController(ApplicationLogger logger) {
+        super(logger);
+        passengerService = new PassengerService(logger);
+    }
+
 
     public PassengerController(ApplicationLogger logger, PassengerService passengerService) {
         super(logger);
@@ -24,8 +29,9 @@ public class PassengerController extends AbstractController  {
 
     public static final String INFO_VALIDATING_XML_FILE = "Validating XML file: ";
     public static final String INFO_CALLING_SERVICE = "Calling service for file reading: ";
+    public static final String INFO_ADDED_PASSENGERS = "Successfully added passengers: ";
 
-    public static final String WARN_XML_PATH_VALIDATION_FAILED = "XML file is invalid!\n";
+    public static final String WARN_XML_PATH_VALIDATION_FAILED = "XML file path is invalid!\n";
     public static final String WARN_DUPLICATED_KEY_FORMATTED_PASSPORT = "The passenger with passport: %s already exists!";
 
     public static final String ERROR_PARSER_CONFIGURATION_EXCEPTION = "Parser configuration error:";
@@ -33,7 +39,8 @@ public class PassengerController extends AbstractController  {
     public static final String ERROR_IO_EXCEPTION = "IO exception:";
     public static final String ERROR_DB_EXCEPTION_ON_INSERT_PASSENGER = "Database error on adding passenger: ";
     public static final String ERROR_SQL_STATE_NULL = "The sql state is null: ";
-    public static final String ERROR_XML_FILE_PASSENGERS_HAD_ERROR = "XML file contained errors in passenger data.\n";
+    public static final String WARN_XML_FILE_PASSENGERS_HAD_ERROR = "XML file contained errors in passenger data.\n";
+
 
     public void importPassengerFromXml(String input) {
 
@@ -52,7 +59,10 @@ public class PassengerController extends AbstractController  {
                 INFO_CALLING_SERVICE + input,
                 ApplicationLogger.LogLevel.INFO);
         try {
-            passengerService.addPassengerFromXML(rs.result());
+            var result = passengerService.addPassengerFromXML(rs.result());
+            if(result != null) {
+                logger.log(INFO_ADDED_PASSENGERS + result, ApplicationLogger.LogLevel.INFO);
+            }
         } catch (ParserConfigurationException e) {
             logger.log(
                     ERROR_PARSER_CONFIGURATION_EXCEPTION + e.getMessage(),
@@ -73,7 +83,7 @@ public class PassengerController extends AbstractController  {
 
         } catch (PassengerService.PassengerValidationException e) {
             logger.log(
-                    ERROR_XML_FILE_PASSENGERS_HAD_ERROR + e.getMessage(),
+                    WARN_XML_FILE_PASSENGERS_HAD_ERROR + e.getMessage(),
                     ApplicationLogger.LogLevel.WARNING);
         }
     }

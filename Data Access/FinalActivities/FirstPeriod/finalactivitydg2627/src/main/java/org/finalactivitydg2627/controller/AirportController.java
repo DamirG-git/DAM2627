@@ -20,11 +20,18 @@ public class AirportController extends AbstractController {
         this.airportService = airportService;
     }
 
+    public AirportController(ApplicationLogger logger) {
+        super(logger);
+        this.airportService = new AirportService();
+    }
+
+
     public AirportController() {
         this.airportService = new AirportService();
     }
 
-    public static final String INFO_CALLING_SERVICE = "Calling service for ";
+    public static final String INFO_CALLING_SERVICE_ORIGIN_AIRPORTS = "Calling service for origin airports...";
+    public static final String INFO_CALLING_SERVICE_DESTINATION_AIRPORTS = "Calling service for destination airports...";
     public static final String INFO_RETRIEVED_ORIGINS = "Successfully retrieved origin airports!\n";
 
     public static final String WARN_ORIGIN_AIRPORTS_NOT_FOUND = "Origin airports not found.";
@@ -32,7 +39,7 @@ public class AirportController extends AbstractController {
     public static final String ERROR_ON_OBTAINING_AIRPORTS = "Error obtaining airports: ";
 
     public void findOriginAirports() {
-        logger.log(INFO_CALLING_SERVICE + "airports...", ApplicationLogger.LogLevel.INFO);
+        logger.log(INFO_CALLING_SERVICE_ORIGIN_AIRPORTS, ApplicationLogger.LogLevel.INFO);
         List<AirportDTO> result;
         try {
             result = airportService.getOriginAirports();
@@ -87,7 +94,7 @@ public class AirportController extends AbstractController {
 
     private void appendFlightCodes(StringBuilder flightCodes, StringBuilder messageBuilder, int totalFlights) {
         if (!flightCodes.isEmpty()) {
-            if(totalFlights > 1) {
+            if (totalFlights >= 1) {
                 messageBuilder.append("s ").append(flightCodes).append(".\n");
             } else {
                 messageBuilder.append(" ").append(flightCodes).append(".\n");
@@ -109,6 +116,7 @@ public class AirportController extends AbstractController {
 
     public static final String INFO_RETRIEVED_DESTINATIONS = "Successfully retrieved destinations!\n";
 
+    public static final String WARN_INVALID_AIRPORT_CODE = "Airport IATA is invalid!\n";
     public static final String WARN_NO_SUCH_AIRPORT_EXISTS = "No such airport exists: ";
     public static final String WARN_NO_DESTINATIONS_FOUND = "No destinations found from airport: ";
 
@@ -117,11 +125,11 @@ public class AirportController extends AbstractController {
         input = input.toUpperCase();
         var originResult = Airports.validateIata(input);
         if (originResult.result() == null) {
-            logger.log(originResult.message(), ApplicationLogger.LogLevel.WARNING);
+            logger.log(WARN_INVALID_AIRPORT_CODE + originResult.message(), ApplicationLogger.LogLevel.WARNING);
             return;
         }
 
-        logger.log(INFO_CALLING_SERVICE + "destinations...", ApplicationLogger.LogLevel.INFO);
+        logger.log(INFO_CALLING_SERVICE_DESTINATION_AIRPORTS, ApplicationLogger.LogLevel.INFO);
 
         AbstractRepo.RepoResultValue<List<AirportDTO>, AirportRepo.AirportStatus> results;
         try {
