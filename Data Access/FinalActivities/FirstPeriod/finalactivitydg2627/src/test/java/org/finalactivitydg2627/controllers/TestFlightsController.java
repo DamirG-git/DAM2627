@@ -1,5 +1,6 @@
 package org.finalactivitydg2627.controllers;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.dto.FlightDTO;
 import org.finalactivitydg2627.repository.AbstractRepo;
@@ -8,6 +9,7 @@ import org.finalactivitydg2627.service.FlightsService;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -16,13 +18,12 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class TestFlightsController {
+public class TestFlightsController  extends AbstractTest {
 
+    @Mock
+    private FlightsService flightsService;
 
     private FlightsController controller;
-    private FlightsService flightsService;
-    private ApplicationLogger logger;
-
     private final TestInput testInput = new TestInput();
 
     private static class TestInput {
@@ -50,9 +51,6 @@ public class TestFlightsController {
 
     @BeforeEach
     void setUp() {
-        flightsService = mock(FlightsService.class);
-        logger = mock(ApplicationLogger.class);
-
         controller = new FlightsController(logger, flightsService);
     }
 
@@ -72,12 +70,6 @@ public class TestFlightsController {
 
     @Test
     void getFlights_failure_invalidInputs() throws SQLException {
-        var returnValue = new AbstractRepo.RepoResultValue<List<FlightDTO>, FlightsRepo.AirportResult>(
-                null,
-                FlightsRepo.AirportResult.NO_ORIGIN_OR_DESTINATION_FOUND
-        );
-        when(flightsService.getFlights(testInput.origin, testInput.destination, testInput.date)).thenReturn(returnValue);
-
         controller.displayFlights(testInput.testInputsRawInvalid);
 
         verify(flightsService, never()).getFlights(testInput.origin, testInput.destination, testInput.date);

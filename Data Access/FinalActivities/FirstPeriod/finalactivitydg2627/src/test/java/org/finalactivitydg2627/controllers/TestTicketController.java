@@ -1,22 +1,26 @@
 package org.finalactivitydg2627.controllers;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.controller.TicketController;
 import org.finalactivitydg2627.repository.TicketRepo;
 import org.finalactivitydg2627.service.TicketService;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 
 import static org.mockito.Mockito.*;
 
-public class TestTicketController {
+public class TestTicketController  extends AbstractTest {
+
+
+    @Mock
+    private TicketService ticketService;
 
     private TicketController controller;
-    private TicketService ticketService;
-    private ApplicationLogger logger;
     private final TestInputs testInput = new TestInputs();
 
     @BeforeEach

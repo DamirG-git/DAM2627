@@ -1,5 +1,6 @@
 package org.finalactivitydg2627.repository;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.model.Passengers;
 import org.finalactivitydg2627.utils.ApplicationLogger;
@@ -14,14 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-public class TestTicketRepo {
+public class TestTicketRepo  extends AbstractTest {
 
 
     private TicketRepo ticketRepo;
-    private static final Passengers test1 = new Passengers("TEST001", "John", "Smith",
-            "Test Street 1", "111111111");
-    private static final Passengers test2 = new Passengers("TEST002", "Jane", "Doe",
-            "Test Street 2", "222222222");
     private static final LocalDate testDate = LocalDate.now();
 
     @BeforeAll
@@ -33,7 +30,6 @@ public class TestTicketRepo {
 
     @BeforeEach
     void setUp() {
-        var logger = mock(ApplicationLogger.class);
         var connection = DBConnection.getInstance();
         ticketRepo = new TicketRepo(connection, logger);
     }

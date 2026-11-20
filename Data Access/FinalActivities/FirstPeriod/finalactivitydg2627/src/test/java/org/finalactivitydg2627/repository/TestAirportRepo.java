@@ -1,5 +1,6 @@
 package org.finalactivitydg2627.repository;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,7 +12,9 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class TestAirportRepo {
+public class TestAirportRepo  extends AbstractTest {
+
+
     private AirportRepo airportRepo;
 
     @BeforeAll
@@ -23,7 +26,6 @@ public class TestAirportRepo {
 
     @BeforeEach
     void setUp() {
-        var logger = mock(ApplicationLogger.class);
         var connection = DBConnection.getInstance();
         airportRepo = new AirportRepo(connection,logger);
     }

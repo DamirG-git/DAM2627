@@ -1,7 +1,7 @@
 package org.finalactivitydg2627.repository;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.database.DBConnection;
-import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class TestFlightsRepo {
+public class TestFlightsRepo extends AbstractTest {
 
     private FlightsRepo flightsRepo;
 
@@ -25,7 +25,6 @@ public class TestFlightsRepo {
 
     @BeforeEach
     void setUp() {
-        var logger = mock(ApplicationLogger.class);
         var connection = DBConnection.getInstance();
         flightsRepo = new FlightsRepo(connection, logger);
 
@@ -33,15 +32,15 @@ public class TestFlightsRepo {
 
 
     private static final LocalDate date = LocalDate.now();
-    private static final String origin = "BOM";
-    private static final String destination = "DFW";
-    private static final String invalid = "INVALID";
+    private static final String ORIGIN = "BOM";
+    private static final String DESTINATION = "DFW";
+    private static final String INVALID = "INVALID";
 
     @Test
     void getFlights_success() throws SQLException {
         var result = flightsRepo.getFlights(
-                origin,
-                destination, date);
+                ORIGIN,
+                DESTINATION, date);
         assertNotNull(result);
         assertNotNull(result.value());
         assertEquals(FlightsRepo.AirportResult.SUCCESS, result.codeEnum());
@@ -61,8 +60,8 @@ public class TestFlightsRepo {
     void getFlights_failure_noOriginOrDestinationFound() throws SQLException {
 
         var result = flightsRepo.getFlights(
-                invalid,
-                invalid, date);
+                INVALID,
+                INVALID, date);
         assertNotNull(result);
         assertNull(result.value());
         assertEquals(FlightsRepo.AirportResult.NO_ORIGIN_OR_DESTINATION_FOUND, result.codeEnum());
@@ -72,8 +71,8 @@ public class TestFlightsRepo {
     void getFlights_failure_noOriginFound() throws SQLException {
 
         var result = flightsRepo.getFlights(
-                invalid,
-                origin, date);
+                INVALID,
+                ORIGIN, date);
         assertNotNull(result);
         assertNull(result.value());
         assertEquals(FlightsRepo.AirportResult.NO_ORIGIN_AIRPORT_FOUND, result.codeEnum());
@@ -83,8 +82,8 @@ public class TestFlightsRepo {
     void getFlights_failure_noDestinationFound() throws SQLException {
 
         var result = flightsRepo.getFlights(
-                origin,
-                invalid, date);
+                ORIGIN,
+                INVALID, date);
         assertNotNull(result);
         assertNull(result.value());
         assertEquals(FlightsRepo.AirportResult.NO_DESTINATION_AIRPORT_FOUND, result.codeEnum());

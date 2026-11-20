@@ -1,10 +1,12 @@
 package org.finalactivitydg2627.controllers;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.service.PassengerService;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,13 +16,13 @@ import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
 
-public class TestPassengerController {
+public class TestPassengerController  extends AbstractTest {
 
+
+    @Mock
+    private PassengerService passengerService;
 
     private PassengerController controller;
-    private PassengerService passengerService;
-    private ApplicationLogger logger;
-
 
     @BeforeEach
     void setUp() {

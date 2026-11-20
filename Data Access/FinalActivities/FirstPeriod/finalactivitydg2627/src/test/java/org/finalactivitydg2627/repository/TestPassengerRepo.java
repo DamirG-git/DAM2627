@@ -1,5 +1,6 @@
 package org.finalactivitydg2627.repository;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.model.Passengers;
 import org.finalactivitydg2627.utils.ApplicationLogger;
@@ -13,9 +14,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class TestPassengerRepo {
+public class TestPassengerRepo  extends AbstractTest {
 
     private PassengerRepo passengerRepo;
+
+
     private static final Passengers test1 = new Passengers("TEST001", "John", "Smith",
             "Test Street 1", "111111111");
     private static final Passengers test2 = new Passengers("TEST002", "Jane", "Doe",
@@ -30,7 +33,6 @@ public class TestPassengerRepo {
 
     @BeforeEach
     void setUp() {
-        var logger = mock(ApplicationLogger.class);
         var connection = DBConnection.getInstance();
         passengerRepo = new PassengerRepo(connection, logger);
     }

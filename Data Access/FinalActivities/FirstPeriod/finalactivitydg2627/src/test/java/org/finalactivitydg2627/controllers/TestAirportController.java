@@ -1,5 +1,6 @@
 package org.finalactivitydg2627.controllers;
 
+import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.dto.AirportDTO;
 import org.finalactivitydg2627.repository.AbstractRepo;
@@ -8,6 +9,7 @@ import org.finalactivitydg2627.service.AirportService;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.sql.SQLException;
 import java.util.Collections;
@@ -15,22 +17,20 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class TestAirportController {
+public class TestAirportController extends AbstractTest {
 
+    @Mock
     private AirportService airportService;
-    private ApplicationLogger logger;
+
     private AirportController controller;
     private final TestInputs testInputs = new TestInputs();
 
     @BeforeEach
     void setUp() {
-        airportService = mock(AirportService.class);
-        logger = mock(ApplicationLogger.class);
-
         controller = new AirportController(logger, airportService);
     }
 
-    class TestInputs{
+    static class TestInputs{
         AirportDTO airportDto1;
         AirportDTO airportDto2;
 
@@ -90,7 +90,7 @@ public class TestAirportController {
         verify(logger).log(contains(AirportController.INFO_FETCHING_DESTINATION_AIRPORTS),eq(ApplicationLogger.LogLevel.INFO));
         verify(airportService).getDestinationAirports(destination);
         verify(logger).log(contains(AirportController.INFO_RETRIEVED_DESTINATIONS), eq(ApplicationLogger.LogLevel.INFO));
-        verify(logger).log(contains("TST"), eq(ApplicationLogger.LogLevel.INFO));
+        verify(logger, times(2)).log(contains("TST"), eq(ApplicationLogger.LogLevel.INFO));
     }
     @Test
     void getDestinationAirports_fail_invalidAirportCode() throws SQLException {
