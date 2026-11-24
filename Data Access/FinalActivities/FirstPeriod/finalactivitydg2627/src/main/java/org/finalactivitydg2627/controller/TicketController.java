@@ -1,10 +1,13 @@
 package org.finalactivitydg2627.controller;
 
+import org.finalactivitydg2627.CommandExecutor;
 import org.finalactivitydg2627.model.Tickets;
 import org.finalactivitydg2627.repository.TicketRepo;
 import org.finalactivitydg2627.service.TicketService;
 import org.finalactivitydg2627.utils.ApplicationLogger;
+import org.finalactivitydg2627.utils.ApplicationValidator;
 import org.finalactivitydg2627.utils.MessageFormatter;
+import org.finalactivitydg2627.utils.TicketPrinter;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -25,6 +28,7 @@ public class TicketController extends AbstractController {
 
 
     public static final String INFO_TICKET_PURCHASED = "Ticket successfully purchased.";
+
 
     public static final String WARN_INPUT_VALIDATION_FAILED = "Input validation failed: \n";
     public static final String WARN_DUPLICATE_TICKET_PURCHASE_FORMAT =
@@ -54,14 +58,61 @@ public class TicketController extends AbstractController {
             return;
         }
 
-        TicketRepo.TicketPurchaseResult result;
+        TicketRepo.TicketPurchaseValues result;
         try {
             result = ticketService.buyTicket(ticket.getPassportCode(), ticket.getFlightCode(), ticket.getTravelDate());
         } catch (SQLException e) {
             logger.log(ERROR_TICKET_PURCHASE + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
             return;
         }
-        displayPurchaseResult(result, ticket);
+        displayPurchaseResult(result.ticketPurchaseResult, ticket);
+        if (args.length == CommandExecutor.BUY_MAX_ARGS) {
+            var printer = new TicketPrinter(logger);
+            printer.printTicket(ticket, result.ticketCode);
+        }
+    }
+
+    public static final String INFO_TICKET_CANCELLED = "Ticket successfully canceled.";
+
+    public static final String WARN_TICKET_ALREADY_CANCELLED = "Ticket was already cancelled.";
+    public static final String WARN_TICKET_NOT_FOUND = "No ticket found on date: ";
+
+    public static final String ERROR_TICKET_CANCELLATION_FAILED = "Ticket failed to cancel.\n";
+
+    public void cancelTicket(String[] args) {
+
+        var ticket = new Tickets();
+        var passportNumResult = ticket.setPassportCode(args[1]);
+        var dateResult = ApplicationValidator.basicDateVerification("travel date", args[2], null, null);
+
+        var errors = MessageFormatter.multipleErrorsFormatter(passportNumResult, dateResult);
+
+        if (!errors.isEmpty()) {
+            logger.log(WARN_INPUT_VALIDATION_FAILED + errors, ApplicationLogger.LogLevel.WARNING);
+            return;
+        }
+        try {
+            var result = ticketService.cancelTicket(passportNumResult.result(), dateResult.result());
+            switch (result) {
+                case SUCCESS -> logger.log(
+                        INFO_TICKET_CANCELLED,
+                        ApplicationLogger.LogLevel.INFO);
+                case PASSENGER_NOT_FOUND -> logger.log(
+                        String.format(WARN_PASSENGER_NOT_FOUND_FORMAT_PASSPORT, passportNumResult.result()),
+                        ApplicationLogger.LogLevel.INFO);
+                case TICKET_ALREADY_CANCELLED -> logger.log(
+                        WARN_TICKET_ALREADY_CANCELLED,
+                        ApplicationLogger.LogLevel.WARNING);
+                case TICKET_NOT_FOUND -> logger.log(
+                        WARN_TICKET_NOT_FOUND + dateResult.result(),
+                        ApplicationLogger.LogLevel.WARNING);
+                default -> logger.log("Should not be possible." + result, ApplicationLogger.LogLevel.ERROR);
+            }
+        } catch (SQLException e) {
+            logger.log(ERROR_TICKET_CANCELLATION_FAILED, ApplicationLogger.LogLevel.WARNING);
+            logger.log(ERROR_TICKET_CANCELLATION_FAILED + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
+        }
+
     }
 
     private void displayPurchaseResult(TicketRepo.TicketPurchaseResult result, Tickets ticket) {
@@ -70,8 +121,9 @@ public class TicketController extends AbstractController {
                     logger.log(String.format(WARN_DUPLICATE_TICKET_PURCHASE_FORMAT, ticket.getPassportCode(), ticket.getTravelDate()),
                             ApplicationLogger.LogLevel.WARNING);
 
-            case FLIGHT_NOT_FOUND -> logger.log(String.format(WARN_FLIGHT_NOT_FOUND_FORMAT_IATA, ticket.getFlightCode()),
-                    ApplicationLogger.LogLevel.WARNING);
+            case FLIGHT_NOT_FOUND ->
+                    logger.log(String.format(WARN_FLIGHT_NOT_FOUND_FORMAT_IATA, ticket.getFlightCode()),
+                            ApplicationLogger.LogLevel.WARNING);
 
             case NO_SEATS_AVAILABLE -> logger.log(
                     String.format(WARN_NO_SEATS_AVAILABLE_FORMAT_FLIGHT_DATE, ticket.getFlightCode(), ticket.getTravelDate()),

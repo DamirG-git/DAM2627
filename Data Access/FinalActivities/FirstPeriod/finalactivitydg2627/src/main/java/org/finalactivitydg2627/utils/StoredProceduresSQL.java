@@ -25,7 +25,7 @@ public class StoredProceduresSQL {
             )
             LANGUAGE sql AS
             $BODY$
-            SELECT f.flight_code, dst.iata, c.name, p.total_seats, p.total_seats - COUNT(t.ticket_number)
+            SELECT f.flight_code, dst.iata, c.name, p.total_seats, COUNT(t.ticket_number)
             FROM flights f
             LEFT JOIN tickets t
                 ON f.flight_code = t.flight_code

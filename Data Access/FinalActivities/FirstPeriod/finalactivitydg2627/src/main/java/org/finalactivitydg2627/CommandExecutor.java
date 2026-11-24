@@ -5,6 +5,7 @@ import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.controller.TicketController;
 import org.finalactivitydg2627.utils.ApplicationLogger;
+import org.finalactivitydg2627.utils.ApplicationValidator;
 import org.finalactivitydg2627.utils.StoredProceduresSQL;
 
 import java.sql.SQLException;
@@ -41,7 +42,8 @@ public class CommandExecutor {
                 -h, --help: show this help
                 -a, --add <filename.xml>: add the passengers in the XML file to the database.
                 -f, --flights <origin> <destination> <date>: show the flights available from origin to destination
-                -b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date
+                -b, --buy <customerId> <flightId> <date> [--print]: buy a ticket for a flight in a specific date, add [--print] at end to print it.
+                -c, --cancel <customerId> <date>: cancel ticket on specific date
                 -o, --origins: show the origins of the flights
                 -d, --destinations <origin>: show the destinations of the flights from origin
             """;
@@ -74,6 +76,8 @@ public class CommandExecutor {
             case "-f", "--flights":
                 handleFlightsCommand(args);
                 break;
+            case "-c", "--cancel":
+                handleCancelCommand(args);
             default:
                 displayUnknownCommand(args[0]);
 
@@ -126,18 +130,44 @@ public class CommandExecutor {
 
 
     public static final String BUY_INSTR =
-            "-b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date";
-    public static final int BUY_MAX_ARGS = 4;
+            "-b, --buy <customerId> <flightId> <date> [--print]: buy a ticket for a flight in a specific date, add [--print] at end to print it.";
+    public static final int BUY_MAX_ARGS = 5;
+    public static final String WARN_WRONG_PRINT_ARG = "Print command had errors: \n";
 
     public void handleBuyCommand(String[] args) {
-        if (args.length != BUY_MAX_ARGS) {
+        var invalid = args.length > BUY_MAX_ARGS || args.length < BUY_MAX_ARGS-1;
+        if (invalid) {
             logger.log(formatInvalidArgumentCountMessage(args, BUY_MAX_ARGS),
                     ApplicationLogger.LogLevel.WARNING);
             logger.log(BUY_INSTR,
                     ApplicationLogger.LogLevel.WARNING);
             return;
         }
+        if (args.length == BUY_MAX_ARGS) {
+            var command = ApplicationValidator.basicStringVerification("print command", args[4], 9, 9, null);
+            if (command.result() == null) {
+                logger.log(WARN_WRONG_PRINT_ARG + command.message(),
+                        ApplicationLogger.LogLevel.WARNING);
+                return;
+            }
+        }
         ticketController.purchaseTicket(args);
+    }
+
+    public static final int CANCEL_MAX_ARGS = 3;
+    public static final String CANCEL_INSTR =
+            "-c, --cancel <customerId> <date>: cancel ticket on specific date";
+
+    public void handleCancelCommand(String[] args) {
+        if (args.length != CANCEL_MAX_ARGS) {
+            logger.log(formatInvalidArgumentCountMessage(args, CANCEL_MAX_ARGS),
+                    ApplicationLogger.LogLevel.WARNING);
+            logger.log(CANCEL_INSTR,
+                    ApplicationLogger.LogLevel.WARNING);
+            return;
+        }
+        ticketController.cancelTicket(args);
+
     }
 
     public static final String DEBUG_STORED_PROCEDURES_INITIALIZED =

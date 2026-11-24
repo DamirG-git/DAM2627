@@ -102,7 +102,8 @@ public class FlightsController extends AbstractController {
         stringBuilder.append("  - ").append("Flight: ")
                 .append(flight.getFlightCode()).append(" from airport ")
                 .append(flight.getIataCode()).append(" in ")
-                .append("(").append(flight.getCityName()).append(")")
-                .append(" has ").append(flight.getFreeSeats()).append(" available seats out of ").append(flight.getTotalSeats()).append(" seats.\n");
+                .append("(").append(flight.getCityName()).append(") ")
+                .append(flight.getFreeSeats())
+                .append(" have been purchased out of ").append(flight.getTotalSeats()).append(" seats.\n");
     }
 }

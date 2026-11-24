@@ -50,10 +50,10 @@ public class TestAppE2E {
         public String destination = "DFW";
         public String date = String.valueOf(LocalDate.now());
         public String flightCode = "QR2305";
-        public String passport = "Y1234567";
+        public String passport = "X9324666";
 
         public final String destinationTestValue = "BOM";
-        public final String[] buyTestValues = {"Y1234567", "QR2305", date};
+        public final String[] buyTestValues = {"X9324666", "QR2305", date};
         public final String[] flightsTestValues = {flightsCommand, origin, destination, date};
         public final String[] ticketTestValues = {buyCommand, passport, flightCode, date};
     }

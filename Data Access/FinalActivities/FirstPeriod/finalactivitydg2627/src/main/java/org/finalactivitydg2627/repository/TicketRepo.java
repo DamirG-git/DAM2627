@@ -3,6 +3,7 @@ package org.finalactivitydg2627.repository;
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
@@ -35,6 +36,8 @@ public class TicketRepo extends AbstractRepo {
                     INSERT INTO tickets (passportno, date_of_travel,date_of_booking, date_of_cancellation, flight_code, price)
                     values (?, ?, now(),NULL, ?, ?)
             """;
+    private static final String SQL_FIND_TICKET = "SELECT t.ticket_number from tickets t where t.passportno = ? and t.date_of_travel = ?";
+
     private static final String SQL_FLIGHT_HAS_FREE_SEATS = """
                     SELECT p.total_seats-COUNT(t.ticket_number) AS free_seats
                     FROM flights f join planes p
@@ -48,6 +51,12 @@ public class TicketRepo extends AbstractRepo {
                     group by p.total_seats;
             """;
 
+    public static class TicketPurchaseValues {
+        public TicketPurchaseResult ticketPurchaseResult;
+        public Integer ticketCode;
+
+    }
+
     public enum TicketPurchaseResult {
         SUCCESS,
         PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE,
@@ -57,14 +66,66 @@ public class TicketRepo extends AbstractRepo {
         PASSENGER_DOES_NOT_EXIST
     }
 
+    public enum TicketCancellationResult {
+        SUCCESS,
+        PASSENGER_NOT_FOUND,
+        TICKET_NOT_FOUND,
+        TICKET_ALREADY_CANCELLED
+    }
 
-    public TicketPurchaseResult buyTicket(String passno, String flightCode, LocalDate date) throws SQLException {
+    public TicketCancellationResult cancelTicket(String passno, LocalDate date) throws SQLException {
+        try (var conn = connection.connect()) {
+            try (var stmt = conn.prepareStatement(SQL_PASSENGER_EXISTS)) {
+                stmt.setString(1, passno);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (!rs.next()) {
+                        return TicketCancellationResult.PASSENGER_NOT_FOUND;
+                    }
+                }
+            }
+            int ticketNum;
+            try (var stmt = conn.prepareStatement("SELECT t.ticket_number, t.date_of_cancellation from tickets t where t.passportno = ? and t.date_of_travel = ?")) {
+                stmt.setString(1, passno);
+                stmt.setObject(2, date);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (!rs.next()) {
+                        return TicketCancellationResult.TICKET_NOT_FOUND;
+                    }
+                    ticketNum = rs.getInt(1);
+                    var isCancelled = rs.getObject(2);
+                    if (isCancelled != null) {
+                        return TicketCancellationResult.TICKET_ALREADY_CANCELLED;
+                    }
+                }
+            }
+
+            try (var stmt = conn.prepareStatement(
+                    "UPDATE tickets SET date_of_cancellation = ? WHERE ticket_number = ?")) {
+                stmt.setObject(1, LocalDate.now());
+                stmt.setInt(2, ticketNum);
+                stmt.executeUpdate();
+                return TicketCancellationResult.SUCCESS;
+            }
+
+
+        }
+
+
+    }
+
+    public TicketPurchaseValues buyTicket(String passno, String flightCode, LocalDate date) throws SQLException {
+        var result = new TicketPurchaseValues();
+
+
         try (var conn = connection.connect()) {
             conn.setAutoCommit(false);
             try (var stmt = conn.prepareStatement(SQL_PASSENGER_EXISTS)) {
                 stmt.setString(1, passno);
                 try (var rs = stmt.executeQuery()) {
-                    if (!rs.next()) return TicketPurchaseResult.PASSENGER_DOES_NOT_EXIST;
+                    if (!rs.next()) {
+                        result.ticketPurchaseResult = TicketPurchaseResult.PASSENGER_DOES_NOT_EXIST;
+                        return result;
+                    }
                 }
             }
 
@@ -78,7 +139,8 @@ public class TicketRepo extends AbstractRepo {
                      var pstFlightHasFreeSeats = conn.prepareStatement(SQL_FLIGHT_HAS_FREE_SEATS);) {
                     if (hasTicketOnSameDate.next() && hasTicketOnSameDate.getBoolean(1)) {
                         conn.rollback();
-                        return TicketPurchaseResult.PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE;
+                        result.ticketPurchaseResult = TicketPurchaseResult.PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE;
+                        return result;
                     }
                     pstFlightHasFreeSeats.setObject(1, date);
                     pstFlightHasFreeSeats.setString(2, flightCode);
@@ -88,11 +150,13 @@ public class TicketRepo extends AbstractRepo {
                         if (stmtFreeSeats.next()) {
                             if (stmtFreeSeats.getLong(1) <= 0) {
                                 conn.rollback();
-                                return TicketPurchaseResult.NO_SEATS_AVAILABLE;
+                                result.ticketPurchaseResult = TicketPurchaseResult.NO_SEATS_AVAILABLE;
+                                return result;
                             }
                         } else {
                             conn.rollback();
-                            return TicketPurchaseResult.FLIGHT_NOT_FOUND;
+                            result.ticketPurchaseResult = TicketPurchaseResult.FLIGHT_NOT_FOUND;
+                            return result;
                         }
 
                         pstTicketAddNewTicket.setString(1, passno);
@@ -103,10 +167,25 @@ public class TicketRepo extends AbstractRepo {
                         var rows = pstTicketAddNewTicket.executeUpdate();
                         if (rows > 0) {
                             conn.commit();
-                            return TicketPurchaseResult.SUCCESS;
+                            try (var stmt = conn.prepareStatement(SQL_FIND_TICKET)) {
+                                stmt.setString(1, passno);
+                                stmt.setObject(2, date);
+                                try (var rs = stmt.executeQuery()) {
+                                    if (!rs.next()) {
+                                        result.ticketPurchaseResult = TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET;
+                                        return result;
+                                    }
+                                    result.ticketCode = rs.getInt(1);
+                                    result.ticketPurchaseResult = TicketPurchaseResult.SUCCESS;
+                                    return result;
+                                }
+
+                            }
+
                         }
                         conn.rollback();
-                        return TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET;
+                        result.ticketPurchaseResult = TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET;
+                        return result;
                     }
 
 

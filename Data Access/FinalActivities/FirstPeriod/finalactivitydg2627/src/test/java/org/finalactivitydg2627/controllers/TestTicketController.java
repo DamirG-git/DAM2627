@@ -22,12 +22,12 @@ public class TestTicketController  extends AbstractTest {
 
     private TicketController controller;
     private final TestInputs testInput = new TestInputs();
+    private final TicketRepo.TicketPurchaseValues ticketPurchaseValues  = new TicketRepo.TicketPurchaseValues();
 
     @BeforeEach
     void setup() {
         ticketService = mock(TicketService.class);
         logger = mock(ApplicationLogger.class);
-
         controller = new TicketController(logger, ticketService);
     }
 
@@ -45,8 +45,9 @@ public class TestTicketController  extends AbstractTest {
 
     @Test
     void addTicket_success() throws SQLException {
-
-        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.SUCCESS);
+        ticketPurchaseValues.ticketPurchaseResult = TicketRepo.TicketPurchaseResult.SUCCESS;
+        ticketPurchaseValues.ticketCode = 0;
+        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(ticketPurchaseValues);
 
         controller.purchaseTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
@@ -64,7 +65,8 @@ public class TestTicketController  extends AbstractTest {
 
     @Test
     void addTicket_failure_passHasTicketOnSameDate() throws SQLException {
-        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE);
+        ticketPurchaseValues.ticketPurchaseResult = TicketRepo.TicketPurchaseResult.PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE;
+        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(ticketPurchaseValues);
 
         controller.purchaseTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
@@ -74,7 +76,8 @@ public class TestTicketController  extends AbstractTest {
 
     @Test
     void addTicket_failure_flightNotFound() throws SQLException {
-        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.FLIGHT_NOT_FOUND);
+        ticketPurchaseValues.ticketPurchaseResult = TicketRepo.TicketPurchaseResult.FLIGHT_NOT_FOUND;
+        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(ticketPurchaseValues);
 
         controller.purchaseTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
@@ -84,7 +87,9 @@ public class TestTicketController  extends AbstractTest {
 
     @Test
     void addTicket_failure_noSeatsAvailableOnFlight() throws SQLException {
-        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.NO_SEATS_AVAILABLE);
+        ticketPurchaseValues.ticketPurchaseResult = TicketRepo.TicketPurchaseResult.NO_SEATS_AVAILABLE;
+        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(ticketPurchaseValues);
+
 
         controller.purchaseTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
@@ -93,7 +98,8 @@ public class TestTicketController  extends AbstractTest {
 
     @Test
     void addTicket_failure_passengerNotFound() throws SQLException {
-        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.PASSENGER_DOES_NOT_EXIST);
+        ticketPurchaseValues.ticketPurchaseResult = TicketRepo.TicketPurchaseResult.PASSENGER_DOES_NOT_EXIST;
+        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(ticketPurchaseValues);
 
         controller.purchaseTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);
@@ -102,7 +108,8 @@ public class TestTicketController  extends AbstractTest {
 
     @Test
     void addTicket_failure_failureOnInsert() throws SQLException {
-        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(TicketRepo.TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET);
+        ticketPurchaseValues.ticketPurchaseResult = TicketRepo.TicketPurchaseResult.FAILED_TO_CREATE_NEW_TICKET;
+        when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(ticketPurchaseValues);
 
         controller.purchaseTicket(testInput.inputs);
         verify(ticketService).buyTicket(testInput.passport, testInput.flightCode, testInput.date);

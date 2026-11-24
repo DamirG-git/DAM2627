@@ -25,10 +25,12 @@ public class TicketService  extends AbstractService {
         this.ticketRepo = ticketRepo;
     }
 
-    public TicketRepo.TicketPurchaseResult buyTicket(String passportNum, String flightCode, LocalDate date) throws SQLException {
-
+    public TicketRepo.TicketPurchaseValues buyTicket(String passportNum, String flightCode, LocalDate date) throws SQLException {
         return ticketRepo.buyTicket(passportNum, flightCode, date);
+    }
 
+    public TicketRepo.TicketCancellationResult cancelTicket(String passportNum, LocalDate date) throws SQLException {
+        return ticketRepo.cancelTicket(passportNum,date);
     }
 
 }

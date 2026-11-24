@@ -1,0 +1,3 @@
+Ticket with number 18
+Successfully purchased on 2026-11-23T20:13:02.552855400
+For passenger:B9876541 on flight LH9876 for date: 2027-06-01
