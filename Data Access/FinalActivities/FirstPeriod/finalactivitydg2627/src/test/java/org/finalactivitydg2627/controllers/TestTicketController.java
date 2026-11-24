@@ -12,6 +12,9 @@ import org.mockito.Mock;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -53,11 +56,10 @@ public class TestTicketController extends AbstractTest {
 
     @Test
     void addTicket_success() throws SQLException {
-
         ticketPurchaseValues.ticketPurchaseResult = TicketRepo.TicketPurchaseResult.SUCCESS;
         ticketPurchaseValues.ticketCode = 0;
+        
         when(ticketService.buyTicket(testInput.passport, testInput.flightCode, testInput.date)).thenReturn(ticketPurchaseValues);
-
 
         controller.purchaseTicket(testInput.inputs);
 

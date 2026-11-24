@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 public class TestTicketRepo extends AbstractTest {
+public class TestTicketRepo extends AbstractTest {
 
 
     private TicketRepo ticketRepo;
@@ -87,6 +88,7 @@ public class TestTicketRepo extends AbstractTest {
     static void verifyTestDatabase() throws SQLException {
         try (var conn = DBConnection.getInstance().connect()) {
             assertEquals("flights2627_test", conn.getCatalog());
+            testData = new TestData();
             testData = new TestData();
         }
 
@@ -163,6 +165,12 @@ public class TestTicketRepo extends AbstractTest {
             var passport2 = testData.passnportno2;
             var flightCode = "EY1234"; //Id 1
             var date = testData.testDate;
+
+
+            var passport = testData.passnportno;
+            var passport2 = testData.passnportno2;
+            var flightCode = "EY1234"; //Id 1
+            var date = testData.testDate;
             try (var stmt = conn.prepareStatement("UPDATE planes p SET total_seats = ? where p.plane_id = ?; ")) {
                 stmt.setInt(1, 1);
                 stmt.setInt(2, 1);
@@ -172,6 +180,7 @@ public class TestTicketRepo extends AbstractTest {
                 assertNotNull(result);
                 assertEquals(TicketRepo.TicketPurchaseResult.SUCCESS, result.ticketPurchaseResult);
 
+                var result2 = ticketRepo.buyTicket(passport2, flightCode, date);
                 var result2 = ticketRepo.buyTicket(passport2, flightCode, date);
                 assertNotNull(result2);
                 assertEquals(TicketRepo.TicketPurchaseResult.NO_SEATS_AVAILABLE, result2.ticketPurchaseResult);
