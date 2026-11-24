@@ -26,18 +26,6 @@ public class TestAppE2E {
     private final TestInput testInputs = new TestInput();
 
 
-    private final String HELP = """
-            Usage: flights [options]
-            
-            Options:
-                -h, --help: show this help
-                -a, --add <filename.xml>: add the passengers in the XML file to the database.
-                -f, --flights <origin> <destination> <date>: show the flights available from origin to destination
-                -b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date
-                -o, --origins: show the origins of the flights
-                -d, --destinations <origin>: show the destinations of the flights from origin
-            """;
-
     private static class TestInput {
         public String[] helpCommand = {"--help"};
         public String[] originsCommand = {"--origins"};
@@ -210,8 +198,8 @@ public class TestAppE2E {
                 eq(ApplicationLogger.LogLevel.WARNING));
 
         try (var conn = DBConnection.getInstance().connect();
-             var stsm = conn.prepareStatement("DELETE from tickets t where t.passportno = 'Y1234567'")) {
-            stsm.executeUpdate();
+             var statement = conn.prepareStatement("DELETE from tickets t where t.passportno = 'Y1234567'")) {
+            statement.executeUpdate();
         }
     }
 
