@@ -16,18 +16,15 @@ public class TicketPrinter {
         this.logger = logger;
     }
 
-    public static final String INFO_WRITING_TICKET = "Ticket information is being written to tickets folder...";
+
     public static final String INFO_TICKET_WRITING_COMPLETE = "Ticket has been written, file name: ";
 
     public static final String WARN_FAILED_TO_WRITE_TICKET = "Ticket writing to file has failed.";
 
     public static final String ERROR_FAILED_TO_CREATE_LOCATION = "Error on creating folder: ";
-    public static final String ERROR_ON_WRITING_TICKET = "Error on writing ticket: ";
 
 
     public void printTicket(Tickets ticket, int number) {
-
-
         var ticketsDirectory = Paths.get(
                 System.getProperty("user.dir"),
                 "tickets"
@@ -39,18 +36,14 @@ public class TicketPrinter {
             logger.log(ERROR_FAILED_TO_CREATE_LOCATION, ApplicationLogger.LogLevel.ERROR);
             return;
         }
-        logger.log(INFO_WRITING_TICKET, ApplicationLogger.LogLevel.INFO);
+
         var ticketFile = "Ticket" + number + ".txt";
         try (var fileWriter = new PrintWriter(
                 new BufferedWriter(
                         new FileWriter(
                                 ticketsDirectory.resolve(ticketFile).
                                         toFile(), true)), true)) {
-            var ticketString = "Ticket with number " + number + "\n" +
-                    "Successfully purchased on " + LocalDateTime.now() + "\n" +
-                    "For passenger:" + ticket.getPassportCode() +
-                    " on flight " + ticket.getFlightCode() +
-                    " for date: " + ticket.getTravelDate();
+            var ticketString = formatTicket(ticket, number);
             fileWriter.println(ticketString);
             logger.log(INFO_TICKET_WRITING_COMPLETE + ticketFile, ApplicationLogger.LogLevel.INFO);
         } catch (IOException e) {
@@ -58,6 +51,18 @@ public class TicketPrinter {
             logger.log(ERROR_FAILED_TO_CREATE_LOCATION, ApplicationLogger.LogLevel.ERROR);
 
         }
+
+
+
+
+    }
+
+    private String formatTicket(Tickets ticket, int number) {
+        return "Ticket with number " + number + "\n" +
+                "Successfully purchased on " + LocalDateTime.now() + "\n" +
+                "For passenger: " + ticket.getPassportCode() +
+                " on flight " + ticket.getFlightCode() +
+                " for date: " + ticket.getTravelDate();
     }
 
 }

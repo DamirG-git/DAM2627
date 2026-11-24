@@ -57,12 +57,10 @@ public class ApplicationLogger {
                 fileWriter.println("INFO: " + message);
                 System.out.printf("INFO: %s%n", message);
             }
-            case ERROR -> {
-                fileWriter.println("!ERROR!: " + message);
-            }
-            case DEBUG -> {
-                fileWriter.println("#DEBUG#: " + message);
-            }
+            case ERROR -> fileWriter.println("!ERROR!: " + message);
+
+            case DEBUG -> fileWriter.println("#DEBUG#: " + message);
+
             case WARNING -> {
                 fileWriter.println("<WARNING>: " + message);
                 System.out.printf("<WARNING>: %s%n", message);

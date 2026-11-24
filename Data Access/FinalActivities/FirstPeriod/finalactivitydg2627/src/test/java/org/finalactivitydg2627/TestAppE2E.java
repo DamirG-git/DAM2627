@@ -23,39 +23,81 @@ public class TestAppE2E {
 
     private CommandExecutor commandExecutor;
     private ApplicationLogger logger;
-    private final TestInput testInputs = new TestInput();
+    private static TestData testData;
 
+    static class TestData {
+        private static final String SQL_ADD_PASSENGER = """
+                INSERT INTO passengers(passportno,firstname,lastname,address,phone) values(?,?,?,?,?);
+                """;
+        private static final String SQL_FIND_PASSENGERS = """
+                       SELECT 1
+                       FROM passengers
+                       WHERE passportno IN (?, ?);
+        """;
+        public final String passnportno = "TST10001";
+        public final String firstname = "John";
+        public final String lastname = "Test";
+        public final String address = "Spain";
+        public final String phone = "Test phone";
+        public final String flightCode = "9W2334";
 
-    private final String HELP = """
-            Usage: flights [options]
-            
-            Options:
-                -h, --help: show this help
-                -a, --add <filename.xml>: add the passengers in the XML file to the database.
-                -f, --flights <origin> <destination> <date>: show the flights available from origin to destination
-                -b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date
-                -o, --origins: show the origins of the flights
-                -d, --destinations <origin>: show the destinations of the flights from origin
-            """;
-
-    private static class TestInput {
-        public String[] helpCommand = {"--help"};
-        public String[] originsCommand = {"--origins"};
-        public String addCommand = "--add";
-        public String destinationsCommand = "--destinations";
-        public String buyCommand = "--buy";
-        public String flightsCommand = "--flights";
+        public final String passnportno2 = "TST10002";
+        public final String firstname2 = "John";
+        public final String lastname2 = "Example";
+        public final String address2 = "America";
+        public final String phone2 = "Le phone";
+        public final String flightCode2 = "QR2305";
 
         public String origin = "BOM";
         public String destination = "DFW";
-        public String date = String.valueOf(LocalDate.now());
-        public String flightCode = "QR2305";
+
+        public final String invalidFlightCode = "INVALID";
+        public final String invalidPassportNo = "INVALID";
+        public final LocalDate testDate = LocalDate.now();
+        private final String testDateRaw = testDate.toString();
+
+        public final String[] flightsTestValues = {CommandExecutor.Commands.FLIGHTS, origin, destination, testDateRaw};
+        public final String[] ticketTestValues = {CommandExecutor.Commands.BUY, passnportno, flightCode, testDateRaw};
+        public final String[] ticketTestValuesPrint = {CommandExecutor.Commands.BUY, passnportno, flightCode, testDateRaw, CommandExecutor.Commands.BUY_PRINT};
+
+
+        public TestData() throws SQLException {
+            try (var conn = DBConnection.getInstance().connect()) {
+
+                try(var stmt = conn.prepareStatement(SQL_FIND_PASSENGERS)) {
+                    stmt.setString(1, passnportno);
+                    stmt.setString(2, passnportno2);
+                    try (var rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            return;
+                        }
+                    }
+                }
+
+                try (var stmt = conn.prepareStatement(SQL_ADD_PASSENGER)) {
+                    stmt.setString(1, passnportno);
+                    stmt.setString(2, firstname);
+                    stmt.setString(3, lastname);
+                    stmt.setString(4, address);
+                    stmt.setString(5, phone);
+                    stmt.addBatch();
+                    stmt.setString(1, passnportno2);
+                    stmt.setString(2, firstname2);
+                    stmt.setString(3, lastname2);
+                    stmt.setString(4, address2);
+                    stmt.setString(5, phone2);
+                    stmt.addBatch();
+                    stmt.executeBatch();
+                }
+            }
+        }
+    }
+
+    private static class TestInput {
+
         public String passport = "X9324666";
 
-        public final String destinationTestValue = "BOM";
-        public final String[] buyTestValues = {"X9324666", "QR2305", date};
-        public final String[] flightsTestValues = {flightsCommand, origin, destination, date};
-        public final String[] ticketTestValues = {buyCommand, passport, flightCode, date};
+
     }
 
     @BeforeAll
@@ -64,6 +106,8 @@ public class TestAppE2E {
             assertEquals("flights2627_test", conn.getCatalog(),
                     "Tests must run against the test database!");
         }
+        testData = new TestData();
+
     }
 
     @BeforeEach
@@ -75,14 +119,14 @@ public class TestAppE2E {
     // Airport controller START
     @Test
     void getOrigins_success() {
-        commandExecutor.executeCommand(testInputs.originsCommand);
+        commandExecutor.executeCommand(new String[]{CommandExecutor.Commands.ORIGINS});
         verify(logger).log(contains(AirportController.INFO_FETCHING_ORIGIN_AIRPORTS), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(AirportController.INFO_ORIGIN_AIRPORTS_RETRIEVED), eq(ApplicationLogger.LogLevel.INFO));
     }
 
     @Test
     void getDestinations_success() {
-        String[] input = {testInputs.destinationsCommand, "BOM"};
+        String[] input = {CommandExecutor.Commands.DESTINATIONS, testData.origin};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(AirportController.INFO_FETCHING_DESTINATION_AIRPORTS), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(AirportController.INFO_RETRIEVED_DESTINATIONS), eq(ApplicationLogger.LogLevel.INFO));
@@ -90,7 +134,8 @@ public class TestAppE2E {
 
     @Test
     void getDestinations_failure_AirportNotFound() {
-        String[] input = {testInputs.destinationsCommand, "XXX"};
+        var invalidOrigin = "XXX";
+        String[] input = {CommandExecutor.Commands.DESTINATIONS, invalidOrigin};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(AirportController.INFO_FETCHING_DESTINATION_AIRPORTS), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(AirportController.WARN_NO_AIRPORT_FOUND_IN_DB), eq(ApplicationLogger.LogLevel.WARNING));
@@ -98,7 +143,8 @@ public class TestAppE2E {
 
     @Test
     void getDestinations_failure_Verification() {
-        String[] input = {testInputs.destinationsCommand, "000"};
+        var invalidOrigin = "000";
+        String[] input = {CommandExecutor.Commands.DESTINATIONS, invalidOrigin};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(AirportController.WARN_INVALID_ORIGIN_AIRPORT_IATA), eq(ApplicationLogger.LogLevel.WARNING));
     }
@@ -107,7 +153,7 @@ public class TestAppE2E {
     // Flights controller START
     @Test
     void getFlights_success() {
-        commandExecutor.executeCommand(testInputs.flightsTestValues);
+        commandExecutor.executeCommand(testData.flightsTestValues);
         verify(logger).log(contains(FlightsController.INFO_FETCHING_FLIGHTS), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(FlightsController.INFO_FLIGHTS_RETRIEVED), eq(ApplicationLogger.LogLevel.INFO));
     }
@@ -115,16 +161,19 @@ public class TestAppE2E {
 
     @Test
     void getFlights_failure_Verification() {
-        String[] input = {testInputs.flightsTestValues[0], "000", null, null};
+        var invalidOrigin = "000";
+        String[] input = {testData.flightsTestValues[0], invalidOrigin, null, null};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(FlightsController.WARN_INPUT_VALIDATION_FAILED), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     @Test
     void getFlights_failure_AirportOriginAndDestinationNotFound() {
-        String[] input = {testInputs.flightsCommand, "ORG", "DES", testInputs.date};
+        var invalidOrigin = "ORG";
+        var invalidDestination = "DES";
+        String[] input = {CommandExecutor.Commands.FLIGHTS, invalidOrigin, invalidDestination, testData.testDateRaw};
         commandExecutor.executeCommand(input);
-        verify(logger).log(contains(String.format(FlightsController.WARN_ORIGIN_OR_DESTINATION_NOT_FOUND_FORMAT_ORIGIN_DEST, "ORG", "DES")), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(String.format(FlightsController.WARN_ORIGIN_OR_DESTINATION_NOT_FOUND_FORMAT_ORIGIN_DEST, invalidOrigin, invalidDestination)), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     // Flight controller END
@@ -133,7 +182,7 @@ public class TestAppE2E {
     void addPassengers_success() throws SQLException {
         // Passenger controller START
         String testXml = "src/test/resources/passengers_test_db_input.xml";
-        String[] input = {testInputs.addCommand, testXml};
+        String[] input = {CommandExecutor.Commands.ADD, testXml};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(PassengerController.INFO_VALIDATING_XML_FILE), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(PassengerController.INFO_IMPORTING_PASSENGERS_FROM_XML), eq(ApplicationLogger.LogLevel.INFO));
@@ -147,7 +196,7 @@ public class TestAppE2E {
 
     @Test
     void addPassengers_invalidXmlFile() {
-        String[] input = {testInputs.addCommand, "invalid/location/file.txt"};
+        String[] input = {CommandExecutor.Commands.ADD, "invalid/location/file.txt"};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(PassengerController.INFO_VALIDATING_XML_FILE), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(PassengerController.WARN_INVALID_XML_FILE_PATH), eq(ApplicationLogger.LogLevel.WARNING));
@@ -156,7 +205,7 @@ public class TestAppE2E {
     @Test
     void addPassengers_failure_failedVerification() {
         String testXmlFail = "src/test/resources/passengers_fail.xml";
-        String[] input = {testInputs.addCommand, testXmlFail};
+        String[] input = {CommandExecutor.Commands.ADD, testXmlFail};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(PassengerController.INFO_IMPORTING_PASSENGERS_FROM_XML + testXmlFail), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(PassengerController.WARN_XML_PASSENGER_VALIDATION_FAILED), eq(ApplicationLogger.LogLevel.WARNING));
@@ -165,7 +214,7 @@ public class TestAppE2E {
     @Test
     void addPassengers_failure_sqlErrorDuplicateKey() {
         String testXmlFailDuplicate = "src/test/resources/passengers_fail_duplicate.xml";
-        String[] input = {testInputs.addCommand, testXmlFailDuplicate};
+        String[] input = {CommandExecutor.Commands.ADD, testXmlFailDuplicate};
         commandExecutor.executeCommand(input);
         verify(logger).log(contains(PassengerController.INFO_IMPORTING_PASSENGERS_FROM_XML + testXmlFailDuplicate), eq(ApplicationLogger.LogLevel.INFO));
         verify(logger).log(contains(PassengerController.ERROR_INSERTING_PASSENGER), eq(ApplicationLogger.LogLevel.ERROR));
@@ -177,40 +226,58 @@ public class TestAppE2E {
 
     @Test
     void buyTickets_success() throws SQLException {
-        commandExecutor.executeCommand(testInputs.ticketTestValues);
+        commandExecutor.executeCommand(testData.ticketTestValues);
         verify(logger).log(contains(TicketController.INFO_TICKET_PURCHASED), eq(ApplicationLogger.LogLevel.INFO));
 
         try (var conn = DBConnection.getInstance().connect();
-             var stsm = conn.prepareStatement("DELETE from tickets t where t.passportno = 'Y1234567'")) {
+             var stsm = conn.prepareStatement("DELETE from tickets t where t.passportno = ?")) {
+            stsm.setString(1, testData.passnportno);
+            stsm.executeUpdate();
+        }
+    }
+
+    @Test
+    void buyTickets_success_print() throws SQLException {
+        commandExecutor.executeCommand(testData.ticketTestValuesPrint);
+        verify(logger).log(contains(TicketController.INFO_TICKET_PURCHASED), eq(ApplicationLogger.LogLevel.INFO));
+        verify(logger).log(contains(TicketController.INFO_PRINTING_TICKET), eq(ApplicationLogger.LogLevel.INFO));
+
+        try (var conn = DBConnection.getInstance().connect();
+             var stsm = conn.prepareStatement("DELETE from tickets t where t.passportno = ?")) {
+            stsm.setString(1, testData.passnportno);
             stsm.executeUpdate();
         }
     }
 
     @Test
     void buyTickets_failure_flightNotExist() {
-        String[] input = {testInputs.buyCommand, testInputs.passport, "XXX", testInputs.date};
+        var invalidFlight = "XXX";
+        String[] input = {CommandExecutor.Commands.BUY, testData.passnportno, invalidFlight, testData.testDateRaw};
         commandExecutor.executeCommand(input);
-        verify(logger).log(contains(String.format(TicketController.WARN_FLIGHT_NOT_FOUND_FORMAT_IATA, "XXX")), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(String.format(TicketController.WARN_FLIGHT_NOT_FOUND_FORMAT_IATA, invalidFlight)), eq(ApplicationLogger.LogLevel.WARNING));
     }
 
     @Test
-    void buyTickets_failure_flightNotFound() {
-        String[] input = {testInputs.buyCommand, "XXXTEST", testInputs.flightCode, testInputs.date};
+    void buyTickets_failure_passengerNotFound() {
+        var invalidPassport = "XXXTEST";
+        String[] input = {CommandExecutor.Commands.BUY, invalidPassport, testData.flightCode, testData.testDateRaw};
         commandExecutor.executeCommand(input);
-        verify(logger).log(contains(String.format(TicketController.WARN_PASSENGER_NOT_FOUND_FORMAT_PASSPORT, "XXXTEST")), eq(ApplicationLogger.LogLevel.WARNING));
+        verify(logger).log(contains(String.format(TicketController.WARN_PASSENGER_NOT_FOUND_FORMAT_PASSPORT, invalidPassport)), eq(ApplicationLogger.LogLevel.WARNING));
     }
+
 
     @Test
     void buyTickets_failure_ticketOnSameDate() throws SQLException {
-        commandExecutor.executeCommand(testInputs.ticketTestValues);
+        commandExecutor.executeCommand(testData.ticketTestValues);
         verify(logger).log(contains(TicketController.INFO_TICKET_PURCHASED), eq(ApplicationLogger.LogLevel.INFO));
-        commandExecutor.executeCommand(testInputs.ticketTestValues);
+        commandExecutor.executeCommand(testData.ticketTestValues);
         verify(logger).log(contains(String.format(
-                TicketController.WARN_DUPLICATE_TICKET_PURCHASE_FORMAT, testInputs.passport, testInputs.date)),
+                        TicketController.WARN_DUPLICATE_TICKET_PURCHASE_FORMAT, testData.passnportno, testData.testDateRaw)),
                 eq(ApplicationLogger.LogLevel.WARNING));
 
         try (var conn = DBConnection.getInstance().connect();
-             var stsm = conn.prepareStatement("DELETE from tickets t where t.passportno = 'Y1234567'")) {
+             var stsm = conn.prepareStatement("DELETE from tickets t where t.passportno = ?")) {
+            stsm.setString(1, testData.passnportno);
             stsm.executeUpdate();
         }
     }

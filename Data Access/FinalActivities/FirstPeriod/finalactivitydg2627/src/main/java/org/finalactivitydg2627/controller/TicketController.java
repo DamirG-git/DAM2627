@@ -15,19 +15,23 @@ import java.util.Arrays;
 public class TicketController extends AbstractController {
 
     private final TicketService ticketService;
+    private final TicketPrinter ticketPrinter;
 
     public TicketController(ApplicationLogger logger) {
         super(logger);
         ticketService = new TicketService(logger);
+        ticketPrinter = new TicketPrinter(logger);
     }
 
-    public TicketController(ApplicationLogger logger, TicketService ticketService) {
+    public TicketController(ApplicationLogger logger, TicketService ticketService, TicketPrinter ticketPrinter) {
         super(logger);
         this.ticketService = ticketService;
+        this.ticketPrinter = ticketPrinter;
     }
 
 
     public static final String INFO_TICKET_PURCHASED = "Ticket successfully purchased.";
+    public static final String INFO_PRINTING_TICKET = "Ticket information is being written to tickets folder...";
 
 
     public static final String WARN_INPUT_VALIDATION_FAILED = "Input validation failed: \n";
@@ -65,11 +69,8 @@ public class TicketController extends AbstractController {
             logger.log(ERROR_TICKET_PURCHASE + e.getMessage(), ApplicationLogger.LogLevel.ERROR);
             return;
         }
-        displayPurchaseResult(result.ticketPurchaseResult, ticket);
-        if (args.length == CommandExecutor.BUY_MAX_ARGS) {
-            var printer = new TicketPrinter(logger);
-            printer.printTicket(ticket, result.ticketCode);
-        }
+        var print = args.length == CommandExecutor.BUY_MAX_ARGS;
+        displayPurchaseResult(result, ticket, print);
     }
 
     public static final String INFO_TICKET_CANCELLED = "Ticket successfully canceled.";
@@ -115,8 +116,8 @@ public class TicketController extends AbstractController {
 
     }
 
-    private void displayPurchaseResult(TicketRepo.TicketPurchaseResult result, Tickets ticket) {
-        switch (result) {
+    private void displayPurchaseResult(TicketRepo.TicketPurchaseValues result, Tickets ticket, boolean print) {
+        switch (result.ticketPurchaseResult) {
             case PASSENGER_ALREADY_HAS_TICKET_ON_SAME_DATE ->
                     logger.log(String.format(WARN_DUPLICATE_TICKET_PURCHASE_FORMAT, ticket.getPassportCode(), ticket.getTravelDate()),
                             ApplicationLogger.LogLevel.WARNING);
@@ -129,8 +130,14 @@ public class TicketController extends AbstractController {
                     String.format(WARN_NO_SEATS_AVAILABLE_FORMAT_FLIGHT_DATE, ticket.getFlightCode(), ticket.getTravelDate()),
                     ApplicationLogger.LogLevel.WARNING);
 
-            case SUCCESS -> logger.log(INFO_TICKET_PURCHASED,
-                    ApplicationLogger.LogLevel.INFO);
+            case SUCCESS -> {
+                if (print) {
+                    logger.log(INFO_PRINTING_TICKET, ApplicationLogger.LogLevel.INFO);
+                    ticketPrinter.printTicket(ticket, result.ticketCode);
+                }
+                logger.log(INFO_TICKET_PURCHASED,
+                        ApplicationLogger.LogLevel.INFO);
+            }
 
             case PASSENGER_DOES_NOT_EXIST -> logger.log(
                     String.format(WARN_PASSENGER_NOT_FOUND_FORMAT_PASSPORT, ticket.getPassportCode()),

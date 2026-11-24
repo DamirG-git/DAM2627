@@ -17,12 +17,32 @@ import static org.mockito.Mockito.mock;
 public class TestPassengerRepo  extends AbstractTest {
 
     private PassengerRepo passengerRepo;
+    private final TestData testData = new TestData();
+
+    static class TestData{
 
 
-    private static final Passengers test1 = new Passengers("TEST001", "John", "Smith",
-            "Test Street 1", "111111111");
-    private static final Passengers test2 = new Passengers("TEST002", "Jane", "Doe",
-            "Test Street 2", "222222222");
+        public final String passport1 = "TEST001";
+        public final String name1 = "John";
+        public final String surname1 = "Smith";
+        public final String address1 = "Test Street 1";
+        public final String phone1 = "111111111";
+
+        public final String passport2 = "TEST002";
+        public final String name2 = "Jane";
+        public final String surname2 = "Doe";
+        public final String address2 = "Test Street 2";
+        public final String phone2 = "222222222";
+
+        public final Passengers passenger1 = new Passengers(
+                passport1, name1, surname1, address1, phone1
+        );
+
+        public final Passengers passenger2 = new Passengers(
+                passport2, name2, surname2, address2, phone2
+        );
+
+    }
 
     @BeforeAll
     static void verifyTestDatabase() throws SQLException {
@@ -39,7 +59,13 @@ public class TestPassengerRepo  extends AbstractTest {
 
     @Test
     void addPassengers_success() throws SQLException {
-        var passengers = List.of(test1, test2);
+        var pass1 = testData.passenger1;
+        var pass2 = testData.passenger2;
+
+        var passport1 = testData.passport1;
+        var passport2 = testData.passport2;
+
+        var passengers = List.of(pass1, pass2);
         try {
             passengerRepo.addPassengers(passengers);
 
@@ -47,8 +73,8 @@ public class TestPassengerRepo  extends AbstractTest {
                  var stmt = conn.prepareStatement(
                          "SELECT COUNT(*) FROM passengers WHERE passportno IN (?, ?)")) {
 
-                stmt.setString(1, "TEST001");
-                stmt.setString(2, "TEST002");
+                stmt.setString(1, passport1);
+                stmt.setString(2, passport2);
 
                 try (var rs = stmt.executeQuery()) {
                     assertTrue(rs.next());
@@ -60,8 +86,8 @@ public class TestPassengerRepo  extends AbstractTest {
                  var stmt = conn.prepareStatement(
                          "DELETE FROM passengers WHERE passportno IN (?, ?)")) {
 
-                stmt.setString(1, "TEST001");
-                stmt.setString(2, "TEST002");
+                stmt.setString(1, passport1);
+                stmt.setString(2, passport2);
                 stmt.executeUpdate();
             }
         }
@@ -69,11 +95,15 @@ public class TestPassengerRepo  extends AbstractTest {
 
     @Test
     void addPassengers_fail_duplicatedKey() throws SQLException {
-        var passengers = List.of(test1, test1);
+        var pass1 = testData.passenger1;
+
+        var passport1 = testData.passport1;
+
+        var passengers = List.of(pass1, pass1);
         assertThrows(SQLException.class, () -> passengerRepo.addPassengers(passengers));
         try (var conn = DBConnection.getInstance().connect()) {
             try (var stmt = conn.prepareStatement("SELECT 1 FROM passengers p where p.passportno = ?")) {
-                stmt.setString(1, "TEST001");
+                stmt.setString(1, passport1);
                 try (var rs = stmt.executeQuery()) {
                     assertFalse(rs.next());
                 }
@@ -83,18 +113,39 @@ public class TestPassengerRepo  extends AbstractTest {
 
     @Test
     void addPassenger_fail_duplicateKeyNotChangingValue() throws SQLException {
-        var passengers = List.of(test1, test2, new Passengers("X9324666", "TEST", "TEST", "TEST", "TEST"));
+
+        var pass1 = testData.passenger1;
+        var pass2 = testData.passenger2;
+
+        var passport1 = testData.passport1;
+        var testInput = "TEST";
+
+        var passengersStartInput = List.of(pass1);
+        var result = passengerRepo.addPassengers(passengersStartInput);
+        assertTrue(result>0);
+
+        var passengers = List.of(pass2, pass2, new Passengers(passport1, testInput, testInput, testInput, testInput));
         assertThrows(SQLException.class, () -> passengerRepo.addPassengers(passengers));
+
+
         try (var conn = DBConnection.getInstance().connect()) {
             try (var stmt = conn.prepareStatement("SELECT * FROM passengers p where p.passportno = ?")) {
-                stmt.setString(1, "X9324666");
+                stmt.setString(1, passport1);
                 try (var rs = stmt.executeQuery()) {
                     assertTrue(rs.next());
-                    assertEquals("X9324666", rs.getString(1));
-                    assertNotEquals("TEST", rs.getString(2));
-                    assertNotEquals("TEST", rs.getString(3));
+                    assertEquals(passport1, rs.getString(1));
+                    assertNotEquals(testInput, rs.getString(2));
+                    assertNotEquals(testInput, rs.getString(3));
                 }
             }
+            finally {
+                try (var stmt = conn.prepareStatement(
+                             "DELETE FROM passengers WHERE passportno = ?")) {
+                    stmt.setString(1, passport1);
+                    stmt.executeUpdate();
+                }
+            }
+
         }
     }
 }

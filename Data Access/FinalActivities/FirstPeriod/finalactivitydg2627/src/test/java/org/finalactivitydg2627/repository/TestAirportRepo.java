@@ -2,6 +2,7 @@ package org.finalactivitydg2627.repository;
 
 import org.finalactivitydg2627.AbstractTest;
 import org.finalactivitydg2627.database.DBConnection;
+import org.finalactivitydg2627.service.AirportService;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,11 @@ public class TestAirportRepo  extends AbstractTest {
 
 
     private AirportRepo airportRepo;
+
+    private final String airportIata = "BOM";
+    private final String invalidAirport = "XXX";
+    private final String airportNoDestinations = "DFW";
+
 
     @BeforeAll
     static void verifyTestDatabase() throws SQLException {
@@ -47,7 +53,7 @@ public class TestAirportRepo  extends AbstractTest {
 
     @Test
     void getDestinationAirports_success() throws SQLException {
-        var results = airportRepo.getDestinationAirports("BOM");
+        var results = airportRepo.getDestinationAirports(airportIata);
         assertNotNull(results);
         assertSame(AirportRepo.AirportStatus.FOUND, results.codeEnum());
         assertFalse(results.value().isEmpty());
@@ -55,7 +61,7 @@ public class TestAirportRepo  extends AbstractTest {
 
     @Test
     void getDestinationAirports_originNotFoundInDB() throws SQLException {
-        var results = airportRepo.getDestinationAirports("NON");
+        var results = airportRepo.getDestinationAirports(invalidAirport);
         assertNotNull(results);
         assertSame(AirportRepo.AirportStatus.NOT_FOUND, results.codeEnum());
         assertNull(results.value());
@@ -63,7 +69,7 @@ public class TestAirportRepo  extends AbstractTest {
 
     @Test
     void getDestinationAirports_noDestinationsFound() throws SQLException {
-        var results = airportRepo.getDestinationAirports("DFW");
+        var results = airportRepo.getDestinationAirports(airportNoDestinations);
         assertNotNull(results);
         assertSame(AirportRepo.AirportStatus.FOUND, results.codeEnum());
         assertTrue(results.value().isEmpty());

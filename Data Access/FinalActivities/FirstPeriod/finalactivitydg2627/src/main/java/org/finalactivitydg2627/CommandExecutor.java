@@ -6,10 +6,12 @@ import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.controller.TicketController;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.finalactivitydg2627.utils.ApplicationValidator;
+import org.finalactivitydg2627.utils.MessageFormatter;
 import org.finalactivitydg2627.utils.StoredProceduresSQL;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class CommandExecutor {
     private final ApplicationLogger logger;
@@ -51,6 +53,34 @@ public class CommandExecutor {
 
     public static final String WARN_NO_INPUT_PROVIDED = "No input was provided.";
 
+    public static class Commands {
+
+        private Commands() {
+        }
+
+        public static final String HELP = "-h";
+        public static final String HELP_LONG = "--help";
+
+        public static final String ORIGINS = "-o";
+        public static final String ORIGINS_LONG = "--origins";
+
+        public static final String ADD = "-a";
+        public static final String ADD_LONG = "--add";
+
+        public static final String DESTINATIONS = "-d";
+        public static final String DESTINATIONS_LONG = "--destinations";
+
+        public static final String BUY = "-b";
+        public static final String BUY_LONG = "--buy";
+        public static final String BUY_PRINT = "[--print]";
+
+        public static final String FLIGHTS = "-f";
+        public static final String FLIGHTS_LONG = "--flights";
+
+        public static final String CANCEL = "-c";
+        public static final String CANCEL_LONG = "--cancel";
+    }
+
 
     public void executeCommand(String[] args) {
         if (args.length == 0) {
@@ -58,29 +88,14 @@ public class CommandExecutor {
             return;
         }
         switch (args[0].trim().toLowerCase()) {
-            case "-h", "--help":
-                displayHelp();
-                break;
-            case "-o", "--origins":
-                displayOriginAirports();
-                break;
-            case "-a", "--add":
-                handleAddCommand(args);
-                break;
-            case "-d", "--destinations":
-                handleDestinationsCommand(args);
-                break;
-            case "-b", "--buy":
-                handleBuyCommand(args);
-                break;
-            case "-f", "--flights":
-                handleFlightsCommand(args);
-                break;
-            case "-c", "--cancel":
-                handleCancelCommand(args);
-            default:
-                displayUnknownCommand(args[0]);
-
+            case Commands.HELP, Commands.HELP_LONG -> displayHelp();
+            case Commands.ORIGINS, Commands.ORIGINS_LONG -> displayOriginAirports();
+            case Commands.ADD, Commands.ADD_LONG -> handleAddCommand(args);
+            case Commands.DESTINATIONS, Commands.DESTINATIONS_LONG -> handleDestinationsCommand(args);
+            case Commands.BUY, Commands.BUY_LONG -> handleBuyCommand(args);
+            case Commands.FLIGHTS, Commands.FLIGHTS_LONG -> handleFlightsCommand(args);
+            case Commands.CANCEL, Commands.CANCEL_LONG -> handleCancelCommand(args);
+            default -> displayUnknownCommand(args[0]);
         }
     }
 
@@ -135,23 +150,26 @@ public class CommandExecutor {
     public static final String WARN_WRONG_PRINT_ARG = "Print command had errors: \n";
 
     public void handleBuyCommand(String[] args) {
-        var invalid = args.length > BUY_MAX_ARGS || args.length < BUY_MAX_ARGS-1;
-        if (invalid) {
-            logger.log(formatInvalidArgumentCountMessage(args, BUY_MAX_ARGS),
-                    ApplicationLogger.LogLevel.WARNING);
-            logger.log(BUY_INSTR,
-                    ApplicationLogger.LogLevel.WARNING);
-            return;
-        }
-        if (args.length == BUY_MAX_ARGS) {
-            var command = ApplicationValidator.basicStringVerification("print command", args[4], 9, 9, null);
-            if (command.result() == null) {
-                logger.log(WARN_WRONG_PRINT_ARG + command.message(),
+        switch (args.length) {
+            case 4 -> ticketController.purchaseTicket(args);
+            case 5 -> {
+                var command = ApplicationValidator.basicStringVerification("print command", args[4], 9, 9, Pattern.compile("^\\[--print]$"));
+                if (command.result() == null) {
+                    logger.log(WARN_WRONG_PRINT_ARG+ MessageFormatter.multipleErrorsFormatter(command) + command.message(),
+                            ApplicationLogger.LogLevel.WARNING);
+                    logger.log(BUY_INSTR,
+                            ApplicationLogger.LogLevel.WARNING);
+                    return;
+                }
+                ticketController.purchaseTicket(args);
+            }
+            default -> {
+                logger.log(formatInvalidArgumentCountMessage(args, BUY_MAX_ARGS),
                         ApplicationLogger.LogLevel.WARNING);
-                return;
+                logger.log(BUY_INSTR,
+                        ApplicationLogger.LogLevel.WARNING);
             }
         }
-        ticketController.purchaseTicket(args);
     }
 
     public static final int CANCEL_MAX_ARGS = 3;

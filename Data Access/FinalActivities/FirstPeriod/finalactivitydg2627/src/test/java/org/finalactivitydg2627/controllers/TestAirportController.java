@@ -25,6 +25,8 @@ public class TestAirportController extends AbstractTest {
     private AirportController controller;
     private final TestInputs testInputs = new TestInputs();
 
+    public static final String TEST_EXCEPTION = "Test exception";
+
     @BeforeEach
     void setUp() {
         controller = new AirportController(logger, airportService);
@@ -43,9 +45,6 @@ public class TestAirportController extends AbstractTest {
 
     @Test
     void getOriginAirports_success() throws SQLException {
-
-
-
         var airports = List.of(testInputs.airportDto1,testInputs.airportDto2);
 
         when(airportService.getOriginAirports()).thenReturn(airports);
@@ -72,11 +71,10 @@ public class TestAirportController extends AbstractTest {
 
     @Test
     void getOriginAirports_fail_serviceException() throws SQLException {
-        var error = "Test exception";
-        when(airportService.getOriginAirports()).thenThrow(new SQLException(error));
+        when(airportService.getOriginAirports()).thenThrow(new SQLException(TEST_EXCEPTION));
         controller.displayOriginAirports();
         verify(airportService).getOriginAirports();
-        verify(logger).log(contains(error), eq(ApplicationLogger.LogLevel.ERROR));
+        verify(logger).log(contains(TEST_EXCEPTION), eq(ApplicationLogger.LogLevel.ERROR));
     }
 
     @Test
@@ -90,7 +88,7 @@ public class TestAirportController extends AbstractTest {
         verify(logger).log(contains(AirportController.INFO_FETCHING_DESTINATION_AIRPORTS),eq(ApplicationLogger.LogLevel.INFO));
         verify(airportService).getDestinationAirports(destination);
         verify(logger).log(contains(AirportController.INFO_RETRIEVED_DESTINATIONS), eq(ApplicationLogger.LogLevel.INFO));
-        verify(logger, times(2)).log(contains("TST"), eq(ApplicationLogger.LogLevel.INFO));
+        verify(logger, times(2)).log(contains(destination), eq(ApplicationLogger.LogLevel.INFO));
     }
     @Test
     void getDestinationAirports_fail_invalidAirportCode() throws SQLException {
@@ -122,12 +120,11 @@ public class TestAirportController extends AbstractTest {
 
     @Test
     void getDestinationAirports_fail_serviceException() throws SQLException {
-        var error = "Test exception";
         var destination = "TST";
-        when(airportService.getDestinationAirports(destination)).thenThrow(new SQLException(error));
+        when(airportService.getDestinationAirports(destination)).thenThrow(new SQLException(TEST_EXCEPTION));
         controller.displayDestinationAirports(destination);
         verify(airportService).getDestinationAirports(destination);
-        verify(logger).log(contains(AirportController.ERROR_FETCHING_AIRPORTS + error), eq(ApplicationLogger.LogLevel.ERROR));
+        verify(logger).log(contains(AirportController.ERROR_FETCHING_AIRPORTS + TEST_EXCEPTION), eq(ApplicationLogger.LogLevel.ERROR));
     }
 
 
