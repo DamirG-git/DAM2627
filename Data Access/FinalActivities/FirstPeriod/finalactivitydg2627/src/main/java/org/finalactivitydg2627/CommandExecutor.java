@@ -4,10 +4,7 @@ import org.finalactivitydg2627.controller.AirportController;
 import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.controller.TicketController;
-import org.finalactivitydg2627.utils.ApplicationLogger;
-import org.finalactivitydg2627.utils.ApplicationValidator;
-import org.finalactivitydg2627.utils.MessageFormatter;
-import org.finalactivitydg2627.utils.StoredProceduresSQL;
+import org.finalactivitydg2627.utils.*;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -21,15 +18,19 @@ public class CommandExecutor {
     private final PassengerController passengerController;
     private final TicketController ticketController;
 
-    public CommandExecutor(ApplicationLogger logger) {
+    public CommandExecutor(ApplicationLogger logger, TicketPrinter ticketPrinter) {
         this.logger = logger;
         airportController = new AirportController(logger);
         flightsController = new FlightsController(logger);
         passengerController = new PassengerController(logger);
-        ticketController = new TicketController(logger);
+        ticketController = new TicketController(logger, ticketPrinter);
     }
 
-    public CommandExecutor(ApplicationLogger logger, AirportController airportController, FlightsController flightsController, PassengerController passengerController, TicketController ticketController) {
+    public CommandExecutor(ApplicationLogger logger,
+                           AirportController airportController,
+                           FlightsController flightsController,
+                           PassengerController passengerController,
+                           TicketController ticketController) {
         this.airportController = airportController;
         this.flightsController = flightsController;
         this.passengerController = passengerController;
@@ -155,7 +156,7 @@ public class CommandExecutor {
             case 5 -> {
                 var command = ApplicationValidator.basicStringVerification("print command", args[4], 9, 9, Pattern.compile("^\\[--print]$"));
                 if (command.result() == null) {
-                    logger.log(WARN_WRONG_PRINT_ARG+ MessageFormatter.multipleErrorsFormatter(command) + command.message(),
+                    logger.log(WARN_WRONG_PRINT_ARG + MessageFormatter.multipleErrorsFormatter(command) + command.message(),
                             ApplicationLogger.LogLevel.WARNING);
                     logger.log(BUY_INSTR,
                             ApplicationLogger.LogLevel.WARNING);

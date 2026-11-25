@@ -5,6 +5,9 @@ import org.finalactivitydg2627.repository.PassengerRepo;
 import org.finalactivitydg2627.utils.ApplicationLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,11 +18,12 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
+public class TestPassengerService extends AbstractTest {
 
-public class TestPassengerService  extends AbstractTest {
-
-
+    @Mock
     private PassengerRepo passengerRepo;
+    @Mock
     private ApplicationLogger logger;
 
     private PassengerService passengerService;
@@ -31,8 +35,6 @@ public class TestPassengerService  extends AbstractTest {
 
     @BeforeEach
     void setUp() {
-        passengerRepo = mock(PassengerRepo.class);
-        logger = mock(ApplicationLogger.class);
         passengerService = new PassengerService(logger, passengerRepo);
     }
 

@@ -2,6 +2,7 @@ package org.finalactivitydg2627;
 
 import org.finalactivitydg2627.database.DBConnection;
 import org.finalactivitydg2627.utils.ApplicationLogger;
+import org.finalactivitydg2627.utils.TicketPrinter;
 
 import java.sql.SQLException;
 
@@ -15,7 +16,7 @@ public class Main {
 
     public static void main(String[] args) {
         try (var ignored = DBConnection.getInstance().connect()) {
-            var commandExe = new CommandExecutor(logger);
+            var commandExe = new CommandExecutor(logger, new TicketPrinter(logger));
             commandExe.executeCommand(args);
         } catch (SQLException e) {
             logger.log(ERROR_SQL_CONNECTION + e.getMessage(), ApplicationLogger.LogLevel.ERROR);

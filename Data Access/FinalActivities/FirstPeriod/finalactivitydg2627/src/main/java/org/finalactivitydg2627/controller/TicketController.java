@@ -17,10 +17,10 @@ public class TicketController extends AbstractController {
     private final TicketService ticketService;
     private final TicketPrinter ticketPrinter;
 
-    public TicketController(ApplicationLogger logger) {
+    public TicketController(ApplicationLogger logger, TicketPrinter ticketPrinter) {
         super(logger);
         ticketService = new TicketService(logger);
-        ticketPrinter = new TicketPrinter(logger);
+        this.ticketPrinter = ticketPrinter;
     }
 
     public TicketController(ApplicationLogger logger, TicketService ticketService, TicketPrinter ticketPrinter) {
@@ -100,7 +100,7 @@ public class TicketController extends AbstractController {
                         ApplicationLogger.LogLevel.INFO);
                 case PASSENGER_NOT_FOUND -> logger.log(
                         String.format(WARN_PASSENGER_NOT_FOUND_FORMAT_PASSPORT, passportNumResult.result()),
-                        ApplicationLogger.LogLevel.INFO);
+                        ApplicationLogger.LogLevel.WARNING);
                 case TICKET_ALREADY_CANCELLED -> logger.log(
                         WARN_TICKET_ALREADY_CANCELLED,
                         ApplicationLogger.LogLevel.WARNING);

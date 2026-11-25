@@ -23,7 +23,7 @@ public class TestAirportController extends AbstractTest {
     private AirportService airportService;
 
     private AirportController controller;
-    private final TestInputs testInputs = new TestInputs();
+    private final TestInput testInput = new TestInput();
 
     public static final String TEST_EXCEPTION = "Test exception";
 
@@ -32,12 +32,12 @@ public class TestAirportController extends AbstractTest {
         controller = new AirportController(logger, airportService);
     }
 
-    static class TestInputs{
+    static class TestInput {
         AirportDTO airportDto1;
         AirportDTO airportDto2;
 
 
-        public TestInputs(){
+        public TestInput(){
             airportDto1 = new AirportDTO("Frankfurt Airport","FRA","Frankfurt","LH123");
             airportDto2 = new AirportDTO("San Francisco International","SFO","San Francisco","UA456");
         }
@@ -45,7 +45,7 @@ public class TestAirportController extends AbstractTest {
 
     @Test
     void getOriginAirports_success() throws SQLException {
-        var airports = List.of(testInputs.airportDto1,testInputs.airportDto2);
+        var airports = List.of(testInput.airportDto1, testInput.airportDto2);
 
         when(airportService.getOriginAirports()).thenReturn(airports);
 
@@ -80,8 +80,8 @@ public class TestAirportController extends AbstractTest {
     @Test
     void getDestinationAirports_success() throws SQLException {
         var destination = "TST";
-        testInputs.airportDto1.setAirportIata(destination);
-        var returnValue = new AbstractRepo.RepoResultValue<>(Collections.singletonList(testInputs.airportDto1), AirportRepo.AirportStatus.FOUND);
+        testInput.airportDto1.setAirportIata(destination);
+        var returnValue = new AbstractRepo.RepoResultValue<>(Collections.singletonList(testInput.airportDto1), AirportRepo.AirportStatus.FOUND);
         when(airportService.getDestinationAirports(destination)).thenReturn(returnValue);
 
         controller.displayDestinationAirports(destination);

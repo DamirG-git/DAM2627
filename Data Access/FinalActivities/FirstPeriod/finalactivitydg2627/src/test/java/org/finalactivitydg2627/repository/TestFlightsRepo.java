@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 public class TestFlightsRepo extends AbstractTest {
 

@@ -5,21 +5,29 @@ import org.finalactivitydg2627.controller.FlightsController;
 import org.finalactivitydg2627.controller.PassengerController;
 import org.finalactivitydg2627.controller.TicketController;
 import org.finalactivitydg2627.utils.ApplicationLogger;
+import org.finalactivitydg2627.utils.TicketPrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import static org.mockito.Mockito.*;
 
-public class TestCommandExecutor {
+public class TestCommandExecutor extends AbstractTest {
 
-     ApplicationLogger logger;
-     CommandExecutor commandExecutor;
-     final TestInput testInput = new TestInput();
+    ApplicationLogger logger;
+    CommandExecutor commandExecutor;
+    final TestInput testInput = new TestInput();
 
-     AirportController airportController;
-     FlightsController flightsController;
-     PassengerController passengerController;
-     TicketController ticketController;
+    @Mock
+    AirportController airportController;
+    @Mock
+    FlightsController flightsController;
+    @Mock
+    PassengerController passengerController;
+    @Mock
+    TicketController ticketController;
+    @Mock
+    TicketPrinter ticketPrinter;
 
             /*
             Usage: flights [options]
@@ -48,6 +56,7 @@ public class TestCommandExecutor {
         airportController = mock(AirportController.class);
         flightsController = mock(FlightsController.class);
         passengerController = mock(PassengerController.class);
+        ticketPrinter = mock(TicketPrinter.class);
 
         commandExecutor = new CommandExecutor(
                 logger, airportController, flightsController, passengerController, ticketController);

@@ -1,3 +1,0 @@
-Ticket with number 147
-Successfully purchased on 2026-11-24T18:06:30.735313600
-For passenger: TST10001 on flight 9W2334 for date: 2026-11-24

@@ -13,9 +13,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
 
-public class TestTicketRepo extends AbstractTest {
 public class TestTicketRepo extends AbstractTest {
 
 
@@ -88,7 +86,6 @@ public class TestTicketRepo extends AbstractTest {
     static void verifyTestDatabase() throws SQLException {
         try (var conn = DBConnection.getInstance().connect()) {
             assertEquals("flights2627_test", conn.getCatalog());
-            testData = new TestData();
             testData = new TestData();
         }
 
@@ -166,11 +163,6 @@ public class TestTicketRepo extends AbstractTest {
             var flightCode = "EY1234"; //Id 1
             var date = testData.testDate;
 
-
-            var passport = testData.passnportno;
-            var passport2 = testData.passnportno2;
-            var flightCode = "EY1234"; //Id 1
-            var date = testData.testDate;
             try (var stmt = conn.prepareStatement("UPDATE planes p SET total_seats = ? where p.plane_id = ?; ")) {
                 stmt.setInt(1, 1);
                 stmt.setInt(2, 1);
@@ -181,7 +173,6 @@ public class TestTicketRepo extends AbstractTest {
                 assertEquals(TicketRepo.TicketPurchaseResult.SUCCESS, result.ticketPurchaseResult);
 
                 var result2 = ticketRepo.buyTicket(passport2, flightCode, date);
-                var result2 = ticketRepo.buyTicket(passport2, flightCode, date);
                 assertNotNull(result2);
                 assertEquals(TicketRepo.TicketPurchaseResult.NO_SEATS_AVAILABLE, result2.ticketPurchaseResult);
 
@@ -190,4 +181,46 @@ public class TestTicketRepo extends AbstractTest {
             }
         }
     }
+
+    @Test
+    void cancelTicket_success() throws SQLException {
+        var result = ticketRepo.buyTicket(testData.passnportno, testData.flightCode2, testData.testDate);
+        assertNotNull(result);
+        assertEquals(TicketRepo.TicketPurchaseResult.SUCCESS, result.ticketPurchaseResult);
+
+        var cancelResult = ticketRepo.cancelTicket(testData.passnportno,testData.testDate);
+        assertNotNull(cancelResult);
+        assertEquals(TicketRepo.TicketCancellationResult.SUCCESS, cancelResult);
+    }
+
+    @Test
+    void cancelTicket_failure_noPassengerFound() throws SQLException {
+        var cancelResult = ticketRepo.cancelTicket(testData.invalidPassportNo,testData.testDate);
+        assertNotNull(cancelResult);
+        assertEquals(TicketRepo.TicketCancellationResult.PASSENGER_NOT_FOUND, cancelResult);
+    }
+
+    @Test
+    void cancelTicket_failure_noTicketFound() throws SQLException {
+        var cancelResult = ticketRepo.cancelTicket(testData.passnportno,testData.testDate);
+        assertNotNull(cancelResult);
+        assertEquals(TicketRepo.TicketCancellationResult.TICKET_NOT_FOUND, cancelResult);
+    }
+
+    @Test
+    void cancelTicket_failure_ticketAlreadyCancelled() throws SQLException {
+        var result = ticketRepo.buyTicket(testData.passnportno, testData.flightCode2, testData.testDate);
+        assertNotNull(result);
+        assertEquals(TicketRepo.TicketPurchaseResult.SUCCESS, result.ticketPurchaseResult);
+
+        var cancelResult = ticketRepo.cancelTicket(testData.passnportno,testData.testDate);
+        assertNotNull(cancelResult);
+        assertEquals(TicketRepo.TicketCancellationResult.SUCCESS, cancelResult);
+
+        var cancelFail = ticketRepo.cancelTicket(testData.passnportno,testData.testDate);
+        assertNotNull(cancelFail);
+        assertEquals(TicketRepo.TicketCancellationResult.TICKET_ALREADY_CANCELLED, cancelFail);
+    }
+
+
 }
